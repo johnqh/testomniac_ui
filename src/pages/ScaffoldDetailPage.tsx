@@ -56,7 +56,7 @@ export function ScaffoldDetailPage() {
 
   if (contextLoading || isLoading) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="text-center text-gray-500 dark:text-gray-400 py-8">Loading...</div>
       </div>
     );
@@ -64,7 +64,7 @@ export function ScaffoldDetailPage() {
 
   if (contextError || error) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="text-center text-red-600 dark:text-red-400 py-8">
           Error: {contextError || error}
         </div>
@@ -74,7 +74,7 @@ export function ScaffoldDetailPage() {
 
   if (!scaffold) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <BackLink label="Scaffolds" onClick={() => navigate(r.scaffolds())} />
         <div className="text-center text-gray-500 dark:text-gray-400 py-8">Scaffold not found</div>
       </div>
@@ -84,7 +84,7 @@ export function ScaffoldDetailPage() {
   const label = SCAFFOLD_LABELS[scaffold.type] ?? scaffold.type;
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <SEOHead title={label} description="" noIndex />
       <BackLink label="Scaffolds" onClick={() => navigate(r.scaffolds())} />
 
@@ -198,7 +198,9 @@ function DetailRow({
       <span className="text-sm font-medium text-gray-500 dark:text-gray-400 w-32 shrink-0">
         {label}
       </span>
-      <span className={`text-sm text-gray-900 dark:text-gray-100 ${mono ? 'font-mono' : ''}`}>
+      <span
+        className={`min-w-0 break-all text-sm text-gray-900 dark:text-gray-100 ${mono ? 'font-mono' : ''}`}
+      >
         {value}
       </span>
     </div>

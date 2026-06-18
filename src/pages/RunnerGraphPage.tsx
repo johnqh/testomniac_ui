@@ -100,7 +100,7 @@ export function RunnerGraphPage() {
 
   if (isLoading) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <SEOHead title="Runner Graph" description="" noIndex />
         <div className="text-center text-gray-500 dark:text-gray-400 py-8">Loading graph...</div>
       </div>
@@ -109,7 +109,7 @@ export function RunnerGraphPage() {
 
   if (pages.length === 0) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <SEOHead title="Runner Graph" description="" noIndex />
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Runner Graph</h1>
         <p className="text-gray-500 dark:text-gray-400">No pages discovered yet.</p>
@@ -118,10 +118,10 @@ export function RunnerGraphPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <SEOHead title="Runner Graph" description="" noIndex />
       <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Runner Graph</h1>
-      <div className="w-full h-[600px] border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+      <div className="w-full h-[70vh] sm:h-[600px] border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
         <ReactFlow
           nodes={nodes}
           edges={edges}

@@ -31,24 +31,30 @@ export function RunSurfaceRunDetailPage() {
     match?.surfaceRuns.find(surfaceRun => surfaceRun.id === Number(surfaceRunId)) ?? null;
 
   if (error) {
-    return <div className="p-6 text-center text-red-600 dark:text-red-400">Error: {error}</div>;
+    return (
+      <div className="p-4 text-center text-red-600 dark:text-red-400 sm:p-6">Error: {error}</div>
+    );
   }
 
   if (isLoading) {
-    return <div className="p-6 text-center text-gray-500 dark:text-gray-400">Loading...</div>;
+    return (
+      <div className="p-4 text-center text-gray-500 dark:text-gray-400 sm:p-6">Loading...</div>
+    );
   }
 
   if (!match || !selectedRun) {
     return (
-      <div className="p-6 text-center text-gray-500 dark:text-gray-400">Surface run not found.</div>
+      <div className="p-4 text-center text-gray-500 dark:text-gray-400 sm:p-6">
+        Surface run not found.
+      </div>
     );
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <SEOHead title={`${match.title} Run`} description="" noIndex />
       <BackLink label="Back to Surface Runs" onClick={() => navigate(r.runSurfaceRuns(runId))} />
-      <nav className="mb-4 flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+      <nav className="mb-4 flex flex-wrap items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
         <button
           onClick={() => navigate(r.run(runId))}
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
@@ -66,7 +72,7 @@ export function RunSurfaceRunDetailPage() {
         <span className="text-gray-900 dark:text-gray-100 font-medium">{match.title}</span>
       </nav>
 
-      <div className="mb-6 flex items-center gap-3">
+      <div className="mb-6 flex flex-wrap items-center gap-3">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{match.title}</h1>
         <StatusBadge status={selectedRun.status} />
       </div>

@@ -169,16 +169,16 @@ export function SchedulesPage() {
 
   if (pageError) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="text-center text-red-600 dark:text-red-400 py-8">Error: {pageError}</div>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <SEOHead title="Schedules" description="" noIndex />
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Schedules</h1>
         <Button variant="primary" onClick={() => (showForm ? closeForm() : setShowForm(true))}>
           {showForm ? 'Cancel' : '+ New Schedule'}

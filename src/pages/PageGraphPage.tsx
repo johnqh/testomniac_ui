@@ -125,14 +125,14 @@ export function PageGraphPage() {
 
   if (isLoading) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="text-center text-gray-500 dark:text-gray-400 py-8">Loading graph...</div>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <SEOHead title="Page Graph" description="" noIndex />
       <BackLink label="Page Detail" onClick={() => navigate(pagesBasePath)} />
       <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Page Graph</h1>
@@ -140,7 +140,7 @@ export function PageGraphPage() {
       {pageStates.length === 0 ? (
         <p className="text-gray-500 dark:text-gray-400">No page states found.</p>
       ) : (
-        <div className="w-full h-[600px] border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <div className="w-full h-[70vh] sm:h-[600px] border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
           <ReactFlow
             nodes={nodes}
             edges={edges}

@@ -92,7 +92,7 @@ export function LiveCounters({
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
       {counters.map(c => (
         <div key={c.label} className="text-center">
           <div className={`text-2xl font-bold tabular-nums ${c.color}`}>{c.value}</div>

@@ -163,20 +163,25 @@ const MENU_SECTIONS: MenuSection[] = [
     title: 'OVERVIEW',
     items: [
       { label: 'Bundles', to: (r, s, e) => r.bundles(s, e), icon: BundlesIcon },
-      { label: 'Runs', to: (r, s, e) => r.runs(s, e), icon: RunsIcon },
-      { label: 'Schedules', to: (r, s, e) => r.schedules(s, e), icon: SchedulesIcon },
-    ],
-  },
-  {
-    title: 'DISCOVERY',
-    items: [
-      { label: 'Pages', to: (r, s, e) => r.pages(s, e), icon: PagesIcon },
       { label: 'Surfaces', to: (r, s, e) => r.testSurfaces(s, e), icon: SurfacesIcon },
       {
-        label: 'Test Interactions',
+        label: 'Interactions',
         to: (r, s, e) => r.testInteractions(s, e),
         icon: InteractionsIcon,
       },
+    ],
+  },
+  {
+    title: 'DESTINATIONS',
+    items: [
+      { label: 'Pages', to: (r, s, e) => r.pages(s, e), icon: PagesIcon },
+      { label: 'Scaffolds', to: (r, s, e) => r.scaffolds(s, e), icon: ScaffoldsIcon },
+      { label: 'Patterns', to: (r, s, e) => r.patterns(s, e), icon: PatternsIcon },
+    ],
+  },
+  {
+    title: 'DISCOVERIES',
+    items: [
       { label: 'Personas', to: (r, s, e) => r.personas(s, e), icon: PersonasIcon },
       { label: 'Scenarios', to: (r, s, e) => r.testScenarios(s, e), icon: ScenariosIcon },
     ],
@@ -184,14 +189,16 @@ const MENU_SECTIONS: MenuSection[] = [
   {
     title: 'ANALYSIS',
     items: [
+      { label: 'Runs', to: (r, s, e) => r.runs(s, e), icon: RunsIcon },
       { label: 'Issues', to: (r, s, e) => r.issues(s, e), icon: IssuesIcon },
-      { label: 'Scaffolds', to: (r, s, e) => r.scaffolds(s, e), icon: ScaffoldsIcon },
-      { label: 'Patterns', to: (r, s, e) => r.patterns(s, e), icon: PatternsIcon },
     ],
   },
   {
     title: 'WORKSPACE',
-    items: [{ label: 'Settings', to: (r, s, e) => r.settings(s, e), icon: SettingsIcon }],
+    items: [
+      { label: 'Schedules', to: (r, s, e) => r.schedules(s, e), icon: SchedulesIcon },
+      { label: 'Settings', to: (r, s, e) => r.settings(s, e), icon: SettingsIcon },
+    ],
   },
 ];
 

@@ -41,7 +41,7 @@ export function RunSurfaceRunsPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <SEOHead title={`Run #${runId} Surface Runs`} description="" noIndex />
       <BackLink label={`Back to Run #${runId}`} onClick={() => navigate(r.run(runId))} />
       <nav className="mb-4 flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">

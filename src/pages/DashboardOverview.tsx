@@ -465,7 +465,7 @@ export function DashboardOverview() {
   }, [firstProductRuns]);
 
   return (
-    <div className="p-6 max-w-5xl">
+    <div className="p-4 sm:p-6 max-w-5xl">
       <SEOHead title="Dashboard" description="" noIndex />
       <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Dashboard</h1>
       <p className="text-gray-500 dark:text-gray-400 mb-8">

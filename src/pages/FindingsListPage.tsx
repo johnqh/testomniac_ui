@@ -149,11 +149,11 @@ export function FindingsListPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <SEOHead title="Findings" description="" noIndex />
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Findings</h1>
           {runId && (

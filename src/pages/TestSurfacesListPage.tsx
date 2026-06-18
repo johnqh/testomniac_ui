@@ -77,7 +77,7 @@ export function TestSurfacesListPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <SEOHead title="Test Surfaces" description="" noIndex />
       <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Test Surfaces</h1>
 

@@ -180,7 +180,7 @@ export function CredentialManagementSection({
 
   return (
     <section className="border-t border-gray-200 pt-6 dark:border-gray-700">
-      <div className="mb-4 flex items-center justify-between gap-4">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h2>
           {description && (
@@ -317,7 +317,7 @@ export function CredentialManagementSection({
                     </Badge>
                   )}
                   {credential.loginUrl && (
-                    <span className="max-w-[200px] truncate text-xs text-gray-400 dark:text-gray-500">
+                    <span className="max-w-full truncate text-xs text-gray-400 dark:text-gray-500 sm:max-w-[200px]">
                       {credential.loginUrl}
                     </span>
                   )}

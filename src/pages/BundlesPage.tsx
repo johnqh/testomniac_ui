@@ -83,9 +83,9 @@ export function BundlesPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <SEOHead title="Bundles" description="" noIndex />
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Test Bundles</h1>
         {primaryRunner && (
           <Button variant="primary" onClick={() => setShowForm(!showForm)}>

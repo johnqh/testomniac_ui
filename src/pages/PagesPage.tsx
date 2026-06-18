@@ -90,7 +90,7 @@ export function PagesPage() {
 
   if (isLoading) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="py-8 text-center text-gray-500 dark:text-gray-400">Loading...</div>
       </div>
     );
@@ -98,16 +98,16 @@ export function PagesPage() {
 
   if (error) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="py-8 text-center text-red-600 dark:text-red-400">Error: {error}</div>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <SEOHead title="Discovered Pages" description="" noIndex />
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           {runScoped ? `Run #${runId} Pages` : 'Discovered Pages'}
         </h1>

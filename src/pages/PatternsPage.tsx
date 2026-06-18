@@ -389,7 +389,7 @@ export function PatternsPage() {
 
   if (contextLoading || isLoading) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="text-center text-gray-500 dark:text-gray-400 py-8">Loading...</div>
       </div>
     );
@@ -397,7 +397,7 @@ export function PatternsPage() {
 
   if (contextError || error) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="text-center text-red-600 dark:text-red-400 py-8">
           Error: {contextError || error}
         </div>
@@ -406,7 +406,7 @@ export function PatternsPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <SEOHead title="UI Patterns" description="" noIndex />
       <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">UI Patterns</h1>
 

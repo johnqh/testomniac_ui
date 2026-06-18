@@ -82,7 +82,7 @@ export function TestRunDetailPage() {
 
   if (runError || error || elementRunError) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="text-center text-red-600 dark:text-red-400 py-8">
           Error: {runError || error || elementRunError}
         </div>
@@ -92,7 +92,7 @@ export function TestRunDetailPage() {
 
   if (isRunLoading || !run) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="text-center text-gray-500 dark:text-gray-400 py-8">Loading run...</div>
       </div>
     );
@@ -114,7 +114,7 @@ export function TestRunDetailPage() {
   const networkLog = formatMultilineLog(testInteractionRun?.networkLog);
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <BackLink label="Back to Runs" onClick={() => navigate(r.runs())} />
 
       {/* Breadcrumb */}

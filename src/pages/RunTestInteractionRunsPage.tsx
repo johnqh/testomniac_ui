@@ -43,20 +43,20 @@ export function RunTestInteractionRunsPage() {
 
   if (!surface || !testInteraction) {
     return (
-      <div className="p-6 text-center text-gray-500 dark:text-gray-400">
+      <div className="p-4 text-center text-gray-500 dark:text-gray-400 sm:p-6">
         Test element not found.
       </div>
     );
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <SEOHead title={`${testInteraction.title} Runs`} description="" noIndex />
       <BackLink
         label={`Back to ${surface.title}`}
         onClick={() => navigate(r.runSurfaceRun(runId, surfaceRunId))}
       />
-      <nav className="mb-4 flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+      <nav className="mb-4 flex flex-wrap items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
         <button
           onClick={() => navigate(r.run(runId))}
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
@@ -83,7 +83,7 @@ export function RunTestInteractionRunsPage() {
         </span>
       </nav>
 
-      <div className="mb-6 flex items-center gap-3">
+      <div className="mb-6 flex flex-wrap items-center gap-3">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           {testInteraction.title}
         </h1>

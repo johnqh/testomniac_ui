@@ -242,7 +242,7 @@ export function BundleDetailPage() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <SEOHead title={bundle.title} description="" noIndex />
       <BackLink label="Bundles" onClick={() => navigate(r.bundles())} />
 
@@ -280,8 +280,8 @@ export function BundleDetailPage() {
             </div>
           </div>
         ) : (
-          <div className="flex items-start justify-between">
-            <div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {bundle.title}
               </h1>

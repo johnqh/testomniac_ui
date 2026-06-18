@@ -112,7 +112,7 @@ export function PageDetailPage() {
 
   if (isLoading || summaryLoading) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="text-center text-gray-500 dark:text-gray-400 py-8">Loading...</div>
       </div>
     );
@@ -121,10 +121,10 @@ export function PageDetailPage() {
   const pagesBasePath = runId ? r.runPages(runId) : r.pages();
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <SEOHead title="Page Detail" description="" noIndex />
       <BackLink label="Pages" onClick={() => navigate(pagesBasePath)} />
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Page Detail</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">

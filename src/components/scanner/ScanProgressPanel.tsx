@@ -61,7 +61,7 @@ export function ScanProgressPanel({
               Current Page
             </span>
             {currentPageUrl && (
-              <span className="text-xs font-mono text-gray-400 dark:text-gray-500 truncate ml-2 max-w-[300px]">
+              <span className="min-w-0 text-xs font-mono text-gray-400 dark:text-gray-500 truncate ml-2 max-w-full sm:max-w-[300px]">
                 {currentPageUrl}
               </span>
             )}

@@ -65,24 +65,30 @@ export function RunTestInteractionRunDetailPage() {
 
   const pageError = structureError || error;
   if (pageError) {
-    return <div className="p-6 text-center text-red-600 dark:text-red-400">Error: {pageError}</div>;
+    return (
+      <div className="p-4 text-center text-red-600 dark:text-red-400 sm:p-6">
+        Error: {pageError}
+      </div>
+    );
   }
 
   if (isLoading || structureLoading || !testInteractionRun) {
-    return <div className="p-6 text-center text-gray-500 dark:text-gray-400">Loading...</div>;
+    return (
+      <div className="p-4 text-center text-gray-500 dark:text-gray-400 sm:p-6">Loading...</div>
+    );
   }
 
   const consoleLog = formatMultilineLog(testInteractionRun.consoleLog);
   const networkLog = formatMultilineLog(testInteractionRun.networkLog);
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <SEOHead title={`Interaction Run #${elementRunId}`} description="" noIndex />
       <BackLink
         label={`Back to ${testInteraction?.title ?? `Test Interaction #${elementId}`}`}
         onClick={() => navigate(r.runSurfaceRunInteraction(runId, surfaceRunId, elementId))}
       />
-      <nav className="mb-4 flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+      <nav className="mb-4 flex flex-wrap items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
         <button
           onClick={() => navigate(r.run(runId))}
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
@@ -188,7 +194,7 @@ export function RunTestInteractionRunDetailPage() {
             {findings.map(finding => (
               <Card key={finding.id} variant="bordered" padding="md">
                 <div className="flex items-start justify-between gap-3">
-                  <div>
+                  <div className="min-w-0">
                     <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {finding.title}
                     </div>

@@ -222,7 +222,7 @@ export function TestScenarioDetailPage() {
 
   if (contextError || sequencesError) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="text-center text-red-600 dark:text-red-400 py-8">
           Error: {contextError || sequencesError}
         </div>
@@ -231,12 +231,12 @@ export function TestScenarioDetailPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <SEOHead title={scenario?.title ?? `Scenario #${scenarioId}`} description="" noIndex />
 
       <BackLink label="Test Scenarios" onClick={() => navigate(r.testScenarios())} />
 
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-2">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           {scenario?.title ?? `Test Scenario #${scenarioId}`}
         </h1>
@@ -245,7 +245,7 @@ export function TestScenarioDetailPage() {
 
       {scenario && (
         <div className="mb-6 space-y-3">
-          <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
             <span>
               Starting path:{' '}
               <code className="text-gray-900 dark:text-gray-100">{scenario.startingPath}</code>
@@ -272,7 +272,7 @@ export function TestScenarioDetailPage() {
       )}
 
       {/* Sequences */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-3">
         <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
           Sequences
         </h2>

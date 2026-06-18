@@ -67,7 +67,7 @@ export function PageStateDetailPage() {
 
   if (statesLoading) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="text-center text-gray-500 dark:text-gray-400 py-8">Loading...</div>
       </div>
     );
@@ -75,7 +75,7 @@ export function PageStateDetailPage() {
 
   if (!state) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="text-center text-gray-500 dark:text-gray-400 py-8">
           Page state not found.
         </div>
@@ -92,13 +92,13 @@ export function PageStateDetailPage() {
   const pageBasePath = runId ? r.runPage(runId, pageId) : r.page(pageId);
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <BackLink label={`Page #${pageId}`} onClick={() => navigate(pageBasePath)} />
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           Page State #{pageStateId}
         </h1>
-        <div className="flex items-center gap-3 mt-2">
+        <div className="flex flex-wrap items-center gap-3 mt-2">
           <span className="px-2 py-0.5 text-xs rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
             {state.sizeClass}
           </span>
