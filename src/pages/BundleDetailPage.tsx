@@ -10,11 +10,10 @@ import {
 } from '@sudobility/testomniac_client';
 import { ActionButton, Button, Tabs, TabsList, TabsTrigger } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { SurfaceCell, InteractionCell, ScenarioCell } from '../components/cells';
 import BackLink from '../components/navigation/BackLink';
 import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
-import { useEnvBasePath } from '../hooks/useEnvBasePath';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 
 type ContentTab = 'surfaces' | 'interactions' | 'scenarios';
@@ -35,7 +34,7 @@ export function BundleDetailPage() {
 
   const numericBundleId = Number(bundleId);
   const runnerId = primaryRunner?.id ?? 0;
-  const basePath = useEnvBasePath();
+  const r = useEnvRoutes();
 
   const {
     bundles,
@@ -193,7 +192,7 @@ export function BundleDetailPage() {
     setError(null);
     try {
       await deleteBundle(numericBundleId);
-      navigate(`${basePath}/bundles`);
+      navigate(r.bundles());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete bundle');
     }
@@ -245,7 +244,7 @@ export function BundleDetailPage() {
   return (
     <div className="p-6">
       <SEOHead title={bundle.title} description="" noIndex />
-      <BackLink label="Bundles" onClick={() => navigate(`${basePath}/bundles`)} />
+      <BackLink label="Bundles" onClick={() => navigate(r.bundles())} />
 
       {/* Header */}
       <div className="mb-6">
@@ -333,7 +332,7 @@ export function BundleDetailPage() {
               <SurfaceCell
                 key={s.id}
                 surface={s}
-                onClick={() => navigate(`${basePath}/test-surfaces/${s.id}`)}
+                onClick={() => navigate(r.testSurface(s.id))}
                 actions={renderRemoveAction('surfaces', s.id)}
               />
             ))}
@@ -350,7 +349,7 @@ export function BundleDetailPage() {
               <InteractionCell
                 key={i.id}
                 interaction={i}
-                onClick={() => navigate(`${basePath}/test-interactions/${i.id}`)}
+                onClick={() => navigate(r.testInteraction(i.id))}
                 actions={renderRemoveAction('interactions', i.id)}
               />
             ))}
@@ -365,7 +364,7 @@ export function BundleDetailPage() {
               <ScenarioCell
                 key={s.id}
                 scenario={s}
-                onClick={() => navigate(`${basePath}/test-scenarios/${s.id}`)}
+                onClick={() => navigate(r.testScenario(s.id))}
                 actions={renderRemoveAction('scenarios', s.id)}
               />
             ))}

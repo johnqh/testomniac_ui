@@ -21,6 +21,7 @@ import '@xyflow/react/dist/style.css';
 import { normalizePath, patternizePath } from '@sudobility/testomniac_lib';
 import { buildArtifactUrl } from '@sudobility/testomniac_client';
 import { useLocalizedNavigate } from '../../hooks/useLocalizedNavigate';
+import { useEnvRoutes } from '../../context/routing';
 
 // --- Constants ---
 
@@ -155,16 +156,12 @@ interface PagesMapViewProps {
 export function PagesMapView({
   pages,
   testInteractions,
-  envId,
-  entitySlug,
   runId,
   screenshotsByPageId,
   apiUrl,
 }: PagesMapViewProps) {
   const { navigate } = useLocalizedNavigate();
-  const pageBasePath = runId
-    ? `/dashboard/${entitySlug}/environments/${envId}/runs/${runId}/pages`
-    : `/dashboard/${entitySlug}/environments/${envId}/pages`;
+  const r = useEnvRoutes();
 
   const { initialNodes, initialEdges, hiddenInteractionCount } = useMemo(() => {
     if (pages.length === 0)
@@ -343,10 +340,10 @@ export function PagesMapView({
     (_: React.MouseEvent, node: Node) => {
       const pageIds = node.data.pageIds as number[] | undefined;
       if (pageIds && pageIds.length > 0) {
-        navigate(`${pageBasePath}/${pageIds[0]}`);
+        navigate(runId ? r.runPage(runId, pageIds[0]) : r.page(pageIds[0]));
       }
     },
-    [navigate, pageBasePath]
+    [navigate, r, runId]
   );
 
   if (pages.length === 0) {

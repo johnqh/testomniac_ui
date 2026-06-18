@@ -14,11 +14,10 @@ import type {
 } from '@sudobility/testomniac_types';
 import type { NetworkClient } from '@sudobility/types';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { InteractionCell, ListCell } from '../components/cells';
 import { ScriptPanel } from '../components/scripts/ScriptPanel';
 import BackLink from '../components/navigation/BackLink';
-import { useEnvBasePath } from '../hooks/useEnvBasePath';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
 import { AddToBundleButton } from '../components/bundles/AddToBundleButton';
@@ -30,7 +29,7 @@ function SequenceCard({
   onToggle,
   networkClient,
   token,
-  basePath,
+  interactionPath,
   navigate,
   interactions,
 }: {
@@ -39,7 +38,7 @@ function SequenceCard({
   onToggle: () => void;
   networkClient: NetworkClient;
   token: string;
-  basePath: string;
+  interactionPath: (id: number) => string;
   navigate: (path: string) => void;
   interactions: TestInteractionResponse[];
 }) {
@@ -85,8 +84,7 @@ function SequenceCard({
             <div className="space-y-2">
               {sorted.map(link => {
                 const interaction = interactionById.get(link.testInteractionId);
-                const onOpen = () =>
-                  navigate(`${basePath}/test-interactions/${link.testInteractionId}`);
+                const onOpen = () => navigate(interactionPath(link.testInteractionId));
                 const stepLabel = (
                   <span className="w-6 text-right font-mono text-xs text-gray-400">
                     {link.stepOrder}.
@@ -143,7 +141,7 @@ export function TestScenarioDetailPage() {
     error: contextError,
   } = useDashboardEnvironmentContext();
 
-  const basePath = useEnvBasePath();
+  const r = useEnvRoutes();
 
   // Fetch the scenario from the list (no single-get endpoint needed)
   const { testScenarios } = useRunnerTestScenarios({
@@ -236,7 +234,7 @@ export function TestScenarioDetailPage() {
     <div className="p-6">
       <SEOHead title={scenario?.title ?? `Scenario #${scenarioId}`} description="" noIndex />
 
-      <BackLink label="Test Scenarios" onClick={() => navigate(`${basePath}/test-scenarios`)} />
+      <BackLink label="Test Scenarios" onClick={() => navigate(r.testScenarios())} />
 
       <div className="flex items-center justify-between mb-2">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -319,7 +317,7 @@ export function TestScenarioDetailPage() {
               onToggle={() => setExpandedSequenceId(expandedSequenceId === seq.id ? null : seq.id)}
               networkClient={networkClient}
               token={token ?? ''}
-              basePath={basePath}
+              interactionPath={r.testInteraction}
               navigate={navigate}
               interactions={testInteractions}
             />

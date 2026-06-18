@@ -8,9 +8,8 @@ import {
 import type { TestScenarioResponse } from '@sudobility/testomniac_types';
 import { Alert, Button, ActionButton } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { ScenarioCell } from '../components/cells';
-import { useEnvBasePath } from '../hooks/useEnvBasePath';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 import { StatusBadge } from '../components/scanner/StatusBadge';
 import { AddScenarioForm } from '../components/scenarios/AddScenarioForm';
@@ -20,6 +19,7 @@ import { ErrorState, LoadingState, EmptyState } from '../components/states';
 export function TestScenariosPage() {
   const { envId } = useRouteParams<{ envId: string }>();
   const { navigate } = useLocalizedNavigate();
+  const r = useEnvRoutes();
   const { baseUrl } = useTestomniacApi();
   const {
     networkClient,
@@ -62,8 +62,6 @@ export function TestScenariosPage() {
 
   // Detect state
   const [detectError, setDetectError] = useState<string | null>(null);
-
-  const basePath = useEnvBasePath();
 
   const handleDelete = async (scenarioId: number) => {
     await deleteTestScenario(scenarioId);
@@ -141,7 +139,7 @@ export function TestScenariosPage() {
             <ScenarioCell
               key={scenario.id}
               scenario={scenario}
-              onClick={() => navigate(`${basePath}/test-scenarios/${scenario.id}`)}
+              onClick={() => navigate(r.testScenario(scenario.id))}
               trailing={
                 <>
                   {scenario.personaId && (

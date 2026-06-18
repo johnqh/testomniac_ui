@@ -7,8 +7,7 @@ import {
 import { formatDate, formatMultilineLog } from '@sudobility/testomniac_lib';
 import { Alert, Card } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
-import { useEnvBasePath } from '../hooks/useEnvBasePath';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 import { StatusBadge } from '../components/scanner/StatusBadge';
 import BackLink from '../components/navigation/BackLink';
@@ -50,8 +49,7 @@ export function RunTestInteractionRunDetailPage() {
     enabled: !!elementRunId && !!token,
   });
 
-  const envBasePath = useEnvBasePath();
-  const basePath = `${envBasePath}/runs/${runId}`;
+  const r = useEnvRoutes();
   const surface =
     structure?.surfaces.find(candidate =>
       candidate.surfaceRuns.some(run => run.id === Number(surfaceRunId))
@@ -82,36 +80,32 @@ export function RunTestInteractionRunDetailPage() {
       <SEOHead title={`Interaction Run #${elementRunId}`} description="" noIndex />
       <BackLink
         label={`Back to ${testInteraction?.title ?? `Test Interaction #${elementId}`}`}
-        onClick={() =>
-          navigate(`${basePath}/surface-runs/${surfaceRunId}/test-interactions/${elementId}`)
-        }
+        onClick={() => navigate(r.runSurfaceRunInteraction(runId, surfaceRunId, elementId))}
       />
       <nav className="mb-4 flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
         <button
-          onClick={() => navigate(basePath)}
+          onClick={() => navigate(r.run(runId))}
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
         >
           Run #{runId}
         </button>
         <span>/</span>
         <button
-          onClick={() => navigate(`${basePath}/surface-runs`)}
+          onClick={() => navigate(r.runSurfaceRuns(runId))}
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
         >
           Surface Runs
         </button>
         <span>/</span>
         <button
-          onClick={() => navigate(`${basePath}/surface-runs/${surfaceRunId}`)}
+          onClick={() => navigate(r.runSurfaceRun(runId, surfaceRunId))}
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
         >
           {surface?.title ?? `Surface Run #${surfaceRunId}`}
         </button>
         <span>/</span>
         <button
-          onClick={() =>
-            navigate(`${basePath}/surface-runs/${surfaceRunId}/test-interactions/${elementId}`)
-          }
+          onClick={() => navigate(r.runSurfaceRunInteraction(runId, surfaceRunId, elementId))}
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
         >
           {testInteraction?.title ?? `Test Interaction #${elementId}`}

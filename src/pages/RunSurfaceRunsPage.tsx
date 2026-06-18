@@ -2,20 +2,19 @@ import { useRunStructure } from '@sudobility/testomniac_client';
 import { Card } from '@sudobility/components';
 import { formatDate } from '@sudobility/testomniac_lib';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 import { StatusBadge } from '../components/scanner/StatusBadge';
 import BackLink from '../components/navigation/BackLink';
 import { ErrorState, LoadingState, EmptyState } from '../components/states';
 
 export function RunSurfaceRunsPage() {
-  const { entitySlug, envId, runId } = useRouteParams<{
-    entitySlug: string;
-    envId: string;
+  const { runId } = useRouteParams<{
     runId: string;
   }>();
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const { navigate } = useLocalizedNavigate();
+  const r = useEnvRoutes();
 
   const { structure, isLoading, error } = useRunStructure({
     networkClient,
@@ -25,7 +24,6 @@ export function RunSurfaceRunsPage() {
     enabled: !!runId && !!token,
   });
 
-  const basePath = `/dashboard/${entitySlug}/environments/${envId}/runs/${runId}`;
   const surfaceRuns =
     structure?.surfaces.flatMap(surface =>
       surface.surfaceRuns.map(surfaceRun => ({
@@ -45,10 +43,10 @@ export function RunSurfaceRunsPage() {
   return (
     <div className="p-6">
       <SEOHead title={`Run #${runId} Surface Runs`} description="" noIndex />
-      <BackLink label={`Back to Run #${runId}`} onClick={() => navigate(basePath)} />
+      <BackLink label={`Back to Run #${runId}`} onClick={() => navigate(r.run(runId))} />
       <nav className="mb-4 flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
         <button
-          onClick={() => navigate(basePath)}
+          onClick={() => navigate(r.run(runId))}
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
         >
           Run #{runId}
@@ -87,7 +85,7 @@ export function RunSurfaceRunsPage() {
               {surfaceRuns.map(({ surface, surfaceRun }) => (
                 <tr
                   key={surfaceRun.id}
-                  onClick={() => navigate(`${basePath}/surface-runs/${surfaceRun.id}`)}
+                  onClick={() => navigate(r.runSurfaceRun(runId, surfaceRun.id))}
                   className="cursor-pointer bg-white transition-colors hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800"
                 >
                   <td className="px-4 py-3 text-gray-900 dark:text-gray-100">{surface.title}</td>

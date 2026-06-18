@@ -3,7 +3,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { useEnvironmentTestInteractions } from '@sudobility/testomniac_client';
 import { PRIORITY_NAMES } from '@sudobility/testomniac_lib';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { SelectField } from '../components/forms/SelectField';
 import { DataTable } from '../components/data/DataTable';
 import { StatusBadge } from '../components/scanner/StatusBadge';
@@ -84,9 +84,10 @@ const PRIORITY_OPTIONS = [
 const DEVICE_OPTIONS = ['All', 'Desktop', 'Mobile'] as const;
 
 export function TestInteractionsPage() {
-  const { entitySlug, envId } = useRouteParams<{ entitySlug: string; envId: string }>();
+  const { envId } = useRouteParams<{ entitySlug: string; envId: string }>();
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const { navigate } = useLocalizedNavigate();
+  const r = useEnvRoutes();
 
   const [typeFilter, setTypeFilter] = useState<string>('');
   const [priorityFilter, setPriorityFilter] = useState<string>('');
@@ -165,9 +166,7 @@ export function TestInteractionsPage() {
         data={filteredData}
         columns={columns as never}
         isLoading={isLoading}
-        onRowClick={(row: TestInteractionRow) =>
-          navigate(`/dashboard/${entitySlug}/environments/${envId}/test-interactions/${row.id}`)
-        }
+        onRowClick={(row: TestInteractionRow) => navigate(r.testInteraction(row.id))}
       />
     </div>
   );

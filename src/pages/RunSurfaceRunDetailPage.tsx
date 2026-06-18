@@ -1,7 +1,6 @@
 import { useRunStructure } from '@sudobility/testomniac_client';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
-import { useEnvBasePath } from '../hooks/useEnvBasePath';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 import { StatusBadge } from '../components/scanner/StatusBadge';
 import { Card } from '@sudobility/components';
@@ -23,8 +22,7 @@ export function RunSurfaceRunDetailPage() {
     enabled: !!runId && !!token,
   });
 
-  const envBasePath = useEnvBasePath();
-  const basePath = `${envBasePath}/runs/${runId}`;
+  const r = useEnvRoutes();
   const match =
     structure?.surfaces.find(surface =>
       surface.surfaceRuns.some(surfaceRun => surfaceRun.id === Number(surfaceRunId))
@@ -49,17 +47,17 @@ export function RunSurfaceRunDetailPage() {
   return (
     <div className="p-6">
       <SEOHead title={`${match.title} Run`} description="" noIndex />
-      <BackLink label="Back to Surface Runs" onClick={() => navigate(`${basePath}/surface-runs`)} />
+      <BackLink label="Back to Surface Runs" onClick={() => navigate(r.runSurfaceRuns(runId))} />
       <nav className="mb-4 flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
         <button
-          onClick={() => navigate(basePath)}
+          onClick={() => navigate(r.run(runId))}
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
         >
           Run #{runId}
         </button>
         <span>/</span>
         <button
-          onClick={() => navigate(`${basePath}/surface-runs`)}
+          onClick={() => navigate(r.runSurfaceRuns(runId))}
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
         >
           Surface Runs
@@ -84,9 +82,7 @@ export function RunSurfaceRunDetailPage() {
           <button
             key={testInteraction.id}
             onClick={() =>
-              navigate(
-                `${basePath}/surface-runs/${surfaceRunId}/test-interactions/${testInteraction.id}`
-              )
+              navigate(r.runSurfaceRunInteraction(runId, surfaceRunId, testInteraction.id))
             }
             className="w-full rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"
           >

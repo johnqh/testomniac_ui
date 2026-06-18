@@ -8,9 +8,8 @@ import {
 import type { TestRunFindingResponse } from '@sudobility/testomniac_types';
 import { formatDate, formatMultilineLog } from '@sudobility/testomniac_lib';
 import { useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import BackLink from '../components/navigation/BackLink';
-import { useEnvBasePath } from '../hooks/useEnvBasePath';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 import { Badge, Card } from '@sudobility/components';
 import { StatusBadge } from '../components/scanner/StatusBadge';
@@ -33,7 +32,7 @@ export function TestRunDetailPage() {
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const { navigate } = useLocalizedNavigate();
 
-  const basePath = useEnvBasePath();
+  const r = useEnvRoutes();
   const testRunId = Number(runId);
 
   const {
@@ -116,12 +115,12 @@ export function TestRunDetailPage() {
 
   return (
     <div className="p-6">
-      <BackLink label="Back to Runs" onClick={() => navigate(`${basePath}/runs`)} />
+      <BackLink label="Back to Runs" onClick={() => navigate(r.runs())} />
 
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 mb-4">
         <button
-          onClick={() => navigate(`${basePath}/runs`)}
+          onClick={() => navigate(r.runs())}
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
         >
           Runs
@@ -198,7 +197,7 @@ export function TestRunDetailPage() {
 
           <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
             <button
-              onClick={() => navigate(`${basePath}/runs/${runId}/surface-runs`)}
+              onClick={() => navigate(r.runSurfaceRuns(runId))}
               className="rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:border-blue-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-600"
             >
               <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -209,7 +208,7 @@ export function TestRunDetailPage() {
               </div>
             </button>
             <button
-              onClick={() => navigate(`${basePath}/runs/${runId}/pages`)}
+              onClick={() => navigate(r.runPages(runId))}
               className="rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:border-blue-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-600"
             >
               <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Pages</div>
@@ -218,7 +217,7 @@ export function TestRunDetailPage() {
               </div>
             </button>
             <button
-              onClick={() => navigate(`${basePath}/runs/${runId}/issues`)}
+              onClick={() => navigate(r.runIssues(runId))}
               className="rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:border-blue-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-600"
             >
               <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Findings</div>
@@ -239,7 +238,7 @@ export function TestRunDetailPage() {
                     key={surface.id}
                     onClick={() =>
                       surface.surfaceRunId != null &&
-                      navigate(`${basePath}/runs/${runId}/surface-runs/${surface.surfaceRunId}`)
+                      navigate(r.runSurfaceRun(runId, surface.surfaceRunId))
                     }
                     disabled={surface.surfaceRunId == null}
                     className="w-full rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:border-blue-300 disabled:cursor-default disabled:hover:border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-600 dark:disabled:hover:border-gray-700"

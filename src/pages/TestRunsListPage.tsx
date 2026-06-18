@@ -2,7 +2,7 @@ import type { TestRunResponse } from '@sudobility/testomniac_types';
 import { formatDuration, formatDate } from '@sudobility/testomniac_lib';
 import { SEOHead } from '../context/config';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
-import { useEnvBasePath } from '../hooks/useEnvBasePath';
+import { useEnvRoutes } from '../context/routing';
 import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
 import { StatusBadge } from '../components/scanner/StatusBadge';
 import { ErrorState, LoadingState, EmptyState } from '../components/states';
@@ -11,7 +11,7 @@ export function TestRunsListPage() {
   const { navigate } = useLocalizedNavigate();
   const { environmentRuns: testRuns, isLoading, error } = useDashboardEnvironmentContext();
 
-  const basePath = useEnvBasePath();
+  const r = useEnvRoutes();
 
   if (error) {
     return <ErrorState message={error} />;
@@ -57,7 +57,7 @@ export function TestRunsListPage() {
               {testRuns.map((run: TestRunResponse) => (
                 <tr
                   key={run.id}
-                  onClick={() => navigate(`${basePath}/runs/${run.id}`)}
+                  onClick={() => navigate(r.run(run.id))}
                   className="bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
                 >
                   <td className="px-4 py-3 font-mono text-gray-900 dark:text-gray-100">

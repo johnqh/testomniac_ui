@@ -3,9 +3,8 @@ import { useEnvironmentTestSurfaces } from '@sudobility/testomniac_client';
 import { getSurfacePriorityBand } from '@sudobility/testomniac_lib';
 import type { TestSurfaceResponse } from '@sudobility/testomniac_types';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { SurfaceCell } from '../components/cells';
-import { useEnvBasePath } from '../hooks/useEnvBasePath';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 import { SelectField } from '../components/forms/SelectField';
 import { ErrorState, LoadingState, EmptyState } from '../components/states';
@@ -64,7 +63,7 @@ export function TestSurfacesListPage() {
     });
   }, [testSurfaces, deviceFilter, priorityFilter, typeFilter]);
 
-  const basePath = useEnvBasePath();
+  const r = useEnvRoutes();
 
   const deviceButtonClass = (value: DeviceFilter) =>
     `px-3 py-1.5 text-sm font-medium transition-colors ${
@@ -167,7 +166,7 @@ export function TestSurfacesListPage() {
             <SurfaceCell
               key={surface.id}
               surface={surface}
-              onClick={() => navigate(`${basePath}/test-surfaces/${surface.id}`)}
+              onClick={() => navigate(r.testSurface(surface.id))}
             />
           ))}
         </div>

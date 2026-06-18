@@ -8,7 +8,7 @@ import { Button, ActionButton, Card, Input, Label } from '@sudobility/components
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { BundleCell } from '../components/cells';
 import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
-import { useEnvBasePath } from '../hooks/useEnvBasePath';
+import { useEnvRoutes } from '../context/routing';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 import { EmptyState } from '../components/states';
 
@@ -29,7 +29,7 @@ export function BundlesPage() {
   const [formError, setFormError] = useState<string | null>(null);
 
   const runnerId = primaryRunner?.id ?? 0;
-  const basePath = useEnvBasePath();
+  const r = useEnvRoutes();
 
   const { bundles, isLoading, error, refetch } = useRunnerTestSurfaceBundles({
     networkClient,
@@ -146,7 +146,7 @@ export function BundlesPage() {
             <BundleCell
               key={bundle.id}
               bundle={bundle}
-              onClick={() => navigate(`${basePath}/bundles/${bundle.id}`)}
+              onClick={() => navigate(r.bundle(bundle.id))}
             />
           ))}
         </div>

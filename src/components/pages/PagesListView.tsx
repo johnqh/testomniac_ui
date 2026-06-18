@@ -1,6 +1,7 @@
 import type { PageResponse } from '@sudobility/testomniac_types';
 import { buildArtifactUrl } from '@sudobility/testomniac_client';
 import { useLocalizedNavigate } from '../../hooks/useLocalizedNavigate';
+import { useEnvRoutes } from '../../context/routing';
 
 interface PagesListViewProps {
   pages: PageResponse[];
@@ -11,18 +12,9 @@ interface PagesListViewProps {
   apiUrl?: string;
 }
 
-export function PagesListView({
-  pages,
-  envId,
-  entitySlug,
-  runId,
-  screenshotsByPageId,
-  apiUrl,
-}: PagesListViewProps) {
+export function PagesListView({ pages, runId, screenshotsByPageId, apiUrl }: PagesListViewProps) {
   const { navigate } = useLocalizedNavigate();
-  const basePath = runId
-    ? `/dashboard/${entitySlug}/environments/${envId}/runs/${runId}/pages`
-    : `/dashboard/${entitySlug}/environments/${envId}/pages`;
+  const r = useEnvRoutes();
 
   const sorted = [...pages].sort((a, b) => a.relativePath.localeCompare(b.relativePath));
 
@@ -59,7 +51,7 @@ export function PagesListView({
             return (
               <tr
                 key={page.id}
-                onClick={() => navigate(`${basePath}/${page.id}`)}
+                onClick={() => navigate(runId ? r.runPage(runId, page.id) : r.page(page.id))}
                 className="cursor-pointer border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
               >
                 <td className="px-3 py-3">

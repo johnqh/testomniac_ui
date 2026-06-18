@@ -7,22 +7,22 @@ import {
 } from '@sudobility/testomniac_client';
 import { Tabs, TabsList, TabsTrigger, Card } from '@sudobility/components';
 import { useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import BackLink from '../components/navigation/BackLink';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 
 type Tab = 'body' | 'content' | 'scaffolds';
 
 export function PageStateDetailPage() {
-  const { pageStateId, pageId, envId, entitySlug, runId } = useRouteParams<{
+  const { pageStateId, pageId, envId, runId } = useRouteParams<{
     pageStateId: string;
     pageId: string;
     envId: string;
-    entitySlug: string;
     runId?: string;
   }>();
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const { navigate } = useLocalizedNavigate();
+  const r = useEnvRoutes();
 
   const [activeTab, setActiveTab] = useState<Tab>('body');
   const [bodyView, setBodyView] = useState<'rendered' | 'source'>('rendered');
@@ -89,9 +89,7 @@ export function PageStateDetailPage() {
     { key: 'scaffolds', label: 'Scaffolds' },
   ];
 
-  const pageBasePath = runId
-    ? `/dashboard/${entitySlug}/environments/${envId}/runs/${runId}/pages/${pageId}`
-    : `/dashboard/${entitySlug}/environments/${envId}/pages/${pageId}`;
+  const pageBasePath = runId ? r.runPage(runId, pageId) : r.page(pageId);
 
   return (
     <div className="p-6">

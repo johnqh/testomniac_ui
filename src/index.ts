@@ -17,8 +17,11 @@ export {
   RoutingProvider,
   useTestomniacRouting,
   useRouteParams,
+  useRoutes,
+  useEnvRoutes,
   Redirect,
   type TestomniacRouting,
+  type TestomniacRoutes,
   type NavigateOptions,
 } from './context/routing';
 

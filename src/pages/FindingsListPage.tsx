@@ -4,7 +4,7 @@ import type { TestRunFindingResponse } from '@sudobility/testomniac_types';
 import { parseExpertiseTitle, PRIORITY_LEVELS } from '@sudobility/testomniac_lib';
 import { Badge, Button } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { getPriorityConfig } from '../config/priorityConfig';
 import { SelectField } from '../components/forms/SelectField';
 import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
@@ -41,13 +41,12 @@ type PriorityFilter = '' | '0' | '1' | '2' | '3' | '4';
 /* ---------- Main component ---------- */
 
 export function FindingsListPage() {
-  const { entitySlug, envId, runId } = useRouteParams<{
-    entitySlug: string;
-    envId: string;
+  const { runId } = useRouteParams<{
     runId?: string;
   }>();
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const { navigate } = useLocalizedNavigate();
+  const r = useEnvRoutes();
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
   const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>('');
   const [pathFilter, setPathFilter] = useState<string>('');
@@ -90,9 +89,7 @@ export function FindingsListPage() {
   const openFinding = (finding: TestRunFindingResponse) => {
     const pageId = finding.path ? pageIdByPath.get(finding.path) : undefined;
     if (pageId && effectiveRunId) {
-      navigate(
-        `/dashboard/${entitySlug}/environments/${envId}/runs/${effectiveRunId}/pages/${pageId}`
-      );
+      navigate(r.runPage(effectiveRunId, pageId));
     }
   };
   const isLoading = contextLoading || runFindingsQuery.isLoading;

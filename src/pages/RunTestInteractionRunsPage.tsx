@@ -2,8 +2,7 @@ import { useRunStructure } from '@sudobility/testomniac_client';
 import { Card } from '@sudobility/components';
 import { formatDuration } from '@sudobility/testomniac_lib';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
-import { useEnvBasePath } from '../hooks/useEnvBasePath';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 import { StatusBadge } from '../components/scanner/StatusBadge';
 import BackLink from '../components/navigation/BackLink';
@@ -26,8 +25,7 @@ export function RunTestInteractionRunsPage() {
     enabled: !!runId && !!token,
   });
 
-  const envBasePath = useEnvBasePath();
-  const basePath = `${envBasePath}/runs/${runId}`;
+  const r = useEnvRoutes();
   const surface =
     structure?.surfaces.find(candidate =>
       candidate.surfaceRuns.some(run => run.id === Number(surfaceRunId))
@@ -56,25 +54,25 @@ export function RunTestInteractionRunsPage() {
       <SEOHead title={`${testInteraction.title} Runs`} description="" noIndex />
       <BackLink
         label={`Back to ${surface.title}`}
-        onClick={() => navigate(`${basePath}/surface-runs/${surfaceRunId}`)}
+        onClick={() => navigate(r.runSurfaceRun(runId, surfaceRunId))}
       />
       <nav className="mb-4 flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
         <button
-          onClick={() => navigate(basePath)}
+          onClick={() => navigate(r.run(runId))}
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
         >
           Run #{runId}
         </button>
         <span>/</span>
         <button
-          onClick={() => navigate(`${basePath}/surface-runs`)}
+          onClick={() => navigate(r.runSurfaceRuns(runId))}
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
         >
           Surface Runs
         </button>
         <span>/</span>
         <button
-          onClick={() => navigate(`${basePath}/surface-runs/${surfaceRunId}`)}
+          onClick={() => navigate(r.runSurfaceRun(runId, surfaceRunId))}
           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
         >
           {surface.title}
@@ -119,7 +117,7 @@ export function RunTestInteractionRunsPage() {
                   key={elementRun.id}
                   onClick={() =>
                     navigate(
-                      `${basePath}/surface-runs/${surfaceRunId}/test-interactions/${elementId}/element-runs/${elementRun.id}`
+                      r.runSurfaceRunInteractionRun(runId, surfaceRunId, elementId, elementRun.id)
                     )
                   }
                   className="cursor-pointer bg-white transition-colors hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800"

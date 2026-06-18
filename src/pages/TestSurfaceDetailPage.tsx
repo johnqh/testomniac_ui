@@ -1,9 +1,8 @@
 import { useTestSurfaceTestInteractions } from '@sudobility/testomniac_client';
 import type { TestInteractionResponse } from '@sudobility/testomniac_types';
 import { useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import BackLink from '../components/navigation/BackLink';
-import { useEnvBasePath } from '../hooks/useEnvBasePath';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 import { StatusBadge } from '../components/scanner/StatusBadge';
 import { AddToBundleButton } from '../components/bundles/AddToBundleButton';
@@ -34,7 +33,7 @@ export function TestSurfaceDetailPage() {
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const { navigate } = useLocalizedNavigate();
 
-  const basePath = useEnvBasePath();
+  const r = useEnvRoutes();
 
   const {
     testInteractions,
@@ -57,7 +56,7 @@ export function TestSurfaceDetailPage() {
 
   return (
     <div className="p-6">
-      <BackLink label="Test Surfaces" onClick={() => navigate(`${basePath}/test-surfaces`)} />
+      <BackLink label="Test Surfaces" onClick={() => navigate(r.testSurfaces())} />
 
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -85,7 +84,7 @@ export function TestSurfaceDetailPage() {
             {testInteractions.map((tc: TestInteractionResponse) => (
               <button
                 key={tc.id}
-                onClick={() => navigate(`${basePath}/test-interactions/${tc.id}`)}
+                onClick={() => navigate(r.testInteraction(tc.id))}
                 className="w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
               >
                 <FileIcon />

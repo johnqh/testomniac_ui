@@ -13,7 +13,7 @@ import '@xyflow/react/dist/style.css';
 import { useRunnerPages, useRunnerPageStates } from '@sudobility/testomniac_client';
 import { layoutDagreGraph } from '@sudobility/testomniac_lib';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 
 const NODE_WIDTH = 200;
@@ -31,9 +31,10 @@ function layoutGraph(nodes: Node[], edges: Edge[]): Node[] {
 }
 
 export function RunnerGraphPage() {
-  const { envId, entitySlug } = useRouteParams<{ envId: string; entitySlug: string }>();
+  const { envId } = useRouteParams<{ envId: string }>();
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const { navigate } = useLocalizedNavigate();
+  const r = useEnvRoutes();
 
   const numericEnvId = Number(envId);
 
@@ -92,9 +93,9 @@ export function RunnerGraphPage() {
 
   const onNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
-      navigate(`/dashboard/${entitySlug}/environments/${envId}/pages/${node.id}`);
+      navigate(r.page(node.id));
     },
-    [navigate, entitySlug, envId]
+    [navigate, r]
   );
 
   if (isLoading) {

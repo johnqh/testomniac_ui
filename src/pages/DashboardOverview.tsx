@@ -12,7 +12,7 @@ import type {
 import { formatDuration } from '@sudobility/testomniac_lib';
 import { Alert, Card } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useRoutes } from '../context/routing';
 import { StatusBadge } from '../components/scanner/StatusBadge';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 import { formatDateTime } from '../utils/formatDateTime';
@@ -48,23 +48,35 @@ function SectionLink({
 /** A single environment card with links to its dashboard sections. */
 function EnvironmentCard({
   environment,
-  basePath,
+  entitySlug,
 }: {
   environment: TestEnvironmentResponse;
-  basePath: string;
+  entitySlug: string;
 }) {
   const { navigate } = useLocalizedNavigate();
-  const envBasePath = `${basePath}/environments/${environment.id}`;
+  const routes = useRoutes();
 
   const sections = [
     {
       label: 'Test Surfaces',
       description: 'Test surface hierarchy',
-      path: `${envBasePath}/test-surfaces`,
+      path: routes.testSurfaces(entitySlug, environment.id),
     },
-    { label: 'Test Runs', description: 'Execution results', path: `${envBasePath}/test-runs` },
-    { label: 'Findings', description: 'Errors and warnings', path: `${envBasePath}/findings` },
-    { label: 'Settings', description: 'Environment settings', path: `${envBasePath}/settings` },
+    {
+      label: 'Test Runs',
+      description: 'Execution results',
+      path: routes.runs(entitySlug, environment.id),
+    },
+    {
+      label: 'Findings',
+      description: 'Errors and warnings',
+      path: routes.issues(entitySlug, environment.id),
+    },
+    {
+      label: 'Settings',
+      description: 'Environment settings',
+      path: routes.settings(entitySlug, environment.id),
+    },
   ];
 
   const kindColor =
@@ -112,10 +124,10 @@ function EnvironmentCard({
 /** Lists environments for a single product, with lazy loading. */
 function ProductSection({
   product,
-  basePath,
+  entitySlug,
 }: {
   product: ProductSummaryResponse;
-  basePath: string;
+  entitySlug: string;
 }) {
   const { networkClient, token, baseUrl } = useTestomniacApi();
 
@@ -149,7 +161,7 @@ function ProductSection({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {environments.map((env: TestEnvironmentResponse) => (
-          <EnvironmentCard key={env.id} environment={env} basePath={basePath} />
+          <EnvironmentCard key={env.id} environment={env} entitySlug={entitySlug} />
         ))}
       </div>
     </section>
@@ -200,8 +212,9 @@ function StatTile({
 // Recent runs section
 // ---------------------------------------------------------------------------
 
-function RecentRunRow({ run, basePath }: { run: TestRunResponse; basePath: string }) {
+function RecentRunRow({ run, entitySlug }: { run: TestRunResponse; entitySlug: string }) {
   const { navigate } = useLocalizedNavigate();
+  const routes = useRoutes();
 
   const url = run.scanUrl
     ? run.scanUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')
@@ -210,7 +223,7 @@ function RecentRunRow({ run, basePath }: { run: TestRunResponse; basePath: strin
 
   return (
     <button
-      onClick={() => navigate(`${basePath}/runs/${run.id}`)}
+      onClick={() => navigate(routes.entityRun(entitySlug, run.id))}
       className="w-full text-left flex items-center gap-4 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors group"
     >
       {/* Status badge */}
@@ -249,11 +262,11 @@ function RecentRunRow({ run, basePath }: { run: TestRunResponse; basePath: strin
 
 function RecentRunsSection({
   runs,
-  basePath,
+  entitySlug,
   isLoading,
 }: {
   runs: TestRunResponse[];
-  basePath: string;
+  entitySlug: string;
   isLoading: boolean;
 }) {
   const recentRuns = useMemo(
@@ -296,7 +309,7 @@ function RecentRunsSection({
       </div>
       <div className="divide-y divide-gray-100 dark:divide-gray-700/50">
         {recentRuns.map(run => (
-          <RecentRunRow key={run.id} run={run} basePath={basePath} />
+          <RecentRunRow key={run.id} run={run} entitySlug={entitySlug} />
         ))}
       </div>
     </Card>
@@ -418,8 +431,8 @@ function useFirstProductRuns(products: ProductSummaryResponse[]) {
 export function DashboardOverview() {
   const { entitySlug } = useRouteParams<{ entitySlug: string }>();
   const { navigate } = useLocalizedNavigate();
+  const routes = useRoutes();
   const { networkClient, token, baseUrl } = useTestomniacApi();
-  const basePath = `/dashboard/${entitySlug}`;
 
   const { products, isLoading, error } = useEntityProducts({
     networkClient,
@@ -545,7 +558,7 @@ export function DashboardOverview() {
       {/* Start new discovery run CTA */}
       <div className="mb-8">
         <button
-          onClick={() => navigate(`${basePath}/scan/new`)}
+          onClick={() => navigate(routes.scanNew(entitySlug ?? ''))}
           className="w-full sm:w-auto flex items-center gap-4 p-5 text-left rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 transition-all group"
         >
           <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-600 dark:bg-blue-500 flex items-center justify-center">
@@ -577,7 +590,11 @@ export function DashboardOverview() {
       {/* ----------------------------------------------------------------- */}
       {!isLoading && !error && totalProducts > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-          <RecentRunsSection runs={firstProductRuns} basePath={basePath} isLoading={runsLoading} />
+          <RecentRunsSection
+            runs={firstProductRuns}
+            entitySlug={entitySlug ?? ''}
+            isLoading={runsLoading}
+          />
           {!runsLoading && firstProductRuns.length > 0 && (
             <RunStatusBreakdown runs={firstProductRuns} />
           )}
@@ -631,7 +648,7 @@ export function DashboardOverview() {
       {products.length > 0 && (
         <div className="space-y-8">
           {products.map((product: ProductSummaryResponse) => (
-            <ProductSection key={product.id} product={product} basePath={basePath} />
+            <ProductSection key={product.id} product={product} entitySlug={entitySlug ?? ''} />
           ))}
         </div>
       )}

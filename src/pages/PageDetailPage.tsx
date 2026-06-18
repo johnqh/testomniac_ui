@@ -14,7 +14,7 @@ import type { TestInteractionResponse } from '@sudobility/testomniac_types';
 import { usePageInteractionGroups } from '@sudobility/testomniac_lib';
 import { Button, Card } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { InteractionCell } from '../components/cells';
 import BackLink from '../components/navigation/BackLink';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
@@ -22,14 +22,14 @@ import { AddScenarioForm } from '../components/scenarios/AddScenarioForm';
 import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
 
 export function PageDetailPage() {
-  const { pageId, envId, entitySlug, runId } = useRouteParams<{
+  const { pageId, envId, runId } = useRouteParams<{
     pageId: string;
     envId: string;
-    entitySlug: string;
     runId?: string;
   }>();
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const { navigate } = useLocalizedNavigate();
+  const r = useEnvRoutes();
   const { primaryRunner, productId } = useDashboardEnvironmentContext();
   const [showScenarioForm, setShowScenarioForm] = useState(false);
 
@@ -118,9 +118,7 @@ export function PageDetailPage() {
     );
   }
 
-  const pagesBasePath = runId
-    ? `/dashboard/${entitySlug}/environments/${envId}/runs/${runId}/pages`
-    : `/dashboard/${entitySlug}/environments/${envId}/pages`;
+  const pagesBasePath = runId ? r.runPages(runId) : r.pages();
 
   return (
     <div className="p-6">
@@ -140,12 +138,7 @@ export function PageDetailPage() {
               {showScenarioForm ? 'Cancel' : 'Add Scenario'}
             </Button>
           )}
-          <Button
-            variant="outline"
-            onClick={() =>
-              navigate(`/dashboard/${entitySlug}/environments/${envId}/pages/${pageId}/graph`)
-            }
-          >
+          <Button variant="outline" onClick={() => navigate(r.pageGraph(pageId))}>
             View Page Graph
           </Button>
         </div>
@@ -283,9 +276,7 @@ export function PageDetailPage() {
               key={state.id}
               onClick={() =>
                 navigate(
-                  runId
-                    ? `/dashboard/${entitySlug}/environments/${envId}/runs/${runId}/pages/${pageId}/states/${state.id}`
-                    : `/dashboard/${entitySlug}/environments/${envId}/pages/${pageId}/states/${state.id}`
+                  runId ? r.runPageState(runId, pageId, state.id) : r.pageState(pageId, state.id)
                 )
               }
               className="text-left rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
@@ -335,11 +326,7 @@ export function PageDetailPage() {
               label="On this page"
               elements={onPageElements}
               onTest={el => createRun({ testInteractionId: el.id })}
-              onOpen={el =>
-                navigate(
-                  `/dashboard/${entitySlug}/environments/${envId}/test-interactions/${el.id}`
-                )
-              }
+              onOpen={el => navigate(r.testInteraction(el.id))}
             />
           )}
 
@@ -348,11 +335,7 @@ export function PageDetailPage() {
               label="Starting from this page"
               elements={startingElements}
               onTest={el => createRun({ testInteractionId: el.id })}
-              onOpen={el =>
-                navigate(
-                  `/dashboard/${entitySlug}/environments/${envId}/test-interactions/${el.id}`
-                )
-              }
+              onOpen={el => navigate(r.testInteraction(el.id))}
             />
           )}
 
@@ -361,11 +344,7 @@ export function PageDetailPage() {
               label="Landing on this page"
               elements={landingElements}
               onTest={el => createRun({ testInteractionId: el.id })}
-              onOpen={el =>
-                navigate(
-                  `/dashboard/${entitySlug}/environments/${envId}/test-interactions/${el.id}`
-                )
-              }
+              onOpen={el => navigate(r.testInteraction(el.id))}
             />
           )}
         </div>

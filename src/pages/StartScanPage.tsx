@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useEntityCredentials, useSubmitScan } from '@sudobility/testomniac_client';
 import { Label } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useRoutes } from '../context/routing';
 import { SelectField } from '../components/forms/SelectField';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 import { ScanForm } from '../components/scanner/ScanForm';
@@ -22,6 +22,7 @@ const AUTH_PROVIDER_LABELS: Record<string, string> = {
 
 export function StartScanPage() {
   const { entitySlug } = useRouteParams<{ entitySlug: string }>();
+  const routes = useRoutes();
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const { navigate } = useLocalizedNavigate();
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +72,11 @@ export function StartScanPage() {
 
       if (response.success && response.data?.testRunId && response.data?.testEnvironmentId) {
         navigate(
-          `/dashboard/${entitySlug}/environments/${response.data.testEnvironmentId}/runs/${response.data.testRunId}/progress`
+          routes.runProgress(
+            entitySlug ?? '',
+            response.data.testEnvironmentId,
+            response.data.testRunId
+          )
         );
       } else {
         setError(response.error || response.data?.message || 'Failed to start scan');

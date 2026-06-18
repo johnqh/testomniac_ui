@@ -1,12 +1,11 @@
 import { useRun } from '@sudobility/testomniac_client';
 import { useTestomniacApi } from '../context/config';
-import { useRouteParams, Redirect } from '../context/routing';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
+import { useRouteParams, useRoutes, Redirect } from '../context/routing';
 
 export function RunRedirect() {
   const { runId, entitySlug } = useRouteParams<{ runId: string; entitySlug: string }>();
   const { networkClient, token, baseUrl } = useTestomniacApi();
-  const { currentLanguage } = useLocalizedNavigate();
+  const routes = useRoutes();
 
   const { run, isLoading, error } = useRun({
     networkClient,
@@ -35,9 +34,5 @@ export function RunRedirect() {
     );
   }
 
-  return (
-    <Redirect
-      to={`/${currentLanguage}/dashboard/${entitySlug}/environments/${run.testEnvironmentId}/runs/${runId}`}
-    />
-  );
+  return <Redirect to={routes.run(entitySlug, run.testEnvironmentId ?? '', runId)} />;
 }

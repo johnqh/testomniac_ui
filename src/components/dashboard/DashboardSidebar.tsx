@@ -9,7 +9,12 @@ import {
 import { useEntityProducts, useProductEnvironments } from '@sudobility/testomniac_client';
 import { useLocalizedNavigate } from '../../hooks/useLocalizedNavigate';
 import { useTestomniacApi } from '../../context/config';
-import { useRouteParams, useTestomniacRouting } from '../../context/routing';
+import {
+  useRouteParams,
+  useTestomniacRouting,
+  useRoutes,
+  type TestomniacRoutes,
+} from '../../context/routing';
 
 interface DashboardSidebarProps {
   entitySlug: string;
@@ -143,7 +148,8 @@ const SettingsIcon = () => (
 
 interface MenuItem {
   label: string;
-  path: string;
+  /** App-relative target, built from the host-supplied route builders. */
+  to: (routes: TestomniacRoutes, entitySlug: string, envId: string) => string;
   icon: React.FC;
 }
 
@@ -156,32 +162,36 @@ const MENU_SECTIONS: MenuSection[] = [
   {
     title: 'OVERVIEW',
     items: [
-      { label: 'Bundles', path: 'bundles', icon: BundlesIcon },
-      { label: 'Runs', path: 'runs', icon: RunsIcon },
-      { label: 'Schedules', path: 'schedules', icon: SchedulesIcon },
+      { label: 'Bundles', to: (r, s, e) => r.bundles(s, e), icon: BundlesIcon },
+      { label: 'Runs', to: (r, s, e) => r.runs(s, e), icon: RunsIcon },
+      { label: 'Schedules', to: (r, s, e) => r.schedules(s, e), icon: SchedulesIcon },
     ],
   },
   {
     title: 'DISCOVERY',
     items: [
-      { label: 'Pages', path: 'pages', icon: PagesIcon },
-      { label: 'Surfaces', path: 'test-surfaces', icon: SurfacesIcon },
-      { label: 'Test Interactions', path: 'test-interactions', icon: InteractionsIcon },
-      { label: 'Personas', path: 'personas', icon: PersonasIcon },
-      { label: 'Scenarios', path: 'test-scenarios', icon: ScenariosIcon },
+      { label: 'Pages', to: (r, s, e) => r.pages(s, e), icon: PagesIcon },
+      { label: 'Surfaces', to: (r, s, e) => r.testSurfaces(s, e), icon: SurfacesIcon },
+      {
+        label: 'Test Interactions',
+        to: (r, s, e) => r.testInteractions(s, e),
+        icon: InteractionsIcon,
+      },
+      { label: 'Personas', to: (r, s, e) => r.personas(s, e), icon: PersonasIcon },
+      { label: 'Scenarios', to: (r, s, e) => r.testScenarios(s, e), icon: ScenariosIcon },
     ],
   },
   {
     title: 'ANALYSIS',
     items: [
-      { label: 'Issues', path: 'issues', icon: IssuesIcon },
-      { label: 'Scaffolds', path: 'scaffolds', icon: ScaffoldsIcon },
-      { label: 'Patterns', path: 'patterns', icon: PatternsIcon },
+      { label: 'Issues', to: (r, s, e) => r.issues(s, e), icon: IssuesIcon },
+      { label: 'Scaffolds', to: (r, s, e) => r.scaffolds(s, e), icon: ScaffoldsIcon },
+      { label: 'Patterns', to: (r, s, e) => r.patterns(s, e), icon: PatternsIcon },
     ],
   },
   {
     title: 'WORKSPACE',
-    items: [{ label: 'Settings', path: 'settings', icon: SettingsIcon }],
+    items: [{ label: 'Settings', to: (r, s, e) => r.settings(s, e), icon: SettingsIcon }],
   },
 ];
 
@@ -194,6 +204,7 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const { navigate } = useLocalizedNavigate();
   const { pathname } = useTestomniacRouting();
+  const routes = useRoutes();
 
   const { products, isLoading: productsLoading } = useEntityProducts({
     networkClient,
@@ -226,13 +237,13 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
   // Auto-select environment if only one exists and no environment in route
   useEffect(() => {
     if (environments.length === 1 && !routeEnvId) {
-      navigate(`/dashboard/${entitySlug}/environments/${environments[0].id}/bundles`);
+      navigate(routes.bundles(entitySlug, environments[0].id));
     }
-  }, [environments, routeEnvId, entitySlug, navigate]);
+  }, [environments, routeEnvId, entitySlug, navigate, routes]);
 
   const handleProductChange = (value: string) => {
     if (value === 'new') {
-      navigate(`/dashboard/${entitySlug}/products/new`);
+      navigate(routes.productNew(entitySlug));
       return;
     }
     setUserSelectedProductId(value);
@@ -241,16 +252,16 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
     // selected. If the new product has exactly one environment, the auto-select
     // effect below will navigate straight into it.
     if (routeEnvId) {
-      navigate(`/dashboard/${entitySlug}`);
+      navigate(routes.entityHome(entitySlug));
     }
   };
 
   const handleEnvironmentChange = (value: string) => {
     if (value === 'new') {
-      navigate(`/dashboard/${entitySlug}/environments/new`);
+      navigate(routes.environmentNew(entitySlug));
       return;
     }
-    navigate(`/dashboard/${entitySlug}/environments/${value}/bundles`);
+    navigate(routes.bundles(entitySlug, value));
   };
 
   // Active path detection
@@ -259,11 +270,8 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
     return pathname.slice(langPrefix.length - 1);
   }, [pathname]);
 
-  const envBasePath = `/dashboard/${entitySlug}/environments/${routeEnvId}`;
-
-  const isActive = (menuPath: string) => {
-    const full = `${envBasePath}/${menuPath}`;
-    return currentPath === full || currentPath.startsWith(full + '/');
+  const isActive = (target: string) => {
+    return currentPath === target || currentPath.startsWith(target + '/');
   };
 
   return (
@@ -331,12 +339,13 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
                 {section.title}
               </span>
               {section.items.map(item => {
-                const active = isActive(item.path);
+                const target = item.to(routes, entitySlug, routeEnvId);
+                const active = isActive(target);
                 const Icon = item.icon;
                 return (
                   <button
-                    key={item.path}
-                    onClick={() => navigate(`${envBasePath}/${item.path}`)}
+                    key={item.label}
+                    onClick={() => navigate(target)}
                     className={[
                       'group relative flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] font-medium transition-all duration-150',
                       active

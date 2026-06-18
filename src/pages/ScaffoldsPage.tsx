@@ -1,9 +1,8 @@
 import { useRunScaffolds } from '@sudobility/testomniac_client';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { ScaffoldCell } from '../components/cells';
 import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
-import { useEnvBasePath } from '../hooks/useEnvBasePath';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 
 export function ScaffoldsPage() {
@@ -15,7 +14,7 @@ export function ScaffoldsPage() {
     isLoading: contextLoading,
     error: contextError,
   } = useDashboardEnvironmentContext();
-  const basePath = useEnvBasePath();
+  const r = useEnvRoutes();
 
   const { scaffolds, isLoading, error } = useRunScaffolds({
     networkClient,
@@ -63,7 +62,7 @@ export function ScaffoldsPage() {
                 key={scaffold.id}
                 scaffold={scaffold}
                 pageCount={pagePaths.length}
-                onClick={() => navigate(`${basePath}/scaffolds/${scaffold.id}`)}
+                onClick={() => navigate(r.scaffold(scaffold.id))}
               />
             );
           })}

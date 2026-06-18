@@ -2,11 +2,10 @@ import { useMemo, useState } from 'react';
 import { useRunScaffolds, useEnvironmentTestInteractions } from '@sudobility/testomniac_client';
 import { Card, Tabs, TabsList, TabsTrigger } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { InteractionCell, SCAFFOLD_ICONS, SCAFFOLD_LABELS } from '../components/cells';
 import BackLink from '../components/navigation/BackLink';
 import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
-import { useEnvBasePath } from '../hooks/useEnvBasePath';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 
 export function ScaffoldDetailPage() {
@@ -24,7 +23,7 @@ export function ScaffoldDetailPage() {
     error: contextError,
   } = useDashboardEnvironmentContext();
 
-  const basePath = useEnvBasePath();
+  const r = useEnvRoutes();
 
   const { scaffolds, isLoading, error } = useRunScaffolds({
     networkClient,
@@ -76,7 +75,7 @@ export function ScaffoldDetailPage() {
   if (!scaffold) {
     return (
       <div className="p-6">
-        <BackLink label="Scaffolds" onClick={() => navigate(`${basePath}/scaffolds`)} />
+        <BackLink label="Scaffolds" onClick={() => navigate(r.scaffolds())} />
         <div className="text-center text-gray-500 dark:text-gray-400 py-8">Scaffold not found</div>
       </div>
     );
@@ -87,7 +86,7 @@ export function ScaffoldDetailPage() {
   return (
     <div className="p-6">
       <SEOHead title={label} description="" noIndex />
-      <BackLink label="Scaffolds" onClick={() => navigate(`${basePath}/scaffolds`)} />
+      <BackLink label="Scaffolds" onClick={() => navigate(r.scaffolds())} />
 
       {/* Header */}
       <div className="mb-6">
@@ -170,7 +169,7 @@ export function ScaffoldDetailPage() {
                   <InteractionCell
                     key={i.id}
                     interaction={i}
-                    onClick={() => navigate(`${basePath}/test-interactions/${i.id}`)}
+                    onClick={() => navigate(r.testInteraction(i.id))}
                   />
                 ))}
               </div>

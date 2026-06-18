@@ -5,9 +5,8 @@ import {
 } from '@sudobility/testomniac_client';
 import type { TestActionResponse, TestInteractionResponse } from '@sudobility/testomniac_types';
 import { useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import BackLink from '../components/navigation/BackLink';
-import { useEnvBasePath } from '../hooks/useEnvBasePath';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 import { Card } from '@sudobility/components';
 import { StatusBadge } from '../components/scanner/StatusBadge';
@@ -98,7 +97,7 @@ export function TestInteractionDetailPage() {
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const { navigate } = useLocalizedNavigate();
 
-  const basePath = useEnvBasePath();
+  const r = useEnvRoutes();
   const numericElementId = Number(elementId);
 
   const { actions, isLoading, error } = useTestInteractionActions({
@@ -147,10 +146,7 @@ export function TestInteractionDetailPage() {
 
   return (
     <div className="p-6">
-      <BackLink
-        label="Test Interactions"
-        onClick={() => navigate(`${basePath}/test-interactions`)}
-      />
+      <BackLink label="Test Interactions" onClick={() => navigate(r.testInteractions())} />
 
       <div className="flex items-center justify-between mb-2">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -209,7 +205,7 @@ export function TestInteractionDetailPage() {
             <ElementLinkRow
               element={dependencyElement}
               relation="Parent dependency"
-              onClick={() => navigate(`${basePath}/test-interactions/${dependencyElement.id}`)}
+              onClick={() => navigate(r.testInteraction(dependencyElement.id))}
             />
           ) : (
             <EmptyState description="This test interaction has no dependency." />
@@ -229,7 +225,7 @@ export function TestInteractionDetailPage() {
                   key={element.id}
                   element={element}
                   relation="Child dependency"
-                  onClick={() => navigate(`${basePath}/test-interactions/${element.id}`)}
+                  onClick={() => navigate(r.testInteraction(element.id))}
                 />
               ))}
             </div>

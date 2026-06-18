@@ -13,7 +13,7 @@ import '@xyflow/react/dist/style.css';
 import { usePageStates, buildArtifactUrl } from '@sudobility/testomniac_client';
 import { layoutDagreGraph } from '@sudobility/testomniac_lib';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useEnvRoutes } from '../context/routing';
 import BackLink from '../components/navigation/BackLink';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 
@@ -70,13 +70,12 @@ function PageStateNode({ data }: { data: { label: string; screenshotUrl?: string
 const nodeTypes = { pageState: PageStateNode };
 
 export function PageGraphPage() {
-  const { pageId, envId, entitySlug } = useRouteParams<{
+  const { pageId } = useRouteParams<{
     pageId: string;
-    envId: string;
-    entitySlug: string;
   }>();
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const { navigate } = useLocalizedNavigate();
+  const r = useEnvRoutes();
 
   const numericPageId = Number(pageId);
   const { pageStates, isLoading: statesLoading } = usePageStates({
@@ -117,12 +116,12 @@ export function PageGraphPage() {
 
   const onNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
-      navigate(`/dashboard/${entitySlug}/environments/${envId}/pages/${pageId}/states/${node.id}`);
+      navigate(r.pageState(pageId, node.id));
     },
-    [navigate, entitySlug, envId, pageId]
+    [navigate, r, pageId]
   );
 
-  const pagesBasePath = `/dashboard/${entitySlug}/environments/${envId}/pages/${pageId}`;
+  const pagesBasePath = r.page(pageId);
 
   if (isLoading) {
     return (

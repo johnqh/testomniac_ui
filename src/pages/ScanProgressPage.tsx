@@ -3,12 +3,13 @@ import { useScanProgressStore } from '@sudobility/testomniac_lib';
 import { useRunProgressStream } from '@sudobility/testomniac_client';
 import { Button } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useRouteParams, useRoutes } from '../context/routing';
 import { ScanProgressPanel } from '../components/scanner/ScanProgressPanel';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 
 export function ScanProgressPage() {
   const { entitySlug, runId } = useRouteParams<{ entitySlug: string; runId: string }>();
+  const routes = useRoutes();
   const { baseUrl } = useTestomniacApi();
   const store = useScanProgressStore();
   const prevRunId = useRef<string | undefined>(undefined);
@@ -39,7 +40,7 @@ export function ScanProgressPage() {
         {store.isComplete && (
           <Button
             variant="primary"
-            onClick={() => navigate(`/dashboard/${entitySlug}/runs/${runId}`)}
+            onClick={() => navigate(routes.entityRun(entitySlug ?? '', runId ?? ''))}
           >
             View Results
           </Button>
