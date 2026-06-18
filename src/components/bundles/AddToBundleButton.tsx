@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { useMutation } from '@tanstack/react-query';
 import { Button } from '@sudobility/components';
-import { useRunnerTestSurfaceBundles, TestomniacClient } from '@sudobility/testomniac_client';
+import { useAddToBundle, useRunnerTestSurfaceBundles } from '@sudobility/testomniac_client';
 import { useTestomniacApi } from '../../context/config';
 import { useDashboardEnvironmentContext } from '../../hooks/useDashboardEnvironmentContext';
 
@@ -34,21 +33,13 @@ export function AddToBundleButton({ itemType, itemId }: AddToBundleButtonProps) 
     [bundles]
   );
 
-  const client = useMemo(
-    () => new TestomniacClient({ baseUrl, networkClient }),
-    [networkClient, baseUrl]
-  );
-
-  const mutation = useMutation({
-    mutationFn: async (bundleId: number) => {
-      if (itemType === 'surface') {
-        return client.addSurfaceToBundle(runnerId, bundleId, itemId, token);
-      } else if (itemType === 'interaction') {
-        return client.addInteractionToBundle(runnerId, bundleId, itemId, token);
-      } else {
-        return client.addScenarioToBundle(runnerId, bundleId, itemId, token);
-      }
-    },
+  const { addToBundle, isAdding } = useAddToBundle({
+    networkClient,
+    baseUrl,
+    runnerId,
+    token,
+    itemType,
+    itemId,
   });
 
   useEffect(() => {
@@ -66,7 +57,7 @@ export function AddToBundleButton({ itemType, itemId }: AddToBundleButtonProps) 
     setOpen(false);
     setFeedback(null);
     try {
-      await mutation.mutateAsync(bundleId);
+      await addToBundle(bundleId);
       setFeedback(`Added to "${bundleTitle}"`);
       setTimeout(() => setFeedback(null), 3000);
     } catch (err) {
@@ -82,9 +73,9 @@ export function AddToBundleButton({ itemType, itemId }: AddToBundleButtonProps) 
         type="button"
         variant="outline"
         onClick={() => setOpen(prev => !prev)}
-        disabled={mutation.isPending}
+        disabled={isAdding}
       >
-        {mutation.isPending ? 'Adding...' : 'Add to Bundle'}
+        {isAdding ? 'Adding...' : 'Add to Bundle'}
       </Button>
       {feedback && (
         <span className="ml-2 text-xs text-green-600 dark:text-green-400">{feedback}</span>

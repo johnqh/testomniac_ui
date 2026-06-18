@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useScanProgressStore } from '@sudobility/testomniac_lib';
-import { useEventSource, buildRunStreamUrl } from '@sudobility/testomniac_client';
+import { useRunProgressStream } from '@sudobility/testomniac_client';
 import { Button } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams } from '../context/routing';
@@ -22,10 +22,10 @@ export function ScanProgressPage() {
   }, [runId, store]);
   const { navigate } = useLocalizedNavigate();
 
-  const sseUrl = runId && !store.isComplete ? buildRunStreamUrl(baseUrl, runId) : null;
-
-  const { isConnected } = useEventSource({
-    url: sseUrl,
+  const { isConnected } = useRunProgressStream({
+    baseUrl,
+    runId,
+    isComplete: store.isComplete,
     onEvent: store.handleEvent,
   });
 

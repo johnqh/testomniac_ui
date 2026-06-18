@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useRunFindings, useRunPages } from '@sudobility/testomniac_client';
 import type { TestRunFindingResponse } from '@sudobility/testomniac_types';
 import { parseExpertiseTitle, PRIORITY_LEVELS } from '@sudobility/testomniac_lib';
-import { Button } from '@sudobility/components';
+import { Badge, Button } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams } from '../context/routing';
 import { getPriorityConfig } from '../config/priorityConfig';
@@ -15,30 +15,21 @@ import { ErrorState, LoadingState, EmptyState } from '../components/states';
 /* ---------- Sub-components ---------- */
 
 function FindingTypeBadge({ type }: { type: string }) {
-  const colors =
-    type === 'error'
-      ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-      : type === 'warning'
-        ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-        : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
+  const variant = type === 'error' ? 'danger' : type === 'warning' ? 'warning' : 'info';
 
   return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${colors}`}
-    >
+    <Badge variant={variant} size="sm" pill>
       {type}
-    </span>
+    </Badge>
   );
 }
 
 function PriorityBadge({ priority }: { priority: number }) {
   const config = getPriorityConfig(priority);
   return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${config.className}`}
-    >
+    <Badge variant="default" size="sm" pill className={config.className}>
       {config.shortLabel}
-    </span>
+    </Badge>
   );
 }
 

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { TestSurfaceBundleResponse } from '@sudobility/testomniac_types';
+import { Badge } from '@sudobility/components';
 import { ListCell, ChevronRight } from './ListCell';
 
 export interface BundleCellProps {
@@ -17,9 +18,9 @@ export function BundleCell({ bundle, onClick, actions }: BundleCellProps) {
         <span className="inline-flex items-center">
           {bundle.title}
           {isAuto && (
-            <span className="ml-2 rounded bg-gray-100 px-1.5 py-0.5 text-[11px] text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+            <Badge variant="default" size="sm" className="ml-2">
               auto
-            </span>
+            </Badge>
           )}
         </span>
       }

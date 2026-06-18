@@ -5,8 +5,8 @@ import {
   useTestScenarioSequences,
   useTestScenarioSequenceTestInteractions,
   useProductPersonas,
+  useGenerateSequence,
 } from '@sudobility/testomniac_client';
-import { useSequenceGenerator } from '@sudobility/testomniac_lib';
 import { Alert, ActionButton, Card } from '@sudobility/components';
 import type {
   TestScenarioSequenceResponse,
@@ -192,10 +192,10 @@ export function TestScenarioDetailPage() {
   });
 
   const {
-    generate,
+    generateSequence,
     isGenerating,
     error: generateError,
-  } = useSequenceGenerator({
+  } = useGenerateSequence({
     networkClient,
     baseUrl,
     token,
@@ -206,14 +206,19 @@ export function TestScenarioDetailPage() {
 
   const handleGenerateSequence = async () => {
     setGenerateErrorMsg(null);
-    const result = await generate(Number(scenarioId), numericEnvId);
-    if (result) {
+    try {
+      await generateSequence({
+        scenarioId: Number(scenarioId),
+        testEnvironmentId: numericEnvId,
+      });
       refetchSequences();
       // The generated interactions are new rows; refresh the interaction list
       // so each sequence step resolves to a full cell without a page reload.
       refetchInteractions();
-    } else if (generateError) {
-      setGenerateErrorMsg(generateError);
+    } catch (err) {
+      setGenerateErrorMsg(
+        err instanceof Error ? err.message : generateError || 'Failed to generate sequence'
+      );
     }
   };
 

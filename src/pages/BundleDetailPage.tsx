@@ -1,5 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useState, useCallback } from 'react';
 import {
   useRunnerTestSurfaceBundles,
   useBundleSurfaces,
@@ -7,7 +6,7 @@ import {
   useBundleScenarios,
   useUpdateTestSurfaceBundle,
   useDeleteTestSurfaceBundle,
-  TestomniacClient,
+  useRemoveFromBundle,
 } from '@sudobility/testomniac_client';
 import { ActionButton, Button, Tabs, TabsList, TabsTrigger } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
@@ -112,41 +111,59 @@ export function BundleDetailPage() {
     enabled: !!token && !!primaryRunner && tab === 'scenarios',
   });
 
-  const client = useMemo(
-    () => new TestomniacClient({ baseUrl, networkClient }),
-    [baseUrl, networkClient]
-  );
-
-  const removeSurface = useMutation({
-    mutationFn: (surfaceId: number) =>
-      client.removeSurfaceFromBundle(runnerId, numericBundleId, surfaceId, token),
-    onSuccess: () => refetchSurfaces(),
+  const { removeFromBundle: removeSurface } = useRemoveFromBundle({
+    networkClient,
+    baseUrl,
+    runnerId,
+    bundleId: numericBundleId,
+    token,
+    itemType: 'surface',
   });
 
-  const removeInteraction = useMutation({
-    mutationFn: (interactionId: number) =>
-      client.removeInteractionFromBundle(runnerId, numericBundleId, interactionId, token),
-    onSuccess: () => refetchInteractions(),
+  const { removeFromBundle: removeInteraction } = useRemoveFromBundle({
+    networkClient,
+    baseUrl,
+    runnerId,
+    bundleId: numericBundleId,
+    token,
+    itemType: 'interaction',
   });
 
-  const removeScenario = useMutation({
-    mutationFn: (scenarioId: number) =>
-      client.removeScenarioFromBundle(runnerId, numericBundleId, scenarioId, token),
-    onSuccess: () => refetchScenarios(),
+  const { removeFromBundle: removeScenario } = useRemoveFromBundle({
+    networkClient,
+    baseUrl,
+    runnerId,
+    bundleId: numericBundleId,
+    token,
+    itemType: 'scenario',
   });
 
   const handleRemove = useCallback(
     async (type: ContentTab, itemId: number) => {
       setError(null);
       try {
-        if (type === 'surfaces') await removeSurface.mutateAsync(itemId);
-        else if (type === 'interactions') await removeInteraction.mutateAsync(itemId);
-        else await removeScenario.mutateAsync(itemId);
+        if (type === 'surfaces') {
+          await removeSurface(itemId);
+          await refetchSurfaces();
+        } else if (type === 'interactions') {
+          await removeInteraction(itemId);
+          await refetchInteractions();
+        } else {
+          await removeScenario(itemId);
+          await refetchScenarios();
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to remove item');
       }
     },
-    [removeSurface, removeInteraction, removeScenario]
+    [
+      refetchInteractions,
+      refetchScenarios,
+      refetchSurfaces,
+      removeInteraction,
+      removeScenario,
+      removeSurface,
+    ]
   );
 
   const startEdit = () => {

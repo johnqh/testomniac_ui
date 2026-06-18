@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { TestSurfaceResponse } from '@sudobility/testomniac_types';
+import { Badge } from '@sudobility/components';
 import { StatusBadge } from '../scanner/StatusBadge';
 import { ListCell } from './ListCell';
 
@@ -25,21 +26,13 @@ function FolderIcon() {
 export function SurfacePriorityBadge({ priority }: { priority: number }) {
   const label =
     priority >= 8 ? 'critical' : priority >= 5 ? 'high' : priority >= 3 ? 'medium' : 'low';
-  const colors =
-    priority >= 8
-      ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-      : priority >= 5
-        ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
-        : priority >= 3
-          ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-          : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300';
+  const variant =
+    priority >= 8 ? 'danger' : priority >= 5 ? 'warning' : priority >= 3 ? 'warning' : 'default';
 
   return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${colors}`}
-    >
+    <Badge variant={variant} size="sm" pill>
       P{priority} {label}
-    </span>
+    </Badge>
   );
 }
 

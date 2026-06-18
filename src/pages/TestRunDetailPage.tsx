@@ -12,24 +12,17 @@ import { useRouteParams } from '../context/routing';
 import BackLink from '../components/navigation/BackLink';
 import { useEnvBasePath } from '../hooks/useEnvBasePath';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
-import { Card } from '@sudobility/components';
+import { Badge, Card } from '@sudobility/components';
 import { StatusBadge } from '../components/scanner/StatusBadge';
 import { EmptyState } from '../components/states';
 
 function FindingTypeBadge({ type }: { type: string }) {
-  const colors =
-    type === 'error'
-      ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-      : type === 'warning'
-        ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-        : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
+  const variant = type === 'error' ? 'danger' : type === 'warning' ? 'warning' : 'info';
 
   return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${colors}`}
-    >
+    <Badge variant={variant} size="sm" pill>
       {type}
-    </span>
+    </Badge>
   );
 }
 
