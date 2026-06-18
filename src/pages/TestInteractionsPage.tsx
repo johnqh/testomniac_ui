@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
-import { useEnvironmentTestInteractions } from '@sudobility/testomniac_client';
+import { useEnvironmentTestInteractionsPage } from '@sudobility/testomniac_client';
 import { PRIORITY_NAMES } from '@sudobility/testomniac_lib';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams, useEnvRoutes } from '../context/routing';
@@ -72,6 +72,21 @@ const columns = [
   }),
 ];
 
+const PAGE_SIZE = 50;
+
+// Known test interaction types (server-side filter; the paged endpoint no longer
+// ships the full set the page could derive these from).
+const TYPE_OPTIONS = [
+  { value: '', label: 'All Types' },
+  { value: 'render', label: 'render' },
+  { value: 'interaction', label: 'interaction' },
+  { value: 'form', label: 'form' },
+  { value: 'form_negative', label: 'form_negative' },
+  { value: 'navigation', label: 'navigation' },
+  { value: 'password', label: 'password' },
+  { value: 'e2e', label: 'e2e' },
+];
+
 const PRIORITY_OPTIONS = [
   { value: '', label: 'All Priorities' },
   { value: '0', label: 'Crash (0)' },
@@ -92,30 +107,34 @@ export function TestInteractionsPage() {
   const [typeFilter, setTypeFilter] = useState<string>('');
   const [priorityFilter, setPriorityFilter] = useState<string>('');
   const [deviceFilter, setDeviceFilter] = useState<string>('All');
+  const [pageIndex, setPageIndex] = useState(0);
 
-  const { testInteractions, isLoading, error } = useEnvironmentTestInteractions({
+  // Any filter change resets to the first page.
+  const onType = (value: string) => {
+    setTypeFilter(value);
+    setPageIndex(0);
+  };
+  const onPriority = (value: string) => {
+    setPriorityFilter(value);
+    setPageIndex(0);
+  };
+  const onDevice = (value: string) => {
+    setDeviceFilter(value);
+    setPageIndex(0);
+  };
+
+  const { testInteractions, total, isLoading, error } = useEnvironmentTestInteractionsPage({
     networkClient,
     baseUrl,
     envId: Number(envId),
     token: token ?? '',
     enabled: !!envId && !!token,
+    limit: PAGE_SIZE,
+    offset: pageIndex * PAGE_SIZE,
+    testType: typeFilter || undefined,
+    priority: priorityFilter !== '' ? Number(priorityFilter) : undefined,
+    sizeClass: deviceFilter !== 'All' ? deviceFilter.toLowerCase() : undefined,
   });
-
-  const uniqueTypes = useMemo(() => {
-    if (!testInteractions) return [];
-    const types = new Set(testInteractions.map((t: TestInteractionRow) => t.testType));
-    return Array.from(types).sort();
-  }, [testInteractions]);
-
-  const filteredData = useMemo(() => {
-    if (!testInteractions) return [];
-    return testInteractions.filter((row: TestInteractionRow) => {
-      if (typeFilter && row.testType !== typeFilter) return false;
-      if (priorityFilter !== '' && row.priority !== Number(priorityFilter)) return false;
-      if (deviceFilter !== 'All' && row.sizeClass !== deviceFilter.toLowerCase()) return false;
-      return true;
-    });
-  }, [testInteractions, typeFilter, priorityFilter, deviceFilter]);
 
   if (error) {
     return <ErrorState message={error} />;
@@ -129,27 +148,16 @@ export function TestInteractionsPage() {
       </h1>
 
       <div className="flex flex-wrap gap-3 mb-4">
-        <SelectField
-          value={typeFilter}
-          onChange={setTypeFilter}
-          options={[
-            { value: '', label: 'All Types' },
-            ...uniqueTypes.map(type => ({ value: type, label: type })),
-          ]}
-        />
+        <SelectField value={typeFilter} onChange={onType} options={TYPE_OPTIONS} />
 
-        <SelectField
-          value={priorityFilter}
-          onChange={setPriorityFilter}
-          options={PRIORITY_OPTIONS}
-        />
+        <SelectField value={priorityFilter} onChange={onPriority} options={PRIORITY_OPTIONS} />
 
         <div className="flex rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
           {DEVICE_OPTIONS.map(option => (
             <button
               key={option}
               type="button"
-              onClick={() => setDeviceFilter(option)}
+              onClick={() => onDevice(option)}
               className={`px-3 py-1.5 text-sm ${
                 deviceFilter === option
                   ? 'bg-blue-600 text-white'
@@ -163,10 +171,16 @@ export function TestInteractionsPage() {
       </div>
 
       <DataTable
-        data={filteredData}
+        data={testInteractions as unknown as TestInteractionRow[]}
         columns={columns as never}
         isLoading={isLoading}
         onRowClick={(row: TestInteractionRow) => navigate(r.testInteraction(row.id))}
+        manualPagination
+        pageSize={PAGE_SIZE}
+        pageIndex={pageIndex}
+        pageCount={Math.max(1, Math.ceil(total / PAGE_SIZE))}
+        totalRows={total}
+        onPageChange={setPageIndex}
       />
     </div>
   );

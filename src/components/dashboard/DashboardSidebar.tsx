@@ -241,6 +241,10 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
     enabled: !!selectedProductId && !!token,
   });
 
+  // The environment selector only appears once a product is chosen; the menu
+  // only appears once the route's environment is a real one in the loaded list.
+  const selectedEnvValid = !!routeEnvId && environments.some(env => String(env.id) === routeEnvId);
+
   // Auto-select environment if only one exists and no environment in route
   useEffect(() => {
     if (environments.length === 1 && !routeEnvId) {
@@ -306,36 +310,46 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
           </div>
         </div>
 
-        <div>
-          <span className="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5 px-0.5">
-            Environment
-          </span>
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-0.5">
-            <Select
-              value={routeEnvId ?? ''}
-              onValueChange={handleEnvironmentChange}
-              disabled={!selectedProductId}
-            >
-              <SelectTrigger className="w-full border-0 bg-transparent shadow-none text-[13px] font-medium">
-                <SelectValue
-                  placeholder={environmentsLoading ? 'Loading...' : 'Select environment'}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {environments.map(a => (
-                  <SelectItem key={a.id} value={String(a.id)}>
-                    {a.title}
-                  </SelectItem>
-                ))}
-                <SelectItem value="new">+ Create New...</SelectItem>
-              </SelectContent>
-            </Select>
+        {/* Environment selector — only once a product is selected */}
+        {selectedProductId && (
+          <div>
+            <span className="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5 px-0.5">
+              Environment
+            </span>
+            {environmentsLoading ? (
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-[13px] text-gray-400 dark:text-gray-500">
+                Loading...
+              </div>
+            ) : environments.length === 0 ? (
+              <button
+                onClick={() => navigate(routes.environmentNew(entitySlug))}
+                className="w-full text-left rounded-lg border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-[13px] font-medium text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                + Create Environment
+              </button>
+            ) : (
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-0.5">
+                <Select value={routeEnvId ?? ''} onValueChange={handleEnvironmentChange}>
+                  <SelectTrigger className="w-full border-0 bg-transparent shadow-none text-[13px] font-medium">
+                    <SelectValue placeholder="Select environment" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {environments.map(a => (
+                      <SelectItem key={a.id} value={String(a.id)}>
+                        {a.title}
+                      </SelectItem>
+                    ))}
+                    <SelectItem value="new">+ Create New...</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
-        </div>
+        )}
       </div>
 
-      {/* Navigation Menu */}
-      {routeEnvId && (
+      {/* Navigation Menu — only when a valid environment is selected */}
+      {selectedProductId && selectedEnvValid && (
         <nav className="flex-1 overflow-y-auto py-3 px-3">
           {MENU_SECTIONS.map((section, sectionIdx) => (
             <div key={section.title}>
@@ -383,10 +397,12 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
         </nav>
       )}
 
-      {!routeEnvId && (
+      {!(selectedProductId && selectedEnvValid) && (
         <div className="flex-1 flex items-center justify-center p-6">
           <p className="text-[13px] text-gray-400 dark:text-gray-500 text-center leading-relaxed">
-            Select a product and environment to get started
+            {!selectedProductId
+              ? 'Select a product to get started'
+              : 'Select an environment to get started'}
           </p>
         </div>
       )}

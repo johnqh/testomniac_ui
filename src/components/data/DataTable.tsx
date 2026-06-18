@@ -22,6 +22,17 @@ interface DataTableProps<T> {
   onGlobalFilterChange?: (value: string) => void;
   /** When provided, rows become clickable and invoke this with the row data. */
   onRowClick?: (row: T) => void;
+  /**
+   * Server-side pagination. When set, `data` is treated as the current page
+   * (not sliced client-side); the host controls the page via `pageIndex` /
+   * `onPageChange`, and `totalRows` / `pageCount` come from the server. The
+   * built-in text filter is hidden (filtering is the host's responsibility).
+   */
+  manualPagination?: boolean;
+  pageIndex?: number;
+  pageCount?: number;
+  totalRows?: number;
+  onPageChange?: (pageIndex: number) => void;
 }
 
 function SkeletonRows({ columnCount }: { columnCount: number }) {
@@ -77,31 +88,54 @@ export function DataTable<T>({
   globalFilter: externalFilter,
   onGlobalFilterChange: onExternalFilterChange,
   onRowClick,
+  manualPagination,
+  pageIndex: manualPageIndex,
+  pageCount: manualPageCount,
+  totalRows: manualTotalRows,
+  onPageChange,
 }: DataTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>(initialSorting ?? []);
   const [internalFilter, setInternalFilter] = useState('');
+  const [internalPagination, setInternalPagination] = useState({
+    pageIndex: 0,
+    pageSize,
+  });
 
   const globalFilter = externalFilter ?? internalFilter;
   const setGlobalFilter = onExternalFilterChange ?? setInternalFilter;
 
+  const pagination = manualPagination
+    ? { pageIndex: manualPageIndex ?? 0, pageSize }
+    : internalPagination;
+
   const table = useReactTable({
     data,
     columns,
-    state: { sorting, globalFilter },
+    state: { sorting, globalFilter, pagination },
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange: updater => {
+      const next = typeof updater === 'function' ? updater(pagination) : updater;
+      if (manualPagination) onPageChange?.(next.pageIndex);
+      else setInternalPagination(next);
+    },
+    manualPagination: manualPagination ?? false,
+    pageCount: manualPagination ? (manualPageCount ?? -1) : undefined,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    initialState: { pagination: { pageSize } },
   });
 
-  const totalRows = table.getFilteredRowModel().rows.length;
+  const totalRows = manualPagination
+    ? (manualTotalRows ?? 0)
+    : table.getFilteredRowModel().rows.length;
   const pageIndex = table.getState().pagination.pageIndex;
   const currentPageSize = table.getState().pagination.pageSize;
   const startRow = totalRows === 0 ? 0 : pageIndex * currentPageSize + 1;
-  const endRow = Math.min((pageIndex + 1) * currentPageSize, totalRows);
+  const endRow = manualPagination
+    ? Math.min(pageIndex * currentPageSize + data.length, totalRows)
+    : Math.min((pageIndex + 1) * currentPageSize, totalRows);
   const pageCount = table.getPageCount();
 
   return (
@@ -112,28 +146,30 @@ export function DataTable<T>({
           <span className="text-xs text-gray-500 dark:text-gray-400">
             Showing {startRow}&ndash;{endRow} of {totalRows}
           </span>
-          <div className="relative">
-            <svg
-              className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400 dark:text-gray-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+          {!manualPagination && (
+            <div className="relative">
+              <svg
+                className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400 dark:text-gray-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                />
+              </svg>
+              <input
+                type="text"
+                value={globalFilter}
+                onChange={e => setGlobalFilter(e.target.value)}
+                placeholder="Filter..."
+                className="h-7 w-48 rounded border border-gray-300 bg-white pl-8 pr-2 text-xs text-gray-700 placeholder-gray-400 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
               />
-            </svg>
-            <input
-              type="text"
-              value={globalFilter}
-              onChange={e => setGlobalFilter(e.target.value)}
-              placeholder="Filter..."
-              className="h-7 w-48 rounded border border-gray-300 bg-white pl-8 pr-2 text-xs text-gray-700 placeholder-gray-400 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
-            />
-          </div>
+            </div>
+          )}
         </div>
       )}
 
