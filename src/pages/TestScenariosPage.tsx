@@ -1,0 +1,170 @@
+import { useState } from 'react';
+import {
+  useRunnerTestScenarios,
+  useDeleteTestScenario,
+  useProductPersonas,
+  useDetectTestScenarios,
+} from '@sudobility/testomniac_client';
+import type { TestScenarioResponse } from '@sudobility/testomniac_types';
+import { Alert, Button, ActionButton } from '@sudobility/components';
+import { SEOHead, useTestomniacApi } from '../context/config';
+import { useRouteParams } from '../context/routing';
+import { ScenarioCell } from '../components/cells';
+import { useEnvBasePath } from '../hooks/useEnvBasePath';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
+import { StatusBadge } from '../components/scanner/StatusBadge';
+import { AddScenarioForm } from '../components/scenarios/AddScenarioForm';
+import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
+import { ErrorState, LoadingState, EmptyState } from '../components/states';
+
+export function TestScenariosPage() {
+  const { envId } = useRouteParams<{ envId: string }>();
+  const { navigate } = useLocalizedNavigate();
+  const { baseUrl } = useTestomniacApi();
+  const {
+    networkClient,
+    token,
+    productId,
+    primaryRunner,
+    isLoading: contextLoading,
+    error: contextError,
+  } = useDashboardEnvironmentContext();
+  const [showForm, setShowForm] = useState(false);
+
+  const { testScenarios, isLoading, error, refetch } = useRunnerTestScenarios({
+    networkClient,
+    baseUrl,
+    runnerId: primaryRunner?.id ?? 0,
+    token,
+    enabled: !!envId && !!token && !!primaryRunner,
+  });
+
+  const { personas } = useProductPersonas({
+    networkClient,
+    baseUrl,
+    productId,
+    token,
+    enabled: !!productId && !!token,
+  });
+
+  const { deleteTestScenario } = useDeleteTestScenario({
+    networkClient,
+    baseUrl,
+    runnerId: primaryRunner?.id ?? 0,
+    token,
+  });
+
+  const { detectTestScenarios, isDetecting } = useDetectTestScenarios({
+    networkClient,
+    baseUrl,
+    token,
+  });
+
+  // Detect state
+  const [detectError, setDetectError] = useState<string | null>(null);
+
+  const basePath = useEnvBasePath();
+
+  const handleDelete = async (scenarioId: number) => {
+    await deleteTestScenario(scenarioId);
+    refetch();
+  };
+
+  const handleDetect = async () => {
+    setDetectError(null);
+    try {
+      await detectTestScenarios({ productId: productId! });
+      refetch();
+    } catch (err) {
+      // The API returns an actionable message (e.g. naming the missing
+      // SHAPESHYFT_* env var) when scenario detection isn't configured.
+      setDetectError(err instanceof Error ? err.message : 'Detection failed');
+    }
+  };
+
+  if (contextError || error) {
+    return <ErrorState message={contextError || error || ''} />;
+  }
+
+  return (
+    <div className="p-6">
+      <SEOHead title="Test Scenarios" description="" noIndex />
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Test Scenarios</h1>
+        <div className="flex items-center gap-2">
+          <ActionButton
+            variant="primary"
+            className="bg-purple-600 hover:bg-purple-700"
+            onClick={handleDetect}
+            disabled={!productId}
+            isLoading={isDetecting}
+            loadingText="Detecting..."
+          >
+            Detect Scenarios
+          </ActionButton>
+          <Button variant="primary" onClick={() => setShowForm(!showForm)}>
+            {showForm ? 'Cancel' : 'New Scenario'}
+          </Button>
+        </div>
+      </div>
+
+      {detectError && <Alert variant="error" description={detectError} className="mb-4" />}
+
+      {showForm && primaryRunner && (
+        <div className="mb-6">
+          <AddScenarioForm
+            networkClient={networkClient}
+            token={token}
+            runnerId={primaryRunner.id}
+            personas={personas}
+            onCreated={() => {
+              setShowForm(false);
+              refetch();
+            }}
+            onCancel={() => setShowForm(false)}
+          />
+        </div>
+      )}
+
+      {(contextLoading || isLoading) && <LoadingState message="Loading test scenarios..." />}
+
+      {!isLoading && testScenarios.length === 0 && !showForm && (
+        <EmptyState
+          title="No test scenarios yet"
+          description="Create a test scenario to define a user flow you want to test."
+        />
+      )}
+
+      {!isLoading && testScenarios.length > 0 && (
+        <div className="space-y-2">
+          {testScenarios.map((scenario: TestScenarioResponse) => (
+            <ScenarioCell
+              key={scenario.id}
+              scenario={scenario}
+              onClick={() => navigate(`${basePath}/test-scenarios/${scenario.id}`)}
+              trailing={
+                <>
+                  {scenario.personaId && (
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      {personas.find(p => p.id === scenario.personaId)?.title ??
+                        `Persona #${scenario.personaId}`}
+                    </span>
+                  )}
+                  <StatusBadge status={scenario.sizeClass} />
+                </>
+              }
+              actions={
+                <button
+                  onClick={() => handleDelete(scenario.id)}
+                  className="text-xs text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                >
+                  Delete
+                </button>
+              }
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

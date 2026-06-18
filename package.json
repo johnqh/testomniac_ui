@@ -1,0 +1,72 @@
+{
+  "name": "@sudobility/testomniac_ui",
+  "version": "0.0.1",
+  "description": "Shared dashboard UI components, pages, and hooks for Testomniac apps (router/i18n-agnostic)",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "build:watch": "tsc -p tsconfig.build.json --watch",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "bun run clean && bun run build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "verify": "bun run typecheck && bun run lint && bun run format:check"
+  },
+  "peerDependencies": {
+    "@heroicons/react": ">=2.0.0",
+    "@sudobility/components": "^5.0.78",
+    "@sudobility/design": "^1.1.32",
+    "@sudobility/testomniac_client": "^0.0.97",
+    "@sudobility/testomniac_lib": "^0.0.108",
+    "@sudobility/testomniac_types": "^0.0.77",
+    "@sudobility/types": "^1.9.62",
+    "@tanstack/react-query": ">=5.0.0",
+    "@tanstack/react-table": ">=8.0.0",
+    "@xyflow/react": ">=12.0.0",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@heroicons/react": "^2.2.0",
+    "@sudobility/components": "^5.0.80",
+    "@sudobility/design": "^1.1.32",
+    "@sudobility/testomniac_client": "^0.0.97",
+    "@sudobility/testomniac_lib": "^0.0.108",
+    "@sudobility/testomniac_types": "^0.0.77",
+    "@sudobility/types": "^1.9.62",
+    "@tanstack/react-query": "^5.90.5",
+    "@tanstack/react-table": "^8.21.3",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@xyflow/react": "^12.10.2",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "globals": "^16.5.0",
+    "prettier": "^3.6.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.4",
+    "vitest": "^4.1.5"
+  },
+  "license": "BUSL-1.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/johnqh/testomniac_ui.git"
+  },
+  "dependencies": {}
+}

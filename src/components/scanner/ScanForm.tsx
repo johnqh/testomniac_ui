@@ -1,0 +1,93 @@
+import { useState, type FormEvent } from 'react';
+import { validateEmailDomain } from '@sudobility/testomniac_lib';
+import { ActionButton, Label } from '@sudobility/components';
+
+interface ScanFormProps {
+  onSubmit: (url: string, email?: string) => void;
+  isSubmitting?: boolean;
+  error?: string | null;
+  showEmail?: boolean;
+}
+
+export function ScanForm({ onSubmit, isSubmitting, error, showEmail = true }: ScanFormProps) {
+  const [url, setUrl] = useState('');
+  const [email, setEmail] = useState('');
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setValidationError(null);
+
+    if (!url.trim()) {
+      setValidationError('URL is required');
+      return;
+    }
+
+    try {
+      new URL(url);
+    } catch {
+      setValidationError('Please enter a valid URL');
+      return;
+    }
+
+    if (email && !validateEmailDomain(email, url)) {
+      setValidationError('Email domain must match the website domain');
+      return;
+    }
+
+    onSubmit(url.trim(), email.trim() || undefined);
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Label htmlFor="scan-url" className="mb-1 block">
+          Website URL
+        </Label>
+        <input
+          id="scan-url"
+          type="url"
+          value={url}
+          onChange={e => setUrl(e.target.value)}
+          placeholder="https://example.com"
+          className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          disabled={isSubmitting}
+        />
+      </div>
+
+      {showEmail && (
+        <div>
+          <Label htmlFor="scan-email" className="mb-1 block">
+            Email (optional)
+          </Label>
+          <input
+            id="scan-email"
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            disabled={isSubmitting}
+          />
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            Must match the website domain if provided
+          </p>
+        </div>
+      )}
+
+      {(validationError || error) && (
+        <div className="text-sm text-red-600 dark:text-red-400">{validationError || error}</div>
+      )}
+
+      <ActionButton
+        type="submit"
+        variant="primary"
+        className="w-full"
+        isLoading={isSubmitting}
+        loadingText="Starting Scan..."
+      >
+        Start Scan
+      </ActionButton>
+    </form>
+  );
+}
