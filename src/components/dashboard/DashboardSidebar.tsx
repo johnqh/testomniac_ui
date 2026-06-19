@@ -6,7 +6,11 @@ import {
   SelectItem,
   SelectValue,
 } from '@sudobility/components';
-import { useEntityProducts, useProductEnvironments } from '@sudobility/testomniac_client';
+import {
+  useEntities,
+  useEntityProducts,
+  useProductEnvironments,
+} from '@sudobility/testomniac_client';
 import { useLocalizedNavigate } from '../../hooks/useLocalizedNavigate';
 import { useTestomniacApi } from '../../context/config';
 import {
@@ -213,6 +217,14 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
   const { pathname } = useTestomniacRouting();
   const routes = useRoutes();
 
+  // Workspaces (entities) the user belongs to. The dashboard is scoped to the
+  // selected workspace via the route's :entitySlug.
+  const entitiesQuery = useEntities(networkClient, baseUrl, token ?? '', {
+    enabled: !!token,
+  });
+  const entities = useMemo(() => entitiesQuery.data?.data ?? [], [entitiesQuery.data]);
+  const entitiesLoading = entitiesQuery.isLoading;
+
   const productsQuery = useEntityProducts(networkClient, baseUrl, token ?? '', entitySlug, {
     enabled: !!token,
   });
@@ -252,6 +264,14 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
     }
   }, [environments, routeEnvId, entitySlug, navigate, routes]);
 
+  const handleWorkspaceChange = (value: string) => {
+    if (value === entitySlug) return;
+    // Reset any product selection so it re-derives for the new workspace, then
+    // re-scope the whole dashboard to the chosen entity.
+    setUserSelectedProductId(null);
+    navigate(routes.entityHome(value));
+  };
+
   const handleProductChange = (value: string) => {
     if (value === 'new') {
       navigate(routes.productNew(entitySlug));
@@ -287,8 +307,28 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800">
-      {/* Product & Environment Selectors */}
+      {/* Workspace, Product & Environment Selectors */}
       <div className="p-4 space-y-3 border-b border-gray-100 dark:border-gray-800">
+        <div>
+          <span className="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5 px-0.5">
+            Workspace
+          </span>
+          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-0.5">
+            <Select value={entitySlug} onValueChange={handleWorkspaceChange}>
+              <SelectTrigger className="w-full border-0 bg-transparent shadow-none text-[13px] font-medium">
+                <SelectValue placeholder={entitiesLoading ? 'Loading...' : 'Select workspace'} />
+              </SelectTrigger>
+              <SelectContent>
+                {entities.map(e => (
+                  <SelectItem key={e.entitySlug} value={e.entitySlug}>
+                    {e.displayName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
         <div>
           <span className="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5 px-0.5">
             Product
