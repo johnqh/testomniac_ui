@@ -1,6 +1,6 @@
 import { type ReactNode, useMemo, useState } from 'react';
 import { useRunPatterns } from '@sudobility/testomniac_client';
-import { Card } from '@sudobility/components';
+import { Card, ContentLayout } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams } from '../context/routing';
 import { SelectField } from '../components/forms/SelectField';
@@ -405,67 +405,73 @@ export function PatternsPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <SEOHead title="UI Patterns" description="" noIndex />
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">UI Patterns</h1>
+    <ContentLayout
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title="UI Patterns" description="" noIndex />
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">UI Patterns</h1>
 
-      {uniqueTypes.length > 1 && (
-        <div className="mb-4">
-          <SelectField
-            value={typeFilter}
-            onChange={setTypeFilter}
-            options={[
-              { value: '', label: 'All Types' },
-              ...uniqueTypes.map(type => ({
-                value: type,
-                label: PATTERN_LABELS[type] ?? type,
-              })),
-            ]}
+          {uniqueTypes.length > 1 && (
+            <div className="mt-4">
+              <SelectField
+                value={typeFilter}
+                onChange={setTypeFilter}
+                options={[
+                  { value: '', label: 'All Types' },
+                  ...uniqueTypes.map(type => ({
+                    value: type,
+                    label: PATTERN_LABELS[type] ?? type,
+                  })),
+                ]}
+              />
+            </div>
+          )}
+        </div>
+      }
+    >
+      <div className="px-4 py-4 sm:px-6">
+        {filteredPatterns.length === 0 ? (
+          <EmptyState
+            title="No UI patterns detected"
+            description="UI patterns will appear here after a scan detects them."
           />
-        </div>
-      )}
-
-      {filteredPatterns.length === 0 ? (
-        <EmptyState
-          title="No UI patterns detected"
-          description="UI patterns will appear here after a scan detects them."
-        />
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredPatterns.map(pattern => (
-            <Card key={pattern.patternType} variant="bordered" padding="md">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-gray-500 dark:text-gray-400">
-                  {PATTERN_ICONS[pattern.patternType] ?? (
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 14 14"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    >
-                      <rect x="2" y="2" width="10" height="10" rx="1" />
-                    </svg>
-                  )}
-                </span>
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {PATTERN_LABELS[pattern.patternType] ?? pattern.patternType}
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                <span>
-                  {pattern.totalCount} instance{pattern.totalCount !== 1 ? 's' : ''}
-                </span>
-                <span>
-                  {pattern.pageStateIds.length} page state
-                  {pattern.pageStateIds.length !== 1 ? 's' : ''}
-                </span>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredPatterns.map(pattern => (
+              <Card key={pattern.patternType} variant="bordered" padding="md">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-gray-500 dark:text-gray-400">
+                    {PATTERN_ICONS[pattern.patternType] ?? (
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 14 14"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                      >
+                        <rect x="2" y="2" width="10" height="10" rx="1" />
+                      </svg>
+                    )}
+                  </span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    {PATTERN_LABELS[pattern.patternType] ?? pattern.patternType}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                  <span>
+                    {pattern.totalCount} instance{pattern.totalCount !== 1 ? 's' : ''}
+                  </span>
+                  <span>
+                    {pattern.pageStateIds.length} page state
+                    {pattern.pageStateIds.length !== 1 ? 's' : ''}
+                  </span>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+    </ContentLayout>
   );
 }

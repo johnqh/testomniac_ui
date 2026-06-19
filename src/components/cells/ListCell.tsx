@@ -13,6 +13,8 @@ export interface ListCellProps {
   actions?: ReactNode;
   /** When provided, the title/subtitle area becomes a clickable button. */
   onClick?: () => void;
+  /** Reduces vertical padding (py-3 → py-2) for tightened row pages. */
+  compact?: boolean;
   className?: string;
 }
 
@@ -32,6 +34,7 @@ export function ListCell({
   trailing,
   actions,
   onClick,
+  compact = false,
   className = '',
 }: ListCellProps) {
   const main = (
@@ -52,7 +55,9 @@ export function ListCell({
 
   return (
     <div
-      className={`flex items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-800 ${
+      className={`flex items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-4 ${
+        compact ? 'py-2' : 'py-3'
+      } dark:border-gray-700 dark:bg-gray-800 ${
         onClick ? 'transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50' : ''
       } ${className}`}
     >

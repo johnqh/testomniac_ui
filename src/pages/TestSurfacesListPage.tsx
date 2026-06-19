@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useEnvironmentTestSurfaces } from '@sudobility/testomniac_client';
 import { getSurfacePriorityBand } from '@sudobility/testomniac_lib';
 import type { TestSurfaceResponse } from '@sudobility/testomniac_types';
+import { ContentLayout, CardGrid } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { SurfaceCell } from '../components/cells';
@@ -80,100 +81,110 @@ export function TestSurfacesListPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <SEOHead title="Test Surfaces" description="" noIndex />
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Test Surfaces</h1>
+    <ContentLayout
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title="Test Surfaces" description="" noIndex />
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Test Surfaces</h1>
 
-      {/* Filter controls */}
-      {!isLoading && testSurfaces.length > 0 && (
-        <div className="flex flex-wrap items-center gap-4 mb-6">
-          {/* Device filter */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500 dark:text-gray-400">Device:</span>
-            <div className="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <button onClick={() => setDeviceFilter('all')} className={deviceButtonClass('all')}>
-                All
-              </button>
-              <button
-                onClick={() => setDeviceFilter('desktop')}
-                className={deviceButtonClass('desktop')}
-              >
-                Desktop
-              </button>
-              <button
-                onClick={() => setDeviceFilter('mobile')}
-                className={deviceButtonClass('mobile')}
-              >
-                Mobile
-              </button>
-            </div>
-          </div>
+          {/* Filter controls */}
+          {!isLoading && testSurfaces.length > 0 && (
+            <div className="flex flex-wrap items-center gap-4 mt-4">
+              {/* Device filter */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Device:</span>
+                <div className="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                  <button
+                    onClick={() => setDeviceFilter('all')}
+                    className={deviceButtonClass('all')}
+                  >
+                    All
+                  </button>
+                  <button
+                    onClick={() => setDeviceFilter('desktop')}
+                    className={deviceButtonClass('desktop')}
+                  >
+                    Desktop
+                  </button>
+                  <button
+                    onClick={() => setDeviceFilter('mobile')}
+                    className={deviceButtonClass('mobile')}
+                  >
+                    Mobile
+                  </button>
+                </div>
+              </div>
 
-          {/* Priority filter */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500 dark:text-gray-400">Priority:</span>
-            <SelectField
-              value={priorityFilter}
-              onChange={v => setPriorityFilter(v as PriorityFilter)}
-              options={[
-                { value: 'all', label: 'All priorities' },
-                { value: 'critical', label: 'Critical (8+)' },
-                { value: 'high', label: 'High (5-7)' },
-                { value: 'medium', label: 'Medium (3-4)' },
-                { value: 'low', label: 'Low (<3)' },
-              ]}
-            />
-          </div>
+              {/* Priority filter */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Priority:</span>
+                <SelectField
+                  value={priorityFilter}
+                  onChange={v => setPriorityFilter(v as PriorityFilter)}
+                  options={[
+                    { value: 'all', label: 'All priorities' },
+                    { value: 'critical', label: 'Critical (8+)' },
+                    { value: 'high', label: 'High (5-7)' },
+                    { value: 'medium', label: 'Medium (3-4)' },
+                    { value: 'low', label: 'Low (<3)' },
+                  ]}
+                />
+              </div>
 
-          {/* Type filter */}
-          {typeOptions.length > 0 && (
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500 dark:text-gray-400">Type:</span>
-              <SelectField
-                value={typeFilter}
-                onChange={setTypeFilter}
-                options={[
-                  { value: 'all', label: 'All types' },
-                  ...typeOptions.map(type => ({ value: type, label: type })),
-                ]}
-              />
+              {/* Type filter */}
+              {typeOptions.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Type:</span>
+                  <SelectField
+                    value={typeFilter}
+                    onChange={setTypeFilter}
+                    options={[
+                      { value: 'all', label: 'All types' },
+                      ...typeOptions.map(type => ({ value: type, label: type })),
+                    ]}
+                  />
+                </div>
+              )}
+
+              {/* Result count */}
+              <span className="text-sm text-gray-400 dark:text-gray-500">
+                {filteredSurfaces.length} of {testSurfaces.length}
+              </span>
             </div>
           )}
-
-          {/* Result count */}
-          <span className="text-sm text-gray-400 dark:text-gray-500">
-            {filteredSurfaces.length} of {testSurfaces.length}
-          </span>
         </div>
-      )}
+      }
+    >
+      <div className="px-4 py-4 sm:px-6">
+        {isLoading && <LoadingState message="Loading test surfaces..." />}
 
-      {isLoading && <LoadingState message="Loading test surfaces..." />}
+        {!isLoading && filteredSurfaces.length === 0 && testSurfaces.length > 0 && (
+          <EmptyState
+            title="No matching test surfaces"
+            description="Try adjusting the filters to see more results."
+          />
+        )}
 
-      {!isLoading && filteredSurfaces.length === 0 && testSurfaces.length > 0 && (
-        <EmptyState
-          title="No matching test surfaces"
-          description="Try adjusting the filters to see more results."
-        />
-      )}
+        {!isLoading && testSurfaces.length === 0 && (
+          <EmptyState
+            title="No test surfaces yet"
+            description="Test surfaces will appear here after a scan generates them."
+          />
+        )}
 
-      {!isLoading && testSurfaces.length === 0 && (
-        <EmptyState
-          title="No test surfaces yet"
-          description="Test surfaces will appear here after a scan generates them."
-        />
-      )}
-
-      {!isLoading && filteredSurfaces.length > 0 && (
-        <div className="space-y-2">
-          {filteredSurfaces.map((surface: TestSurfaceResponse) => (
-            <SurfaceCell
-              key={surface.id}
-              surface={surface}
-              onClick={() => navigate(r.testSurface(surface.id))}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+        {!isLoading && filteredSurfaces.length > 0 && (
+          <CardGrid>
+            {filteredSurfaces.map((surface: TestSurfaceResponse) => (
+              <SurfaceCell
+                key={surface.id}
+                surface={surface}
+                variant="tile"
+                onClick={() => navigate(r.testSurface(surface.id))}
+              />
+            ))}
+          </CardGrid>
+        )}
+      </div>
+    </ContentLayout>
   );
 }

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useScanProgressStore } from '@sudobility/testomniac_lib';
 import { useRunProgressStream } from '@sudobility/testomniac_client';
-import { Button } from '@sudobility/components';
+import { Button, ContentLayout } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams, useRoutes } from '../context/routing';
 import { ScanProgressPanel } from '../components/scanner/ScanProgressPanel';
@@ -31,34 +31,40 @@ export function ScanProgressPage() {
   });
 
   return (
-    <div className="p-4 sm:p-6">
-      <SEOHead title="Discovery Run Progress" description="" noIndex />
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-          Discovery Run Progress
-        </h1>
-        {store.isComplete && (
-          <Button
-            variant="primary"
-            onClick={() => navigate(routes.entityRun(entitySlug ?? '', runId ?? ''))}
-          >
-            View Results
-          </Button>
-        )}
+    <ContentLayout
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title="Discovery Run Progress" description="" noIndex />
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              Discovery Run Progress
+            </h1>
+            {store.isComplete && (
+              <Button
+                variant="primary"
+                onClick={() => navigate(routes.entityRun(entitySlug ?? '', runId ?? ''))}
+              >
+                View Results
+              </Button>
+            )}
+          </div>
+        </div>
+      }
+    >
+      <div className="px-4 py-4 sm:px-6">
+        <ScanProgressPanel
+          pagesFound={store.pagesFound}
+          pageStatesFound={store.pageStatesFound}
+          testRunsCompleted={store.testRunsCompleted}
+          findingsFound={store.findingsFound}
+          error={store.error}
+          events={store.events}
+          isConnected={isConnected}
+          isComplete={store.isComplete}
+          latestScreenshotUrl={store.latestScreenshotUrl}
+          currentPageUrl={store.currentPageUrl}
+        />
       </div>
-
-      <ScanProgressPanel
-        pagesFound={store.pagesFound}
-        pageStatesFound={store.pageStatesFound}
-        testRunsCompleted={store.testRunsCompleted}
-        findingsFound={store.findingsFound}
-        error={store.error}
-        events={store.events}
-        isConnected={isConnected}
-        isComplete={store.isComplete}
-        latestScreenshotUrl={store.latestScreenshotUrl}
-        currentPageUrl={store.currentPageUrl}
-      />
-    </div>
+    </ContentLayout>
   );
 }

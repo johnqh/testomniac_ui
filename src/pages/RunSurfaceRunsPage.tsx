@@ -1,6 +1,6 @@
 import { useRunStructure } from '@sudobility/testomniac_client';
-import { Card } from '@sudobility/components';
 import { formatDate } from '@sudobility/testomniac_lib';
+import { ContentLayout, CardGrid, GridTile } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
@@ -40,72 +40,47 @@ export function RunSurfaceRunsPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <SEOHead title={`Run #${runId} Surface Runs`} description="" noIndex />
-      <BackLink label={`Back to Run #${runId}`} onClick={() => navigate(r.run(runId))} />
-      <nav className="mb-4 flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
-        <button
-          onClick={() => navigate(r.run(runId))}
-          className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-        >
-          Run #{runId}
-        </button>
-        <span>/</span>
-        <span className="text-gray-900 dark:text-gray-100 font-medium">Surface Runs</span>
-      </nav>
+    <ContentLayout
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title={`Run #${runId} Surface Runs`} description="" noIndex />
+          <BackLink label={`Back to Run #${runId}`} onClick={() => navigate(r.run(runId))} />
+          <nav className="mb-4 flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+            <button
+              onClick={() => navigate(r.run(runId))}
+              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              Run #{runId}
+            </button>
+            <span>/</span>
+            <span className="text-gray-900 dark:text-gray-100 font-medium">Surface Runs</span>
+          </nav>
 
-      <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">Surface Runs</h1>
-
-      {surfaceRuns.length === 0 ? (
-        <EmptyState description="No surface runs found for this run." />
-      ) : (
-        <Card variant="bordered" padding="none" className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
-                <th className="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400">
-                  Surface
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400">
-                  Run
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400">
-                  Status
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400">
-                  Elements
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400">
-                  Started
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {surfaceRuns.map(({ surface, surfaceRun }) => (
-                <tr
-                  key={surfaceRun.id}
-                  onClick={() => navigate(r.runSurfaceRun(runId, surfaceRun.id))}
-                  className="cursor-pointer bg-white transition-colors hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800"
-                >
-                  <td className="px-4 py-3 text-gray-900 dark:text-gray-100">{surface.title}</td>
-                  <td className="px-4 py-3 font-mono text-gray-600 dark:text-gray-400">
-                    #{surfaceRun.id}
-                  </td>
-                  <td className="px-4 py-3">
-                    <StatusBadge status={surfaceRun.status} />
-                  </td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
-                    {surface.testInteractions.length}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
-                    {formatDate(surfaceRun.startedAt)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Card>
-      )}
-    </div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Surface Runs</h1>
+        </div>
+      }
+    >
+      <div className="px-4 py-4 sm:px-6">
+        {surfaceRuns.length === 0 ? (
+          <EmptyState description="No surface runs found for this run." />
+        ) : (
+          <CardGrid density="wide">
+            {surfaceRuns.map(({ surface, surfaceRun }) => (
+              <GridTile
+                key={surfaceRun.id}
+                topRight={<StatusBadge status={surfaceRun.status} />}
+                title={surface.title}
+                footer={
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    {surface.testInteractions.length} elements · {formatDate(surfaceRun.startedAt)}
+                  </span>
+                }
+                onClick={() => navigate(r.runSurfaceRun(runId, surfaceRun.id))}
+              />
+            ))}
+          </CardGrid>
+        )}
+      </div>
+    </ContentLayout>
   );
 }

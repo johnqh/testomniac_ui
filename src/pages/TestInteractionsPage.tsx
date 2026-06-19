@@ -1,76 +1,13 @@
 import { useState } from 'react';
-import { createColumnHelper } from '@tanstack/react-table';
 import { useEnvironmentTestInteractionsPage } from '@sudobility/testomniac_client';
-import { PRIORITY_NAMES } from '@sudobility/testomniac_lib';
+import type { TestInteractionResponse } from '@sudobility/testomniac_types';
+import { ContentLayout, CardGrid } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { SelectField } from '../components/forms/SelectField';
-import { DataTable } from '../components/data/DataTable';
-import { StatusBadge } from '../components/scanner/StatusBadge';
-import { ErrorState } from '../components/states';
+import { InteractionCell } from '../components/cells';
+import { ErrorState, LoadingState, EmptyState } from '../components/states';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
-
-interface TestInteractionRow {
-  id: number;
-  title: string;
-  testType: string;
-  sizeClass: string;
-  priority: number;
-  surfaceTags: string[];
-  startingPath: string | null;
-}
-
-const columnHelper = createColumnHelper<TestInteractionRow>();
-
-const columns = [
-  columnHelper.accessor('title', {
-    header: 'Name',
-    cell: info => (
-      <div className="min-w-0">
-        <div className="font-medium text-gray-900 dark:text-gray-100">{info.getValue()}</div>
-        <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
-          {info.row.original.startingPath || '/'}
-        </div>
-      </div>
-    ),
-  }),
-  columnHelper.accessor('testType', {
-    header: 'Type',
-    cell: info => <StatusBadge status={info.getValue()} />,
-  }),
-  columnHelper.accessor('priority', {
-    header: 'Priority',
-    cell: info => {
-      const p = info.getValue();
-      const label = PRIORITY_NAMES[p] ?? `P${p}`;
-      const color =
-        p <= 1
-          ? 'text-red-600 font-medium'
-          : p === 2
-            ? 'text-orange-600 font-medium'
-            : 'text-gray-600 dark:text-gray-400';
-      return <span className={color}>{label}</span>;
-    },
-  }),
-  columnHelper.accessor('surfaceTags', {
-    header: 'Tags',
-    cell: info => (
-      <div className="flex gap-1 flex-wrap">
-        {(info.getValue() ?? []).map(tag => (
-          <span
-            key={tag}
-            className="px-1.5 py-0.5 text-xs rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-    ),
-  }),
-  columnHelper.accessor('sizeClass', {
-    header: 'Device',
-  }),
-];
 
 const PAGE_SIZE = 50;
 
@@ -137,57 +74,120 @@ export function TestInteractionsPage() {
     },
     { enabled: !!envId && !!token }
   );
-  const testInteractions = interactionsQuery.data?.data?.items ?? [];
+  const testInteractions: TestInteractionResponse[] = interactionsQuery.data?.data?.items ?? [];
   const total = interactionsQuery.data?.data?.total ?? 0;
   const isLoading = interactionsQuery.isLoading;
   const error = interactionsQuery.error?.message ?? null;
+
+  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const startRow = total === 0 ? 0 : pageIndex * PAGE_SIZE + 1;
+  const endRow = Math.min(pageIndex * PAGE_SIZE + testInteractions.length, total);
 
   if (error) {
     return <ErrorState message={error} />;
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <SEOHead title="Test Interactions" description="" noIndex />
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-        Test Interactions
-      </h1>
+    <ContentLayout
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title="Test Interactions" description="" noIndex />
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Test Interactions</h1>
 
-      <div className="flex flex-wrap gap-3 mb-4">
-        <SelectField value={typeFilter} onChange={onType} options={TYPE_OPTIONS} />
+          <div className="flex flex-wrap gap-3 mt-4">
+            <SelectField value={typeFilter} onChange={onType} options={TYPE_OPTIONS} />
 
-        <SelectField value={priorityFilter} onChange={onPriority} options={PRIORITY_OPTIONS} />
+            <SelectField value={priorityFilter} onChange={onPriority} options={PRIORITY_OPTIONS} />
 
-        <div className="flex rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
-          {DEVICE_OPTIONS.map(option => (
-            <button
-              key={option}
-              type="button"
-              onClick={() => onDevice(option)}
-              className={`px-3 py-1.5 text-sm ${
-                deviceFilter === option
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700'
-              } ${option !== 'All' ? 'border-l border-gray-300 dark:border-gray-600' : ''}`}
-            >
-              {option}
-            </button>
-          ))}
+            <div className="flex rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
+              {DEVICE_OPTIONS.map(option => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => onDevice(option)}
+                  className={`px-3 py-1.5 text-sm ${
+                    deviceFilter === option
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  } ${option !== 'All' ? 'border-l border-gray-300 dark:border-gray-600' : ''}`}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      }
+    >
+      <div className="px-4 py-4 sm:px-6">
+        {isLoading && <LoadingState message="Loading test interactions..." />}
 
-      <DataTable
-        data={testInteractions as unknown as TestInteractionRow[]}
-        columns={columns as never}
-        isLoading={isLoading}
-        onRowClick={(row: TestInteractionRow) => navigate(r.testInteraction(row.id))}
-        manualPagination
-        pageSize={PAGE_SIZE}
-        pageIndex={pageIndex}
-        pageCount={Math.max(1, Math.ceil(total / PAGE_SIZE))}
-        totalRows={total}
-        onPageChange={setPageIndex}
-      />
-    </div>
+        {!isLoading && testInteractions.length === 0 && (
+          <EmptyState
+            title="No test interactions"
+            description="Try adjusting the filters to see more results."
+          />
+        )}
+
+        {!isLoading && testInteractions.length > 0 && (
+          <>
+            <div className="mb-3 text-xs text-gray-500 dark:text-gray-400">
+              Showing {startRow}&ndash;{endRow} of {total}
+            </div>
+
+            <CardGrid>
+              {testInteractions.map(interaction => (
+                <InteractionCell
+                  key={interaction.id}
+                  interaction={interaction}
+                  variant="tile"
+                  onClick={() => navigate(r.testInteraction(interaction.id))}
+                />
+              ))}
+            </CardGrid>
+
+            {pageCount > 1 && (
+              <div className="mt-4 flex items-center justify-end gap-1 border-t border-gray-200 pt-3 dark:border-gray-700">
+                <button
+                  onClick={() => setPageIndex(0)}
+                  disabled={pageIndex === 0}
+                  className="px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  aria-label="First page"
+                >
+                  &laquo;
+                </button>
+                <button
+                  onClick={() => setPageIndex(p => Math.max(0, p - 1))}
+                  disabled={pageIndex === 0}
+                  className="px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  aria-label="Previous page"
+                >
+                  &lsaquo;
+                </button>
+                <span className="px-2 text-xs text-gray-600 dark:text-gray-400">
+                  Page {pageIndex + 1} of {pageCount}
+                </span>
+                <button
+                  onClick={() => setPageIndex(p => Math.min(pageCount - 1, p + 1))}
+                  disabled={pageIndex >= pageCount - 1}
+                  className="px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  aria-label="Next page"
+                >
+                  &rsaquo;
+                </button>
+                <button
+                  onClick={() => setPageIndex(pageCount - 1)}
+                  disabled={pageIndex >= pageCount - 1}
+                  className="px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  aria-label="Last page"
+                >
+                  &raquo;
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </ContentLayout>
   );
 }

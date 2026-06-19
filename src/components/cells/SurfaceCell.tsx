@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { TestSurfaceResponse } from '@sudobility/testomniac_types';
-import { Badge } from '@sudobility/components';
+import { Badge, GridTile } from '@sudobility/components';
 import { StatusBadge } from '../scanner/StatusBadge';
 import { ListCell } from './ListCell';
 
@@ -40,10 +40,25 @@ export interface SurfaceCellProps {
   surface: TestSurfaceResponse;
   onClick?: () => void;
   actions?: ReactNode;
+  /** `row` (default, full-width ListCell) or `tile` (compact card for CardGrid). */
+  variant?: 'row' | 'tile';
 }
 
 /** Canonical cell for a TestSurface — folder icon, title, description/path, priority + device badges. */
-export function SurfaceCell({ surface, onClick, actions }: SurfaceCellProps) {
+export function SurfaceCell({ surface, onClick, actions, variant = 'row' }: SurfaceCellProps) {
+  if (variant === 'tile') {
+    return (
+      <GridTile
+        leading={<FolderIcon />}
+        topRight={<SurfacePriorityBadge priority={surface.priority} />}
+        title={surface.title}
+        subtitle={surface.startingPath || '/'}
+        footer={<StatusBadge status={surface.sizeClass} />}
+        actions={actions}
+        onClick={onClick}
+      />
+    );
+  }
   return (
     <ListCell
       leading={<FolderIcon />}

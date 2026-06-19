@@ -40,6 +40,7 @@ export * from './components/cells';
 export * from './components/data';
 export * from './components/scanner';
 export { SelectField, type SelectOption } from './components/forms/SelectField';
+export { AddButton } from './components/ui/AddButton';
 export { DashboardSidebar } from './components/dashboard/DashboardSidebar';
 export { ScriptPanel } from './components/scripts/ScriptPanel';
 export { AddScenarioForm } from './components/scenarios/AddScenarioForm';

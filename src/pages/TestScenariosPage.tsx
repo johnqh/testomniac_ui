@@ -6,8 +6,9 @@ import {
   useDetectTestScenarios,
 } from '@sudobility/testomniac_client';
 import type { TestScenarioResponse } from '@sudobility/testomniac_types';
-import { Alert, Button, ActionButton } from '@sudobility/components';
+import { Alert, ActionButton, ContentLayout, CardGrid } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
+import { AddButton } from '../components/ui/AddButton';
 import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { ScenarioCell } from '../components/cells';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
@@ -85,84 +86,93 @@ export function TestScenariosPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <SEOHead title="Test Scenarios" description="" noIndex />
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Test Scenarios</h1>
-        <div className="flex items-center gap-2">
-          <ActionButton
-            variant="primary"
-            className="bg-purple-600 hover:bg-purple-700"
-            onClick={handleDetect}
-            disabled={!productId}
-            isLoading={isDetecting}
-            loadingText="Detecting..."
-          >
-            Detect Scenarios
-          </ActionButton>
-          <Button variant="primary" onClick={() => setShowForm(!showForm)}>
-            {showForm ? 'Cancel' : 'New Scenario'}
-          </Button>
+    <ContentLayout
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title="Test Scenarios" description="" noIndex />
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Test Scenarios</h1>
+            <div className="flex items-center gap-2">
+              <ActionButton
+                variant="primary"
+                className="bg-purple-600 hover:bg-purple-700"
+                onClick={handleDetect}
+                disabled={!productId}
+                isLoading={isDetecting}
+                loadingText="Detecting..."
+              >
+                Detect Scenarios
+              </ActionButton>
+              <AddButton
+                label="New Scenario"
+                active={showForm}
+                onClick={() => setShowForm(!showForm)}
+              />
+            </div>
+          </div>
         </div>
-      </div>
+      }
+    >
+      <div className="px-4 py-4 sm:px-6">
+        {detectError && <Alert variant="error" description={detectError} className="mb-4" />}
 
-      {detectError && <Alert variant="error" description={detectError} className="mb-4" />}
-
-      {showForm && primaryRunner && (
-        <div className="mb-6">
-          <AddScenarioForm
-            networkClient={networkClient}
-            token={token}
-            runnerId={primaryRunner.id}
-            personas={personas}
-            onCreated={() => {
-              setShowForm(false);
-              refetch();
-            }}
-            onCancel={() => setShowForm(false)}
-          />
-        </div>
-      )}
-
-      {(contextLoading || isLoading) && <LoadingState message="Loading test scenarios..." />}
-
-      {!isLoading && testScenarios.length === 0 && !showForm && (
-        <EmptyState
-          title="No test scenarios yet"
-          description="Create a test scenario to define a user flow you want to test."
-        />
-      )}
-
-      {!isLoading && testScenarios.length > 0 && (
-        <div className="space-y-2">
-          {testScenarios.map((scenario: TestScenarioResponse) => (
-            <ScenarioCell
-              key={scenario.id}
-              scenario={scenario}
-              onClick={() => navigate(r.testScenario(scenario.id))}
-              trailing={
-                <>
-                  {scenario.personaId && (
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      {personas.find(p => p.id === scenario.personaId)?.title ??
-                        `Persona #${scenario.personaId}`}
-                    </span>
-                  )}
-                  <StatusBadge status={scenario.sizeClass} />
-                </>
-              }
-              actions={
-                <button
-                  onClick={() => handleDelete(scenario.id)}
-                  className="text-xs text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                >
-                  Delete
-                </button>
-              }
+        {showForm && primaryRunner && (
+          <div className="mb-6">
+            <AddScenarioForm
+              networkClient={networkClient}
+              token={token}
+              runnerId={primaryRunner.id}
+              personas={personas}
+              onCreated={() => {
+                setShowForm(false);
+                refetch();
+              }}
+              onCancel={() => setShowForm(false)}
             />
-          ))}
-        </div>
-      )}
-    </div>
+          </div>
+        )}
+
+        {(contextLoading || isLoading) && <LoadingState message="Loading test scenarios..." />}
+
+        {!isLoading && testScenarios.length === 0 && !showForm && (
+          <EmptyState
+            title="No test scenarios yet"
+            description="Create a test scenario to define a user flow you want to test."
+          />
+        )}
+
+        {!isLoading && testScenarios.length > 0 && (
+          <CardGrid>
+            {testScenarios.map((scenario: TestScenarioResponse) => (
+              <ScenarioCell
+                key={scenario.id}
+                scenario={scenario}
+                variant="tile"
+                onClick={() => navigate(r.testScenario(scenario.id))}
+                trailing={
+                  <>
+                    {scenario.personaId && (
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {personas.find(p => p.id === scenario.personaId)?.title ??
+                          `Persona #${scenario.personaId}`}
+                      </span>
+                    )}
+                    <StatusBadge status={scenario.sizeClass} />
+                  </>
+                }
+                actions={
+                  <button
+                    onClick={() => handleDelete(scenario.id)}
+                    className="text-xs text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                  >
+                    Delete
+                  </button>
+                }
+              />
+            ))}
+          </CardGrid>
+        )}
+      </div>
+    </ContentLayout>
   );
 }

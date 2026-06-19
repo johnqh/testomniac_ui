@@ -13,9 +13,10 @@ import {
   describeScheduleTarget,
   describeRecurrence,
 } from '@sudobility/testomniac_lib';
-import { ActionButton, Button, Card, Label } from '@sudobility/components';
+import { ActionButton, Card, Label, ContentLayout } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams } from '../context/routing';
+import { AddButton } from '../components/ui/AddButton';
 import { SelectField } from '../components/forms/SelectField';
 import { StatusBadge } from '../components/scanner/StatusBadge';
 import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
@@ -178,219 +179,227 @@ export function SchedulesPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <SEOHead title="Schedules" description="" noIndex />
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Schedules</h1>
-        <Button variant="primary" onClick={() => (showForm ? closeForm() : setShowForm(true))}>
-          {showForm ? 'Cancel' : '+ New Schedule'}
-        </Button>
-      </div>
-
-      {showForm && (
-        <Card variant="bordered" padding="lg" className="mb-6 space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <Label className="mb-1 block">Title</Label>
-              <input
-                type="text"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                placeholder="Production navigation smoke"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
-              />
-            </div>
-            <div>
-              <Label className="mb-1 block">Target type</Label>
-              <SelectField
-                value={targetKind}
-                onChange={v => setTargetKind(v as TargetKind)}
-                options={[
-                  { value: 'bundle', label: 'Bundle' },
-                  { value: 'surface', label: 'Surface' },
-                  { value: 'element', label: 'Element' },
-                ]}
-              />
-            </div>
+    <ContentLayout
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title="Schedules" description="" noIndex />
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Schedules</h1>
+            <AddButton
+              label="New Schedule"
+              active={showForm}
+              onClick={() => (showForm ? closeForm() : setShowForm(true))}
+            />
           </div>
-
-          {targetKind === 'bundle' && (
-            <div>
-              <Label className="mb-1 block">Bundle</Label>
-              <SelectField
-                value={selectedBundleId}
-                onChange={setSelectedBundleId}
-                options={[
-                  { value: '', label: 'Select a bundle' },
-                  ...bundles.map(bundle => ({
-                    value: String(bundle.id),
-                    label: `#${bundle.id} ${bundle.title}`,
-                  })),
-                ]}
-              />
-            </div>
-          )}
-
-          {targetKind === 'surface' && (
-            <div>
-              <Label className="mb-1 block">Surface</Label>
-              <SelectField
-                value={selectedSurfaceId}
-                onChange={setSelectedSurfaceId}
-                options={[
-                  { value: '', label: 'Select a surface' },
-                  ...testSurfaces.map(surface => ({
-                    value: String(surface.id),
-                    label: `#${surface.id} ${surface.title}`,
-                  })),
-                ]}
-              />
-            </div>
-          )}
-
-          {targetKind === 'element' && (
-            <div>
-              <Label className="mb-1 block">Element</Label>
-              <SelectField
-                value={selectedElementId}
-                onChange={setSelectedElementId}
-                options={[
-                  { value: '', label: 'Select a test interaction' },
-                  ...testInteractions.map(element => ({
-                    value: String(element.id),
-                    label: `#${element.id} ${element.title}`,
-                  })),
-                ]}
-              />
-            </div>
-          )}
-
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div>
-              <Label className="mb-1 block">Recurrence</Label>
-              <SelectField
-                value={recurrenceType}
-                onChange={v => setRecurrenceType(v as CreateTestScheduleRequest['recurrenceType'])}
-                options={RECURRENCE_OPTIONS.map(option => ({
-                  value: String(option.value),
-                  label: option.label,
-                }))}
-              />
-            </div>
-
-            <div>
-              <Label className="mb-1 block">Time</Label>
-              <input
-                type="time"
-                value={timeOfDay}
-                onChange={e => setTimeOfDay(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
-              />
-            </div>
-
-            {recurrenceType === 'weekly' && (
+        </div>
+      }
+    >
+      <div className="px-4 py-4 sm:px-6">
+        {showForm && (
+          <Card variant="bordered" padding="lg" className="mb-6 space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <Label className="mb-1 block">Day</Label>
+                <Label className="mb-1 block">Title</Label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={e => setTitle(e.target.value)}
+                  placeholder="Production navigation smoke"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
+                />
+              </div>
+              <div>
+                <Label className="mb-1 block">Target type</Label>
                 <SelectField
-                  value={dayOfWeek}
-                  onChange={setDayOfWeek}
-                  options={DAY_OPTIONS.map(option => ({
+                  value={targetKind}
+                  onChange={v => setTargetKind(v as TargetKind)}
+                  options={[
+                    { value: 'bundle', label: 'Bundle' },
+                    { value: 'surface', label: 'Surface' },
+                    { value: 'element', label: 'Element' },
+                  ]}
+                />
+              </div>
+            </div>
+
+            {targetKind === 'bundle' && (
+              <div>
+                <Label className="mb-1 block">Bundle</Label>
+                <SelectField
+                  value={selectedBundleId}
+                  onChange={setSelectedBundleId}
+                  options={[
+                    { value: '', label: 'Select a bundle' },
+                    ...bundles.map(bundle => ({
+                      value: String(bundle.id),
+                      label: `#${bundle.id} ${bundle.title}`,
+                    })),
+                  ]}
+                />
+              </div>
+            )}
+
+            {targetKind === 'surface' && (
+              <div>
+                <Label className="mb-1 block">Surface</Label>
+                <SelectField
+                  value={selectedSurfaceId}
+                  onChange={setSelectedSurfaceId}
+                  options={[
+                    { value: '', label: 'Select a surface' },
+                    ...testSurfaces.map(surface => ({
+                      value: String(surface.id),
+                      label: `#${surface.id} ${surface.title}`,
+                    })),
+                  ]}
+                />
+              </div>
+            )}
+
+            {targetKind === 'element' && (
+              <div>
+                <Label className="mb-1 block">Element</Label>
+                <SelectField
+                  value={selectedElementId}
+                  onChange={setSelectedElementId}
+                  options={[
+                    { value: '', label: 'Select a test interaction' },
+                    ...testInteractions.map(element => ({
+                      value: String(element.id),
+                      label: `#${element.id} ${element.title}`,
+                    })),
+                  ]}
+                />
+              </div>
+            )}
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <div>
+                <Label className="mb-1 block">Recurrence</Label>
+                <SelectField
+                  value={recurrenceType}
+                  onChange={v =>
+                    setRecurrenceType(v as CreateTestScheduleRequest['recurrenceType'])
+                  }
+                  options={RECURRENCE_OPTIONS.map(option => ({
                     value: String(option.value),
                     label: option.label,
                   }))}
                 />
               </div>
-            )}
+
+              <div>
+                <Label className="mb-1 block">Time</Label>
+                <input
+                  type="time"
+                  value={timeOfDay}
+                  onChange={e => setTimeOfDay(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
+                />
+              </div>
+
+              {recurrenceType === 'weekly' && (
+                <div>
+                  <Label className="mb-1 block">Day</Label>
+                  <SelectField
+                    value={dayOfWeek}
+                    onChange={setDayOfWeek}
+                    options={DAY_OPTIONS.map(option => ({
+                      value: String(option.value),
+                      label: option.label,
+                    }))}
+                  />
+                </div>
+              )}
+
+              <div>
+                <Label className="mb-1 block">Device</Label>
+                <SelectField
+                  value={sizeClass}
+                  onChange={v => setSizeClass(v as CreateTestScheduleRequest['sizeClass'])}
+                  options={[
+                    { value: 'desktop', label: 'Desktop' },
+                    { value: 'mobile', label: 'Mobile' },
+                  ]}
+                />
+              </div>
+            </div>
 
             <div>
-              <Label className="mb-1 block">Device</Label>
-              <SelectField
-                value={sizeClass}
-                onChange={v => setSizeClass(v as CreateTestScheduleRequest['sizeClass'])}
-                options={[
-                  { value: 'desktop', label: 'Desktop' },
-                  { value: 'mobile', label: 'Mobile' },
-                ]}
+              <Label className="mb-1 block">Timezone</Label>
+              <input
+                type="text"
+                value={timezone}
+                onChange={e => setTimezone(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
               />
             </div>
+
+            <label className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+              <input
+                type="checkbox"
+                checked={discovery}
+                onChange={e => setDiscovery(e.target.checked)}
+                className="rounded border-gray-300 dark:border-gray-600"
+              />
+              Run in discovery mode
+            </label>
+
+            <div className="flex items-center gap-3">
+              <ActionButton
+                variant="primary"
+                isLoading={isCreating}
+                loadingText="Creating..."
+                onClick={handleCreate}
+                disabled={!canCreate}
+              >
+                Create Schedule
+              </ActionButton>
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                This only creates the schedule object. Worker launch is not wired here.
+              </span>
+            </div>
+          </Card>
+        )}
+
+        {isLoading && (
+          <div className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">
+            Loading schedules...
           </div>
+        )}
 
-          <div>
-            <Label className="mb-1 block">Timezone</Label>
-            <input
-              type="text"
-              value={timezone}
-              onChange={e => setTimezone(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
-            />
-          </div>
+        {!isLoading && schedules.length === 0 && !showForm && (
+          <EmptyState
+            title="No schedules yet"
+            description="Create a schedule to store a recurring run definition for a bundle, surface, or test element."
+          />
+        )}
 
-          <label className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
-            <input
-              type="checkbox"
-              checked={discovery}
-              onChange={e => setDiscovery(e.target.checked)}
-              className="rounded border-gray-300 dark:border-gray-600"
-            />
-            Run in discovery mode
-          </label>
-
-          <div className="flex items-center gap-3">
-            <ActionButton
-              variant="primary"
-              isLoading={isCreating}
-              loadingText="Creating..."
-              onClick={handleCreate}
-              disabled={!canCreate}
-            >
-              Create Schedule
-            </ActionButton>
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              This only creates the schedule object. Worker launch is not wired here.
-            </span>
-          </div>
-        </Card>
-      )}
-
-      {isLoading && (
-        <div className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">
-          Loading schedules...
-        </div>
-      )}
-
-      {!isLoading && schedules.length === 0 && !showForm && (
-        <EmptyState
-          title="No schedules yet"
-          description="Create a schedule to store a recurring run definition for a bundle, surface, or test element."
-        />
-      )}
-
-      {!isLoading && schedules.length > 0 && (
-        <div className="space-y-3">
-          {schedules.map(schedule => (
-            <Card key={schedule.id} variant="bordered" padding="md">
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                    {schedule.title}
+        {!isLoading && schedules.length > 0 && (
+          <div className="space-y-2">
+            {schedules.map(schedule => (
+              <Card key={schedule.id} variant="bordered" padding="sm">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+                      {schedule.title}
+                    </div>
+                    <div className="mt-0.5 truncate text-xs text-gray-500 dark:text-gray-400">
+                      {describeScheduleTarget(schedule)} · {describeRecurrence(schedule)} ·{' '}
+                      {schedule.timezone}
+                    </div>
                   </div>
-                  <div className="mt-1 text-sm text-gray-600 dark:text-gray-300">
-                    {describeScheduleTarget(schedule)}
-                  </div>
-                  <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    {describeRecurrence(schedule)} · {schedule.timezone}
+                  <div className="flex flex-wrap items-center justify-end gap-2 flex-shrink-0">
+                    <StatusBadge status={schedule.enabled ? 'enabled' : 'disabled'} />
+                    <StatusBadge status={schedule.sizeClass} />
+                    {schedule.discovery && <StatusBadge status="discovery" />}
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center justify-end gap-2 flex-shrink-0">
-                  <StatusBadge status={schedule.enabled ? 'enabled' : 'disabled'} />
-                  <StatusBadge status={schedule.sizeClass} />
-                  {schedule.discovery && <StatusBadge status="discovery" />}
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+    </ContentLayout>
   );
 }

@@ -1,5 +1,6 @@
 import type { PageResponse } from '@sudobility/testomniac_types';
 import { buildArtifactUrl } from '@sudobility/testomniac_client';
+import { CardGrid } from '@sudobility/components';
 import { useLocalizedNavigate } from '../../hooks/useLocalizedNavigate';
 import { useEnvRoutes } from '../../context/routing';
 
@@ -25,85 +26,65 @@ export function PagesListView({ pages, runId, screenshotsByPageId, apiUrl }: Pag
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-gray-200 dark:border-gray-700">
-            <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 w-16">
-              Preview
-            </th>
-            <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              Path
-            </th>
-            <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              Route Key
-            </th>
-            <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              Status
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {sorted.map(page => {
-            const isExternal = page.relativePath.startsWith('http');
-            const screenshotPath = screenshotsByPageId?.get(page.id);
+    <CardGrid>
+      {sorted.map(page => {
+        const isExternal = page.relativePath.startsWith('http');
+        const screenshotPath = screenshotsByPageId?.get(page.id);
 
-            return (
-              <tr
-                key={page.id}
-                onClick={() => navigate(runId ? r.runPage(runId, page.id) : r.page(page.id))}
-                className="cursor-pointer border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
-              >
-                <td className="px-3 py-3">
-                  <div className="w-12 h-8 rounded overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                    {screenshotPath && apiUrl ? (
-                      <img
-                        src={buildArtifactUrl(apiUrl, screenshotPath, { thumbnail: true })}
-                        alt=""
-                        className="w-full h-full object-cover object-top"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <svg
-                        className="w-4 h-4 text-gray-300 dark:text-gray-600"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                      >
-                        <rect x="3" y="3" width="18" height="18" rx="2" />
-                        <path d="M3 15l5-5 4 4 3-3 6 6" />
-                      </svg>
-                    )}
-                  </div>
-                </td>
-                <td className="px-3 py-3 text-gray-900 dark:text-gray-100">
-                  <div className="flex items-center gap-2">
-                    <span className="truncate max-w-md">{page.relativePath}</span>
-                    {isExternal && (
-                      <span className="shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[11px] text-gray-500 dark:bg-gray-800 dark:text-gray-400">
-                        external
-                      </span>
-                    )}
-                  </div>
-                </td>
-                <td className="px-3 py-3 text-gray-600 dark:text-gray-300">
-                  {page.routeKey ?? (
-                    <span className="text-gray-400 dark:text-gray-600">&mdash;</span>
-                  )}
-                </td>
-                <td className="px-3 py-3">
-                  {page.requiresLogin && (
-                    <span className="rounded bg-yellow-100 px-1.5 py-0.5 text-xs text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">
-                      Login
-                    </span>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+        return (
+          <div
+            key={page.id}
+            role="button"
+            tabIndex={0}
+            onClick={() => navigate(runId ? r.runPage(runId, page.id) : r.page(page.id))}
+            className="flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white text-left transition-colors dark:border-gray-700 dark:bg-gray-800 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/40"
+          >
+            <div className="aspect-[16/9] w-full shrink-0 overflow-hidden border-b border-gray-200 bg-gray-100 dark:border-gray-700 dark:bg-gray-900 flex items-center justify-center">
+              {screenshotPath && apiUrl ? (
+                <img
+                  src={buildArtifactUrl(apiUrl, screenshotPath, { thumbnail: true })}
+                  alt=""
+                  className="h-full w-full object-cover object-top"
+                  loading="lazy"
+                />
+              ) : (
+                <svg
+                  className="h-8 w-8 text-gray-300 dark:text-gray-600"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M3 15l5-5 4 4 3-3 6 6" />
+                </svg>
+              )}
+            </div>
+            <div className="min-w-0 flex-1 p-3">
+              <div className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+                {page.relativePath}
+              </div>
+              <div className="mt-1.5 flex flex-wrap items-center gap-1">
+                {page.routeKey && (
+                  <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[11px] text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                    {page.routeKey}
+                  </span>
+                )}
+                {page.requiresLogin && (
+                  <span className="rounded bg-yellow-100 px-1.5 py-0.5 text-[11px] text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">
+                    Login
+                  </span>
+                )}
+                {isExternal && (
+                  <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[11px] text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                    external
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </CardGrid>
   );
 }

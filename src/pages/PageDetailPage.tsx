@@ -12,9 +12,10 @@ import {
 } from '@sudobility/testomniac_client';
 import type { TestInteractionResponse } from '@sudobility/testomniac_types';
 import { usePageInteractionGroups } from '@sudobility/testomniac_lib';
-import { Button, Card } from '@sudobility/components';
+import { Button, Card, ContentLayout } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams, useEnvRoutes } from '../context/routing';
+import { AddButton } from '../components/ui/AddButton';
 import { InteractionCell } from '../components/cells';
 import BackLink from '../components/navigation/BackLink';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
@@ -109,235 +110,245 @@ export function PageDetailPage() {
   const pagesBasePath = runId ? r.runPages(runId) : r.pages();
 
   return (
-    <div className="p-4 sm:p-6">
-      <SEOHead title="Page Detail" description="" noIndex />
-      <BackLink label="Pages" onClick={() => navigate(pagesBasePath)} />
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Page Detail</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            {summary?.relativePath ?? `Page #${pageId}`}
-            {runId ? ` • Run #${runId}` : ` • Page #${pageId}`}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          {primaryRunner && (
-            <Button variant="primary" onClick={() => setShowScenarioForm(prev => !prev)}>
-              {showScenarioForm ? 'Cancel' : 'Add Scenario'}
-            </Button>
-          )}
-          <Button variant="outline" onClick={() => navigate(r.pageGraph(pageId))}>
-            View Page Graph
-          </Button>
-        </div>
-      </div>
-
-      {showScenarioForm && primaryRunner && (
-        <div className="mb-6">
-          <AddScenarioForm
-            networkClient={networkClient}
-            token={token ?? ''}
-            runnerId={primaryRunner.id}
-            personas={personas}
-            defaultStartingPath={summary?.relativePath ?? currentPage?.relativePath ?? '/'}
-            onCreated={() => setShowScenarioForm(false)}
-            onCancel={() => setShowScenarioForm(false)}
-          />
-        </div>
-      )}
-
-      {summary && (
-        <>
-          <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-            <Card variant="bordered" padding="md">
-              <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {summary.pageStatesCount}
-              </div>
-              <div className="text-xs text-gray-500">Page States</div>
-            </Card>
-            <Card variant="bordered" padding="md">
-              <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {summary.testInteractionsCount}
-              </div>
-              <div className="text-xs text-gray-500">Test Interactions</div>
-            </Card>
-            <Card variant="bordered" padding="md">
-              <div className="text-2xl font-bold text-red-600 dark:text-red-400">
-                {summary.findings}
-              </div>
-              <div className="text-xs text-gray-500">Findings</div>
-            </Card>
-            <Card variant="bordered" padding="md">
-              <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {summary.testInteractionRunsCount}
-              </div>
-              <div className="text-xs text-gray-500">Case Runs</div>
-            </Card>
+    <ContentLayout
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title="Page Detail" description="" noIndex />
+          <BackLink label="Pages" onClick={() => navigate(pagesBasePath)} />
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Page Detail</h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {summary?.relativePath ?? `Page #${pageId}`}
+                {runId ? ` • Run #${runId}` : ` • Page #${pageId}`}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              {primaryRunner && (
+                <AddButton
+                  label="Add Scenario"
+                  active={showScenarioForm}
+                  onClick={() => setShowScenarioForm(prev => !prev)}
+                />
+              )}
+              <Button variant="outline" onClick={() => navigate(r.pageGraph(pageId))}>
+                View Page Graph
+              </Button>
+            </div>
           </div>
+        </div>
+      }
+    >
+      <div className="px-4 py-4 sm:px-6">
+        {showScenarioForm && primaryRunner && (
+          <div className="mb-6">
+            <AddScenarioForm
+              networkClient={networkClient}
+              token={token ?? ''}
+              runnerId={primaryRunner.id}
+              personas={personas}
+              defaultStartingPath={summary?.relativePath ?? currentPage?.relativePath ?? '/'}
+              onCreated={() => setShowScenarioForm(false)}
+              onCancel={() => setShowScenarioForm(false)}
+            />
+          </div>
+        )}
 
-          {summary.latestScreenshotPath && (
-            <Card variant="bordered" padding="none" className="mb-8 overflow-hidden">
-              <img
-                src={buildArtifactUrl(baseUrl, summary.latestScreenshotPath)}
-                alt={`${summary.relativePath} latest screenshot`}
-                className="h-72 w-full object-cover object-top"
-              />
-            </Card>
-          )}
-
-          {summary.recentFindings.length > 0 && (
-            <div className="mb-8">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Recent Findings
-              </h2>
-              <div className="space-y-3">
-                {summary.recentFindings.slice(0, 8).map(finding => (
-                  <Card key={finding.id} variant="bordered" padding="md">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {finding.title}
-                        </div>
-                        <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                          {finding.description}
-                        </div>
-                      </div>
-                      <div className="shrink-0 text-[11px] capitalize text-gray-500 dark:text-gray-400">
-                        {finding.expertise ?? finding.type}
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
+        {summary && (
+          <>
+            <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+              <Card variant="bordered" padding="md">
+                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  {summary.pageStatesCount}
+                </div>
+                <div className="text-xs text-gray-500">Page States</div>
+              </Card>
+              <Card variant="bordered" padding="md">
+                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  {summary.testInteractionsCount}
+                </div>
+                <div className="text-xs text-gray-500">Test Interactions</div>
+              </Card>
+              <Card variant="bordered" padding="md">
+                <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                  {summary.findings}
+                </div>
+                <div className="text-xs text-gray-500">Findings</div>
+              </Card>
+              <Card variant="bordered" padding="md">
+                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  {summary.testInteractionRunsCount}
+                </div>
+                <div className="text-xs text-gray-500">Case Runs</div>
+              </Card>
             </div>
-          )}
 
-          {summary.runtimeSignals.length > 0 && (
-            <div className="mb-8">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Runtime Signals
-              </h2>
-              <div className="space-y-4">
-                {summary.runtimeSignals.map(signal => (
-                  <Card key={signal.testInteractionRunId} variant="bordered" padding="md">
-                    <div className="mb-3 flex items-center justify-between gap-3">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {signal.testInteractionTitle ??
-                            `Test Interaction #${signal.testInteractionId}`}
+            {summary.latestScreenshotPath && (
+              <Card variant="bordered" padding="none" className="mb-8 overflow-hidden">
+                <img
+                  src={buildArtifactUrl(baseUrl, summary.latestScreenshotPath)}
+                  alt={`${summary.relativePath} latest screenshot`}
+                  className="h-72 w-full object-cover object-top"
+                />
+              </Card>
+            )}
+
+            {summary.recentFindings.length > 0 && (
+              <div className="mb-8">
+                <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Recent Findings
+                </h2>
+                <div className="space-y-3">
+                  {summary.recentFindings.slice(0, 8).map(finding => (
+                    <Card key={finding.id} variant="bordered" padding="md">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {finding.title}
+                          </div>
+                          <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                            {finding.description}
+                          </div>
                         </div>
-                        <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                          Case run #{signal.testInteractionRunId}
-                          {signal.completedAt
-                            ? ` • ${new Date(signal.completedAt).toLocaleString()}`
-                            : ''}
+                        <div className="shrink-0 text-[11px] capitalize text-gray-500 dark:text-gray-400">
+                          {finding.expertise ?? finding.type}
                         </div>
                       </div>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {signal.status}
-                      </span>
-                    </div>
-                    {signal.consoleLog && (
-                      <pre className="mb-3 max-h-48 overflow-auto rounded border border-gray-200 bg-gray-50 p-3 text-xs leading-5 text-gray-700 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-300">
-                        {signal.consoleLog}
-                      </pre>
-                    )}
-                    {signal.networkLog && (
-                      <pre className="max-h-48 overflow-auto rounded border border-gray-200 bg-gray-50 p-3 text-xs leading-5 text-gray-700 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-300">
-                        {signal.networkLog}
-                      </pre>
-                    )}
-                  </Card>
-                ))}
+                    </Card>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-        </>
-      )}
+            )}
 
-      {pageStates.length === 0 ? (
-        <p className="text-gray-500 dark:text-gray-400">No page states found.</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {pageStates.map(state => (
-            <button
-              key={state.id}
-              onClick={() =>
-                navigate(
-                  runId ? r.runPageState(runId, pageId, state.id) : r.pageState(pageId, state.id)
-                )
-              }
-              className="text-left rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
-            >
-              <div className="h-40 bg-gray-100 dark:bg-gray-800 overflow-hidden">
-                {state.screenshotPath ? (
-                  <img
-                    src={buildArtifactUrl(baseUrl, state.screenshotPath)}
-                    alt={`State ${state.id} screenshot`}
-                    className="w-full h-full object-cover object-top"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-xs text-gray-400">No screenshot</span>
+            {summary.runtimeSignals.length > 0 && (
+              <div className="mb-8">
+                <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Runtime Signals
+                </h2>
+                <div className="space-y-4">
+                  {summary.runtimeSignals.map(signal => (
+                    <Card key={signal.testInteractionRunId} variant="bordered" padding="md">
+                      <div className="mb-3 flex items-center justify-between gap-3">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {signal.testInteractionTitle ??
+                              `Test Interaction #${signal.testInteractionId}`}
+                          </div>
+                          <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                            Case run #{signal.testInteractionRunId}
+                            {signal.completedAt
+                              ? ` • ${new Date(signal.completedAt).toLocaleString()}`
+                              : ''}
+                          </div>
+                        </div>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          {signal.status}
+                        </span>
+                      </div>
+                      {signal.consoleLog && (
+                        <pre className="mb-3 max-h-48 overflow-auto rounded border border-gray-200 bg-gray-50 p-3 text-xs leading-5 text-gray-700 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-300">
+                          {signal.consoleLog}
+                        </pre>
+                      )}
+                      {signal.networkLog && (
+                        <pre className="max-h-48 overflow-auto rounded border border-gray-200 bg-gray-50 p-3 text-xs leading-5 text-gray-700 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-300">
+                          {signal.networkLog}
+                        </pre>
+                      )}
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {pageStates.length === 0 ? (
+          <p className="text-gray-500 dark:text-gray-400">No page states found.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {pageStates.map(state => (
+              <button
+                key={state.id}
+                onClick={() =>
+                  navigate(
+                    runId ? r.runPageState(runId, pageId, state.id) : r.pageState(pageId, state.id)
+                  )
+                }
+                className="text-left rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
+              >
+                <div className="h-40 bg-gray-100 dark:bg-gray-800 overflow-hidden">
+                  {state.screenshotPath ? (
+                    <img
+                      src={buildArtifactUrl(baseUrl, state.screenshotPath)}
+                      alt={`State ${state.id} screenshot`}
+                      className="w-full h-full object-cover object-top"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <span className="text-xs text-gray-400">No screenshot</span>
+                    </div>
+                  )}
+                </div>
+                <div className="p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      State #{state.id}
+                    </span>
+                    <span className="px-1.5 py-0.5 text-xs rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                      {state.sizeClass}
+                    </span>
                   </div>
-                )}
-              </div>
-              <div className="p-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    State #{state.id}
-                  </span>
-                  <span className="px-1.5 py-0.5 text-xs rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
-                    {state.sizeClass}
-                  </span>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    {state.capturedAt
+                      ? new Date(state.capturedAt).toLocaleString()
+                      : 'No capture date'}
+                  </div>
                 </div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">
-                  {state.capturedAt
-                    ? new Date(state.capturedAt).toLocaleString()
-                    : 'No capture date'}
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
-      )}
+              </button>
+            ))}
+          </div>
+        )}
 
-      {/* Test Interactions Section */}
-      {(startingElements.length > 0 || landingElements.length > 0 || onPageElements.length > 0) && (
-        <div className="mt-10">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-            Test Interactions
-          </h2>
+        {/* Test Interactions Section */}
+        {(startingElements.length > 0 ||
+          landingElements.length > 0 ||
+          onPageElements.length > 0) && (
+          <div className="mt-10">
+            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+              Test Interactions
+            </h2>
 
-          {onPageElements.length > 0 && (
-            <TestInteractionGroup
-              label="On this page"
-              elements={onPageElements}
-              onTest={el => createRun({ testInteractionId: el.id })}
-              onOpen={el => navigate(r.testInteraction(el.id))}
-            />
-          )}
+            {onPageElements.length > 0 && (
+              <TestInteractionGroup
+                label="On this page"
+                elements={onPageElements}
+                onTest={el => createRun({ testInteractionId: el.id })}
+                onOpen={el => navigate(r.testInteraction(el.id))}
+              />
+            )}
 
-          {startingElements.length > 0 && (
-            <TestInteractionGroup
-              label="Starting from this page"
-              elements={startingElements}
-              onTest={el => createRun({ testInteractionId: el.id })}
-              onOpen={el => navigate(r.testInteraction(el.id))}
-            />
-          )}
+            {startingElements.length > 0 && (
+              <TestInteractionGroup
+                label="Starting from this page"
+                elements={startingElements}
+                onTest={el => createRun({ testInteractionId: el.id })}
+                onOpen={el => navigate(r.testInteraction(el.id))}
+              />
+            )}
 
-          {landingElements.length > 0 && (
-            <TestInteractionGroup
-              label="Landing on this page"
-              elements={landingElements}
-              onTest={el => createRun({ testInteractionId: el.id })}
-              onOpen={el => navigate(r.testInteraction(el.id))}
-            />
-          )}
-        </div>
-      )}
-    </div>
+            {landingElements.length > 0 && (
+              <TestInteractionGroup
+                label="Landing on this page"
+                elements={landingElements}
+                onTest={el => createRun({ testInteractionId: el.id })}
+                onOpen={el => navigate(r.testInteraction(el.id))}
+              />
+            )}
+          </div>
+        )}
+      </div>
+    </ContentLayout>
   );
 }
 
@@ -398,6 +409,7 @@ function TestInteractionRow({
     <InteractionCell
       interaction={element}
       onClick={onOpen}
+      compact
       actions={
         <div className="relative" ref={menuRef}>
           <button

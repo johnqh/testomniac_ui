@@ -35,26 +35,25 @@ interface DataTableProps<T> {
   onPageChange?: (pageIndex: number) => void;
 }
 
-function SkeletonRows({ columnCount }: { columnCount: number }) {
-  const widths = ['w-3/4', 'w-1/2', 'w-2/3', 'w-5/6'];
+function SkeletonCards() {
   return (
-    <>
+    <div className="space-y-2">
       {Array.from({ length: 5 }).map((_, rowIdx) => (
-        <tr
+        <div
           key={rowIdx}
-          className={`border-b border-gray-100 dark:border-gray-800 ${rowIdx % 2 === 0 ? 'bg-gray-50/50 dark:bg-gray-800/20' : ''}`}
+          className="rounded-lg border border-gray-200 px-4 py-3 dark:border-gray-700"
         >
-          {Array.from({ length: columnCount }).map((_, colIdx) => (
-            <td key={colIdx} className="px-3 py-2.5">
-              <div
-                className={`h-4 ${widths[(rowIdx + colIdx) % widths.length]} rounded bg-gray-200 dark:bg-gray-700 animate-pulse`}
-              />
-            </td>
-          ))}
-        </tr>
+          <div className="h-4 w-2/3 rounded bg-gray-200 animate-pulse dark:bg-gray-700" />
+          <div className="mt-2 h-3 w-1/3 rounded bg-gray-200 animate-pulse dark:bg-gray-700" />
+        </div>
       ))}
-    </>
+    </div>
   );
+}
+
+/** Column header text for a cell label, falling back to the column id. */
+function columnLabel(header: unknown, id: string): string {
+  return typeof header === 'string' ? header : id;
 }
 
 function EmptyState({ message }: { message: string }) {
@@ -176,72 +175,46 @@ export function DataTable<T>({
       {/* Empty state */}
       {!isLoading && data.length === 0 && <EmptyState message={emptyMessage} />}
 
-      {/* Table */}
-      {(isLoading || data.length > 0) && (
-        <table className="w-full text-sm">
-          <thead>
-            {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id} className="border-b border-gray-200 dark:border-gray-700">
-                {headerGroup.headers.map(header => {
-                  const isSorted = header.column.getIsSorted();
-                  return (
-                    <th
-                      key={header.id}
-                      className={`px-3 py-2 text-left text-xs font-medium uppercase tracking-wider cursor-pointer select-none ${
-                        isSorted
-                          ? 'text-blue-600 dark:text-blue-400'
-                          : 'text-gray-500 dark:text-gray-400'
-                      }`}
-                      onClick={header.column.getToggleSortingHandler()}
-                    >
-                      <span className="inline-flex items-center gap-1">
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                        {isSorted === 'asc' ? (
-                          <svg className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                            <path
-                              fillRule="evenodd"
-                              d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        ) : isSorted === 'desc' ? (
-                          <svg className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                            <path
-                              fillRule="evenodd"
-                              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        ) : null}
+      {/* Cards (mobile-friendly; replaces the row/column table) */}
+      {isLoading && <SkeletonCards />}
+      {!isLoading && data.length > 0 && (
+        <div className="space-y-2">
+          {table.getRowModel().rows.map(row => {
+            const cells = row.getVisibleCells();
+            const [first, ...rest] = cells;
+            return (
+              <div
+                key={row.id}
+                role={onRowClick ? 'button' : undefined}
+                tabIndex={onRowClick ? 0 : undefined}
+                onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+                className={`rounded-lg border border-gray-200 bg-white px-4 py-3 transition-colors dark:border-gray-700 dark:bg-gray-800 ${
+                  onRowClick ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/40' : ''
+                }`}
+              >
+                {first && (
+                  <div className="font-medium text-gray-900 dark:text-gray-100">
+                    {flexRender(first.column.columnDef.cell, first.getContext())}
+                  </div>
+                )}
+                {rest.length > 0 && (
+                  <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
+                    {rest.map(cell => (
+                      <span key={cell.id} className="inline-flex items-center gap-1">
+                        <span className="text-gray-400 dark:text-gray-500">
+                          {columnLabel(cell.column.columnDef.header, cell.column.id)}:
+                        </span>
+                        <span className="text-gray-700 dark:text-gray-300">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </span>
                       </span>
-                    </th>
-                  );
-                })}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <SkeletonRows columnCount={columns.length} />
-            ) : (
-              table.getRowModel().rows.map(row => (
-                <tr
-                  key={row.id}
-                  onClick={onRowClick ? () => onRowClick(row.original) : undefined}
-                  className={`border-b border-gray-100 dark:border-gray-800 even:bg-gray-50 dark:even:bg-gray-800/30 hover:bg-gray-100/70 dark:hover:bg-gray-800/50 transition-colors ${
-                    onRowClick ? 'cursor-pointer' : ''
-                  }`}
-                >
-                  {row.getVisibleCells().map(cell => (
-                    <td key={cell.id} className="px-3 py-2.5 text-gray-900 dark:text-gray-100">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       )}
 
       {/* Pagination */}

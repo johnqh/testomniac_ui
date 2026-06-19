@@ -151,6 +151,8 @@ interface PagesMapViewProps {
   /** Map of pageId → screenshot artifact path (from page states) */
   screenshotsByPageId?: Map<number, string>;
   apiUrl?: string;
+  /** When true, the map fills its parent's height instead of a fixed 600px box. */
+  fill?: boolean;
 }
 
 export function PagesMapView({
@@ -159,6 +161,7 @@ export function PagesMapView({
   runId,
   screenshotsByPageId,
   apiUrl,
+  fill = false,
 }: PagesMapViewProps) {
   const { navigate } = useLocalizedNavigate();
   const r = useEnvRoutes();
@@ -357,14 +360,18 @@ export function PagesMapView({
   }
 
   return (
-    <div className="space-y-2">
+    <div className={fill ? 'flex h-full flex-col gap-2' : 'space-y-2'}>
       {hiddenInteractionCount > 0 && (
-        <p className="text-xs text-gray-500 dark:text-gray-400">
+        <p className="flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">
           {hiddenInteractionCount} interaction
           {hiddenInteractionCount === 1 ? '' : 's'} omitted (no cross-page connection).
         </p>
       )}
-      <div className="h-[600px] w-full overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+      <div
+        className={`w-full overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 ${
+          fill ? 'min-h-0 flex-1' : 'h-[600px]'
+        }`}
+      >
         <ReactFlow
           nodes={nodes}
           edges={edges}

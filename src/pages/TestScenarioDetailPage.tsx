@@ -7,7 +7,7 @@ import {
   useProductPersonas,
   useGenerateSequence,
 } from '@sudobility/testomniac_client';
-import { Alert, ActionButton, Card } from '@sudobility/components';
+import { Alert, ActionButton, Card, ContentLayout } from '@sudobility/components';
 import type {
   TestScenarioSequenceResponse,
   TestInteractionResponse,
@@ -61,7 +61,7 @@ function SequenceCard({
     <Card variant="bordered" padding="none" className="overflow-hidden">
       <button
         onClick={onToggle}
-        className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+        className="flex items-center gap-3 w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
       >
         <span className="text-xs text-gray-400">{isExpanded ? '▼' : '▶'}</span>
         <div className="flex-1 min-w-0">
@@ -83,7 +83,7 @@ function SequenceCard({
             <div className="text-xs text-gray-400 py-2">No interactions in this sequence.</div>
           )}
           {!isLoading && sorted.length > 0 && (
-            <div className="space-y-2">
+            <div className="space-y-1">
               {sorted.map(link => {
                 const interaction = interactionById.get(link.testInteractionId);
                 const onOpen = () => navigate(interactionPath(link.testInteractionId));
@@ -98,6 +98,7 @@ function SequenceCard({
                     interaction={interaction}
                     onClick={onOpen}
                     leading={stepLabel}
+                    compact
                   />
                 ) : (
                   <ListCell
@@ -105,6 +106,7 @@ function SequenceCard({
                     leading={stepLabel}
                     title={`Interaction #${link.testInteractionId}`}
                     onClick={onOpen}
+                    compact
                   />
                 );
               })}
@@ -228,95 +230,108 @@ export function TestScenarioDetailPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <SEOHead title={scenario?.title ?? `Scenario #${scenarioId}`} description="" noIndex />
+    <ContentLayout
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title={scenario?.title ?? `Scenario #${scenarioId}`} description="" noIndex />
 
-      <BackLink label="Test Scenarios" onClick={() => navigate(r.testScenarios())} />
+          <BackLink label="Test Scenarios" onClick={() => navigate(r.testScenarios())} />
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-2">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-          {scenario?.title ?? `Test Scenario #${scenarioId}`}
-        </h1>
-        <AddToBundleButton itemType="scenario" itemId={Number(scenarioId)} />
-      </div>
-
-      {scenario && (
-        <div className="mb-6 space-y-3">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
-            <span>
-              Starting path:{' '}
-              <code className="text-gray-900 dark:text-gray-100">{scenario.startingPath}</code>
-            </span>
-            <span>
-              Device: <code className="text-gray-900 dark:text-gray-100">{scenario.sizeClass}</code>
-            </span>
-            {scenario.personaId && (
-              <span>
-                Persona:{' '}
-                <code className="text-gray-900 dark:text-gray-100">
-                  {personaName ?? `#${scenario.personaId}`}
-                </code>
-              </span>
-            )}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {scenario?.title ?? `Test Scenario #${scenarioId}`}
+            </h1>
+            <AddToBundleButton itemType="scenario" itemId={Number(scenarioId)} />
           </div>
-          <Card variant="bordered" padding="sm">
-            <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Prompt</div>
-            <p className="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap">
-              {scenario.prompt}
-            </p>
-          </Card>
         </div>
-      )}
+      }
+    >
+      <div className="px-4 py-4 sm:px-6">
+        {scenario && (
+          <div className="mb-6 space-y-3">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
+              <span>
+                Starting path:{' '}
+                <code className="text-gray-900 dark:text-gray-100">{scenario.startingPath}</code>
+              </span>
+              <span>
+                Device:{' '}
+                <code className="text-gray-900 dark:text-gray-100">{scenario.sizeClass}</code>
+              </span>
+              {scenario.personaId && (
+                <span>
+                  Persona:{' '}
+                  <code className="text-gray-900 dark:text-gray-100">
+                    {personaName ?? `#${scenario.personaId}`}
+                  </code>
+                </span>
+              )}
+            </div>
+            <Card variant="bordered" padding="sm">
+              <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                Prompt
+              </div>
+              <p className="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap">
+                {scenario.prompt}
+              </p>
+            </Card>
+          </div>
+        )}
 
-      {/* Sequences */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-3">
-        <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-          Sequences
-        </h2>
-        <ActionButton
-          variant="primary"
-          className="bg-purple-600 hover:bg-purple-700"
-          onClick={handleGenerateSequence}
-          disabled={!scenarioId}
-          isLoading={isGenerating}
-          loadingText="Generating..."
-        >
-          Generate Sequence
-        </ActionButton>
+        {/* Sequences */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-3">
+          <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            Sequences
+          </h2>
+          <ActionButton
+            variant="primary"
+            className="bg-purple-600 hover:bg-purple-700"
+            onClick={handleGenerateSequence}
+            disabled={!scenarioId}
+            isLoading={isGenerating}
+            loadingText="Generating..."
+          >
+            Generate Sequence
+          </ActionButton>
+        </div>
+
+        {generateErrorMsg && (
+          <Alert variant="error" description={generateErrorMsg} className="mb-3" />
+        )}
+
+        {sequencesLoading && (
+          <div className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">
+            Loading...
+          </div>
+        )}
+
+        {!sequencesLoading && sequences.length === 0 && (
+          <EmptyState
+            title="No sequences yet"
+            description="Sequences are created when a scenario is run against an environment."
+          />
+        )}
+
+        {sequences.length > 0 && (
+          <div className="space-y-2">
+            {sequences.map((seq: TestScenarioSequenceResponse) => (
+              <SequenceCard
+                key={seq.id}
+                sequence={seq}
+                isExpanded={expandedSequenceId === seq.id}
+                onToggle={() =>
+                  setExpandedSequenceId(expandedSequenceId === seq.id ? null : seq.id)
+                }
+                networkClient={networkClient}
+                token={token ?? ''}
+                interactionPath={r.testInteraction}
+                navigate={navigate}
+                interactions={testInteractions}
+              />
+            ))}
+          </div>
+        )}
       </div>
-
-      {generateErrorMsg && (
-        <Alert variant="error" description={generateErrorMsg} className="mb-3" />
-      )}
-
-      {sequencesLoading && (
-        <div className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">Loading...</div>
-      )}
-
-      {!sequencesLoading && sequences.length === 0 && (
-        <EmptyState
-          title="No sequences yet"
-          description="Sequences are created when a scenario is run against an environment."
-        />
-      )}
-
-      {sequences.length > 0 && (
-        <div className="space-y-2">
-          {sequences.map((seq: TestScenarioSequenceResponse) => (
-            <SequenceCard
-              key={seq.id}
-              sequence={seq}
-              isExpanded={expandedSequenceId === seq.id}
-              onToggle={() => setExpandedSequenceId(expandedSequenceId === seq.id ? null : seq.id)}
-              networkClient={networkClient}
-              token={token ?? ''}
-              interactionPath={r.testInteraction}
-              navigate={navigate}
-              interactions={testInteractions}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+    </ContentLayout>
   );
 }

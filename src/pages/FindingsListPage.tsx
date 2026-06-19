@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useRunFindings, useRunPages } from '@sudobility/testomniac_client';
 import type { TestRunFindingResponse } from '@sudobility/testomniac_types';
-import { parseExpertiseTitle, PRIORITY_LEVELS } from '@sudobility/testomniac_lib';
-import { Badge, Button } from '@sudobility/components';
+import { parseExpertiseTitle, PRIORITY_LEVELS, formatDate } from '@sudobility/testomniac_lib';
+import { Badge, Button, ContentLayout } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { getPriorityConfig } from '../config/priorityConfig';
@@ -142,226 +142,226 @@ export function FindingsListPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <SEOHead title="Findings" description="" noIndex />
+    <ContentLayout
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title="Findings" description="" noIndex />
 
-      {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Findings</h1>
-          {runId && (
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Showing findings for run #{runId}.
-            </p>
-          )}
-        </div>
+          {/* Header */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Findings</h1>
+              {runId && (
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  Showing findings for run #{runId}.
+                </p>
+              )}
+            </div>
 
-        {/* Type filter toggle */}
-        <div className="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <button
-            onClick={() => setTypeFilter('all')}
-            className={`px-3 py-1.5 text-sm font-medium transition-colors ${
-              typeFilter === 'all'
-                ? 'bg-blue-600 text-white'
-                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-            }`}
-          >
-            All
-          </button>
-          <button
-            onClick={() => setTypeFilter('errors')}
-            className={`px-3 py-1.5 text-sm font-medium transition-colors ${
-              typeFilter === 'errors'
-                ? 'bg-red-600 text-white'
-                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-            }`}
-          >
-            Errors only
-          </button>
-        </div>
-      </div>
-
-      {/* Priority chips */}
-      {!isLoading && findings.length > 0 && (
-        <div className="mb-4 flex flex-wrap gap-2">
-          {PRIORITY_LEVELS.map(p => {
-            const key = String(p);
-            const config = getPriorityConfig(p);
-            const count = findings.filter(f => f.priority === p).length;
-            const isActive = priorityFilter === key;
-            return (
+            {/* Type filter toggle */}
+            <div className="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
               <button
-                key={key}
-                onClick={() => setPriorityFilter(isActive ? '' : (key as PriorityFilter))}
-                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-all ${
-                  isActive
-                    ? `${config.chipClassName} ring-2 ring-offset-1 ring-current`
-                    : `${config.chipClassName} opacity-80 hover:opacity-100`
+                onClick={() => setTypeFilter('all')}
+                className={`px-3 py-1.5 text-sm font-medium transition-colors ${
+                  typeFilter === 'all'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                 }`}
               >
-                <span>{config.shortLabel}</span>
-                <span className="font-bold">{count}</span>
+                All
               </button>
-            );
-          })}
-        </div>
-      )}
+              <button
+                onClick={() => setTypeFilter('errors')}
+                className={`px-3 py-1.5 text-sm font-medium transition-colors ${
+                  typeFilter === 'errors'
+                    ? 'bg-red-600 text-white'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                }`}
+              >
+                Errors only
+              </button>
+            </div>
+          </div>
 
-      {/* Filter dropdowns row */}
-      {!isLoading && findings.length > 0 && (
-        <div className="mb-4 flex flex-wrap items-center gap-3">
-          {/* Category filter */}
-          {uniqueCategories.length > 0 && (
-            <SelectField
-              value={categoryFilter}
-              onChange={setCategoryFilter}
-              options={[
-                { value: '', label: 'All categories' },
-                ...uniqueCategories.map(cat => ({ value: cat, label: cat })),
-              ]}
-            />
+          {/* Priority chips */}
+          {!isLoading && findings.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {PRIORITY_LEVELS.map(p => {
+                const key = String(p);
+                const config = getPriorityConfig(p);
+                const count = findings.filter(f => f.priority === p).length;
+                const isActive = priorityFilter === key;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setPriorityFilter(isActive ? '' : (key as PriorityFilter))}
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-all ${
+                      isActive
+                        ? `${config.chipClassName} ring-2 ring-offset-1 ring-current`
+                        : `${config.chipClassName} opacity-80 hover:opacity-100`
+                    }`}
+                  >
+                    <span>{config.shortLabel}</span>
+                    <span className="font-bold">{count}</span>
+                  </button>
+                );
+              })}
+            </div>
           )}
 
-          {/* Path filter */}
-          {uniquePaths.length > 0 && (
-            <SelectField
-              value={pathFilter}
-              onChange={setPathFilter}
-              options={[
-                { value: '', label: 'All pages' },
-                ...uniquePaths.map(p => ({ value: p, label: p })),
-              ]}
-            />
-          )}
+          {/* Filter dropdowns row */}
+          {!isLoading && findings.length > 0 && (
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              {/* Category filter */}
+              {uniqueCategories.length > 0 && (
+                <SelectField
+                  value={categoryFilter}
+                  onChange={setCategoryFilter}
+                  options={[
+                    { value: '', label: 'All categories' },
+                    ...uniqueCategories.map(cat => ({ value: cat, label: cat })),
+                  ]}
+                />
+              )}
 
-          {/* Clear all filters */}
-          {hasActiveFilters && (
-            <Button
-              variant="link"
-              size="sm"
-              onClick={() => {
-                setTypeFilter('all');
-                setPriorityFilter('');
-                setPathFilter('');
-                setCategoryFilter('');
-              }}
-            >
-              Clear filters
-            </Button>
-          )}
+              {/* Path filter */}
+              {uniquePaths.length > 0 && (
+                <SelectField
+                  value={pathFilter}
+                  onChange={setPathFilter}
+                  options={[
+                    { value: '', label: 'All pages' },
+                    ...uniquePaths.map(p => ({ value: p, label: p })),
+                  ]}
+                />
+              )}
 
-          {/* Result count */}
-          <span className="ml-auto text-xs text-gray-500 dark:text-gray-400">
-            {filteredFindings.length} of {findings.length} findings
-          </span>
-        </div>
-      )}
-
-      {isLoading && <LoadingState message="Loading findings..." />}
-
-      {!isLoading && filteredFindings.length === 0 && (
-        <EmptyState
-          title={hasActiveFilters ? 'No findings match the current filters' : 'No findings yet'}
-          description={
-            hasActiveFilters
-              ? 'Try adjusting or clearing the filters above.'
-              : 'Findings will appear here after test runs complete.'
-          }
-        />
-      )}
-
-      {!isLoading && filteredFindings.length > 0 && (
-        <div className="space-y-3">
-          {filteredFindings.map(finding => {
-            const { tag, title } = parseExpertiseTitle(finding.title);
-            const canOpen = !!(finding.path && pageIdByPath.has(finding.path) && effectiveRunId);
-            return (
-              <div key={finding.id}>
-                <div
-                  onClick={canOpen ? () => openFinding(finding) : undefined}
-                  role={canOpen ? 'button' : undefined}
-                  tabIndex={canOpen ? 0 : undefined}
-                  onKeyDown={
-                    canOpen
-                      ? e => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            openFinding(finding);
-                          }
-                        }
-                      : undefined
-                  }
-                  className={`px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 ${
-                    canOpen
-                      ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors'
-                      : ''
-                  }`}
+              {/* Clear all filters */}
+              {hasActiveFilters && (
+                <Button
+                  variant="link"
+                  size="sm"
+                  onClick={() => {
+                    setTypeFilter('all');
+                    setPriorityFilter('');
+                    setPathFilter('');
+                    setCategoryFilter('');
+                  }}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="flex flex-col gap-1">
-                      <FindingTypeBadge type={finding.type} />
-                      <PriorityBadge priority={finding.priority} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        {tag && (
-                          <span className="inline-flex shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400">
-                            {tag}
-                          </span>
-                        )}
-                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                          {title}
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        {finding.description}
-                      </p>
-                      <div className="flex items-center gap-3 mt-2">
-                        {finding.path && (
-                          <span className="text-xs font-mono text-gray-400 dark:text-gray-500">
-                            {finding.path}
-                          </span>
-                        )}
-                        <span className="text-xs text-gray-400 dark:text-gray-500">
-                          {finding.interactionRunIds?.length
-                            ? `Run #${finding.interactionRunIds.join(', #')}`
-                            : ''}
-                        </span>
-                        {finding.createdAt && (
-                          <span className="text-xs text-gray-400 dark:text-gray-500">
-                            {new Date(finding.createdAt).toLocaleString()}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={e => {
-                        e.stopPropagation();
-                        setScriptFindingId(prev => (prev === finding.id ? null : finding.id));
-                      }}
-                      className="shrink-0 self-start"
-                    >
-                      {scriptFindingId === finding.id ? 'Hide' : 'Script'}
-                    </Button>
-                  </div>
-                </div>
-                {scriptFindingId === finding.id && (
-                  <div className="mt-2">
-                    <ScriptPanel
-                      kind="finding"
-                      id={finding.id}
-                      filename={`finding-${finding.id}.spec.ts`}
-                    />
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                  Clear filters
+                </Button>
+              )}
+
+              {/* Result count */}
+              <span className="ml-auto text-xs text-gray-500 dark:text-gray-400">
+                {filteredFindings.length} of {findings.length} findings
+              </span>
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      }
+    >
+      <div className="px-4 py-4 sm:px-6">
+        {isLoading && <LoadingState message="Loading findings..." />}
+
+        {!isLoading && filteredFindings.length === 0 && (
+          <EmptyState
+            title={hasActiveFilters ? 'No findings match the current filters' : 'No findings yet'}
+            description={
+              hasActiveFilters
+                ? 'Try adjusting or clearing the filters above.'
+                : 'Findings will appear here after test runs complete.'
+            }
+          />
+        )}
+
+        {!isLoading && filteredFindings.length > 0 && (
+          <div className="space-y-2">
+            {filteredFindings.map(finding => {
+              const { tag, title } = parseExpertiseTitle(finding.title);
+              const canOpen = !!(finding.path && pageIdByPath.has(finding.path) && effectiveRunId);
+              return (
+                <div key={finding.id}>
+                  <div
+                    onClick={canOpen ? () => openFinding(finding) : undefined}
+                    role={canOpen ? 'button' : undefined}
+                    tabIndex={canOpen ? 0 : undefined}
+                    onKeyDown={
+                      canOpen
+                        ? e => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              openFinding(finding);
+                            }
+                          }
+                        : undefined
+                    }
+                    className={`px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 ${
+                      canOpen
+                        ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors'
+                        : ''
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex flex-col gap-1">
+                        <FindingTypeBadge type={finding.type} />
+                        <PriorityBadge priority={finding.priority} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          {tag && (
+                            <span className="inline-flex shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                              {tag}
+                            </span>
+                          )}
+                          <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                            {title}
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                          {finding.description}
+                        </p>
+                        <div className="mt-1.5 truncate text-xs text-gray-400 dark:text-gray-500">
+                          {[
+                            finding.path,
+                            finding.interactionRunIds?.length
+                              ? `Run #${finding.interactionRunIds.join(', #')}`
+                              : null,
+                            finding.createdAt ? formatDate(finding.createdAt) : null,
+                          ]
+                            .filter(Boolean)
+                            .join(' · ')}
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={e => {
+                          e.stopPropagation();
+                          setScriptFindingId(prev => (prev === finding.id ? null : finding.id));
+                        }}
+                        className="shrink-0 self-start"
+                      >
+                        {scriptFindingId === finding.id ? 'Hide' : 'Script'}
+                      </Button>
+                    </div>
+                  </div>
+                  {scriptFindingId === finding.id && (
+                    <div className="mt-2">
+                      <ScriptPanel
+                        kind="finding"
+                        id={finding.id}
+                        filename={`finding-${finding.id}.spec.ts`}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </ContentLayout>
   );
 }

@@ -8,7 +8,15 @@ import {
   useDeleteTestSurfaceBundle,
   useRemoveFromBundle,
 } from '@sudobility/testomniac_client';
-import { ActionButton, Button, Tabs, TabsList, TabsTrigger } from '@sudobility/components';
+import {
+  ActionButton,
+  Button,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  ContentLayout,
+  CardGrid,
+} from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { SurfaceCell, InteractionCell, ScenarioCell } from '../components/cells';
@@ -225,136 +233,159 @@ export function BundleDetailPage() {
   ];
 
   return (
-    <div className="p-4 sm:p-6">
-      <SEOHead title={bundle.title} description="" noIndex />
-      <BackLink label="Bundles" onClick={() => navigate(r.bundles())} />
+    <ContentLayout
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title={bundle.title} description="" noIndex />
+          <BackLink label="Bundles" onClick={() => navigate(r.bundles())} />
 
-      {/* Header */}
-      <div className="mb-6">
-        {editing ? (
-          <div className="space-y-3">
-            <input
-              type="text"
-              value={editTitle}
-              onChange={e => setEditTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-lg font-bold"
-            />
-            <input
-              type="text"
-              value={editDescription}
-              onChange={e => setEditDescription(e.target.value)}
-              placeholder="Description (optional)"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
-            />
-            {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
-            <div className="flex gap-2">
-              <ActionButton
-                variant="primary"
-                isLoading={isUpdating}
-                loadingText="Saving..."
-                onClick={handleSave}
-                disabled={!editTitle.trim()}
-              >
-                Save
-              </ActionButton>
-              <Button variant="outline" type="button" onClick={() => setEditing(false)}>
-                Cancel
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {bundle.title}
-              </h1>
-              {bundle.description && (
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  {bundle.description}
-                </p>
-              )}
-            </div>
-            {!isDiscovery && (
-              <div className="flex gap-2">
-                <Button variant="outline" type="button" onClick={startEdit}>
-                  Edit
-                </Button>
-                <Button variant="destructive-outline" type="button" onClick={handleDelete}>
-                  Delete
-                </Button>
+          {/* Header */}
+          <div className="mb-6">
+            {editing ? (
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  value={editTitle}
+                  onChange={e => setEditTitle(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-lg font-bold"
+                />
+                <input
+                  type="text"
+                  value={editDescription}
+                  onChange={e => setEditDescription(e.target.value)}
+                  placeholder="Description (optional)"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
+                />
+                {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+                <div className="flex gap-2">
+                  <ActionButton
+                    variant="primary"
+                    isLoading={isUpdating}
+                    loadingText="Saving..."
+                    onClick={handleSave}
+                    disabled={!editTitle.trim()}
+                  >
+                    Save
+                  </ActionButton>
+                  <Button variant="outline" type="button" onClick={() => setEditing(false)}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    {bundle.title}
+                  </h1>
+                  {bundle.description && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      {bundle.description}
+                    </p>
+                  )}
+                </div>
+                {!isDiscovery && (
+                  <div className="flex gap-2">
+                    <Button variant="outline" type="button" onClick={startEdit}>
+                      Edit
+                    </Button>
+                    <Button variant="destructive-outline" type="button" onClick={handleDelete}>
+                      Delete
+                    </Button>
+                  </div>
+                )}
               </div>
             )}
-          </div>
-        )}
-        {!editing && error && (
-          <p className="text-sm text-red-600 dark:text-red-400 mt-2">{error}</p>
-        )}
-      </div>
-
-      {/* Tabs */}
-      <Tabs value={tab} onValueChange={v => setTab(v as ContentTab)} className="mb-4">
-        <TabsList>
-          {tabs.map(t => (
-            <TabsTrigger key={t.key} value={t.key}>
-              {t.label}
-              {t.count > 0 && (
-                <span className="ml-1.5 text-xs text-gray-400 dark:text-gray-500">({t.count})</span>
-              )}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
-
-      {/* Content */}
-      <div className="space-y-2">
-        {tab === 'surfaces' && (
-          <>
-            {surfacesLoading && <LoadingState />}
-            {!surfacesLoading && surfaces.length === 0 && <EmptyState label="surfaces" />}
-            {surfaces.map(s => (
-              <SurfaceCell
-                key={s.id}
-                surface={s}
-                onClick={() => navigate(r.testSurface(s.id))}
-                actions={renderRemoveAction('surfaces', s.id)}
-              />
-            ))}
-          </>
-        )}
-
-        {tab === 'interactions' && (
-          <>
-            {interactionsLoading && <LoadingState />}
-            {!interactionsLoading && interactions.length === 0 && (
-              <EmptyState label="interactions" />
+            {!editing && error && (
+              <p className="text-sm text-red-600 dark:text-red-400 mt-2">{error}</p>
             )}
-            {interactions.map(i => (
-              <InteractionCell
-                key={i.id}
-                interaction={i}
-                onClick={() => navigate(r.testInteraction(i.id))}
-                actions={renderRemoveAction('interactions', i.id)}
-              />
+          </div>
+        </div>
+      }
+    >
+      <div className="px-4 py-4 sm:px-6">
+        {/* Tabs */}
+        <Tabs value={tab} onValueChange={v => setTab(v as ContentTab)} className="mb-4">
+          <TabsList>
+            {tabs.map(t => (
+              <TabsTrigger key={t.key} value={t.key}>
+                {t.label}
+                {t.count > 0 && (
+                  <span className="ml-1.5 text-xs text-gray-400 dark:text-gray-500">
+                    ({t.count})
+                  </span>
+                )}
+              </TabsTrigger>
             ))}
-          </>
-        )}
+          </TabsList>
+        </Tabs>
 
-        {tab === 'scenarios' && (
-          <>
-            {scenariosLoading && <LoadingState />}
-            {!scenariosLoading && scenarios.length === 0 && <EmptyState label="scenarios" />}
-            {scenarios.map(s => (
-              <ScenarioCell
-                key={s.id}
-                scenario={s}
-                onClick={() => navigate(r.testScenario(s.id))}
-                actions={renderRemoveAction('scenarios', s.id)}
-              />
-            ))}
-          </>
-        )}
+        {/* Content */}
+        <div>
+          {tab === 'surfaces' && (
+            <>
+              {surfacesLoading && <LoadingState />}
+              {!surfacesLoading && surfaces.length === 0 && <EmptyState label="surfaces" />}
+              {surfaces.length > 0 && (
+                <CardGrid>
+                  {surfaces.map(s => (
+                    <SurfaceCell
+                      key={s.id}
+                      surface={s}
+                      variant="tile"
+                      onClick={() => navigate(r.testSurface(s.id))}
+                      actions={renderRemoveAction('surfaces', s.id)}
+                    />
+                  ))}
+                </CardGrid>
+              )}
+            </>
+          )}
+
+          {tab === 'interactions' && (
+            <>
+              {interactionsLoading && <LoadingState />}
+              {!interactionsLoading && interactions.length === 0 && (
+                <EmptyState label="interactions" />
+              )}
+              {interactions.length > 0 && (
+                <CardGrid>
+                  {interactions.map(i => (
+                    <InteractionCell
+                      key={i.id}
+                      interaction={i}
+                      variant="tile"
+                      onClick={() => navigate(r.testInteraction(i.id))}
+                      actions={renderRemoveAction('interactions', i.id)}
+                    />
+                  ))}
+                </CardGrid>
+              )}
+            </>
+          )}
+
+          {tab === 'scenarios' && (
+            <>
+              {scenariosLoading && <LoadingState />}
+              {!scenariosLoading && scenarios.length === 0 && <EmptyState label="scenarios" />}
+              {scenarios.length > 0 && (
+                <CardGrid>
+                  {scenarios.map(s => (
+                    <ScenarioCell
+                      key={s.id}
+                      scenario={s}
+                      variant="tile"
+                      onClick={() => navigate(r.testScenario(s.id))}
+                      actions={renderRemoveAction('scenarios', s.id)}
+                    />
+                  ))}
+                </CardGrid>
+              )}
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </ContentLayout>
   );
 }
 

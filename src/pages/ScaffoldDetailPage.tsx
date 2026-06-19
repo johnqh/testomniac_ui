@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useRunScaffolds, useEnvironmentTestInteractions } from '@sudobility/testomniac_client';
-import { Card, Tabs, TabsList, TabsTrigger } from '@sudobility/components';
+import { Card, Tabs, TabsList, TabsTrigger, ContentLayout } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { InteractionCell, SCAFFOLD_ICONS, SCAFFOLD_LABELS } from '../components/cells';
@@ -87,103 +87,107 @@ export function ScaffoldDetailPage() {
   const label = SCAFFOLD_LABELS[scaffold.type] ?? scaffold.type;
 
   return (
-    <div className="p-4 sm:p-6">
-      <SEOHead title={label} description="" noIndex />
-      <BackLink label="Scaffolds" onClick={() => navigate(r.scaffolds())} />
+    <ContentLayout
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title={label} description="" noIndex />
+          <BackLink label="Scaffolds" onClick={() => navigate(r.scaffolds())} />
 
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
-          <span className="text-gray-500 dark:text-gray-400 [&>svg]:h-5 [&>svg]:w-5">
-            {SCAFFOLD_ICONS[scaffold.type]}
-          </span>
-          <h1 className="text-2xl font-bold">{label}</h1>
+          {/* Header */}
+          <div className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
+            <span className="text-gray-500 dark:text-gray-400 [&>svg]:h-5 [&>svg]:w-5">
+              {SCAFFOLD_ICONS[scaffold.type]}
+            </span>
+            <h1 className="text-2xl font-bold">{label}</h1>
+          </div>
         </div>
-      </div>
-
-      {/* Details */}
-      <div className="space-y-4">
-        <Card
-          variant="bordered"
-          padding="none"
-          className="divide-y divide-gray-200 dark:divide-gray-700"
-        >
-          <DetailRow label="Type" value={scaffold.type} />
-          <DetailRow label="Element ID" value={String(scaffold.htmlElementId)} mono />
-          {scaffold.htmlHash && <DetailRow label="HTML Hash" value={scaffold.htmlHash} mono />}
-          {scaffold.createdAt && (
-            <DetailRow label="Created" value={new Date(scaffold.createdAt).toLocaleString()} />
-          )}
-        </Card>
-
-        {/* Tabs: Pages / Interactions */}
-        <div>
-          <Tabs
-            value={tab}
-            onValueChange={v => setTab(v as 'pages' | 'interactions')}
-            className="mb-4"
+      }
+    >
+      <div className="px-4 py-4 sm:px-6">
+        {/* Details */}
+        <div className="space-y-4">
+          <Card
+            variant="bordered"
+            padding="none"
+            className="divide-y divide-gray-200 dark:divide-gray-700"
           >
-            <TabsList>
-              <TabsTrigger value="pages">
-                Pages
-                {pagePaths.length > 0 && (
-                  <span className="ml-1.5 text-xs text-gray-400 dark:text-gray-500">
-                    ({pagePaths.length})
-                  </span>
-                )}
-              </TabsTrigger>
-              <TabsTrigger value="interactions">
-                Interactions
-                {scaffoldInteractions.length > 0 && (
-                  <span className="ml-1.5 text-xs text-gray-400 dark:text-gray-500">
-                    ({scaffoldInteractions.length})
-                  </span>
-                )}
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+            <DetailRow label="Type" value={scaffold.type} />
+            <DetailRow label="Element ID" value={String(scaffold.htmlElementId)} mono />
+            {scaffold.htmlHash && <DetailRow label="HTML Hash" value={scaffold.htmlHash} mono />}
+            {scaffold.createdAt && (
+              <DetailRow label="Created" value={new Date(scaffold.createdAt).toLocaleString()} />
+            )}
+          </Card>
 
-          {tab === 'pages' &&
-            (pagePaths.length > 0 ? (
-              <Card
-                variant="bordered"
-                padding="none"
-                className="divide-y divide-gray-200 dark:divide-gray-700"
-              >
-                {pagePaths.map((path: string) => (
-                  <div
-                    key={path}
-                    className="px-4 py-2.5 text-sm font-mono text-gray-700 dark:text-gray-300"
-                  >
-                    {path}
-                  </div>
-                ))}
-              </Card>
-            ) : (
-              <div className="text-sm text-gray-400 dark:text-gray-500 py-8 text-center">
-                No pages use this scaffold.
-              </div>
-            ))}
+          {/* Tabs: Pages / Interactions */}
+          <div>
+            <Tabs
+              value={tab}
+              onValueChange={v => setTab(v as 'pages' | 'interactions')}
+              className="mb-4"
+            >
+              <TabsList>
+                <TabsTrigger value="pages">
+                  Pages
+                  {pagePaths.length > 0 && (
+                    <span className="ml-1.5 text-xs text-gray-400 dark:text-gray-500">
+                      ({pagePaths.length})
+                    </span>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="interactions">
+                  Interactions
+                  {scaffoldInteractions.length > 0 && (
+                    <span className="ml-1.5 text-xs text-gray-400 dark:text-gray-500">
+                      ({scaffoldInteractions.length})
+                    </span>
+                  )}
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
 
-          {tab === 'interactions' &&
-            (scaffoldInteractions.length > 0 ? (
-              <div className="space-y-2">
-                {scaffoldInteractions.map(i => (
-                  <InteractionCell
-                    key={i.id}
-                    interaction={i}
-                    onClick={() => navigate(r.testInteraction(i.id))}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="text-sm text-gray-400 dark:text-gray-500 py-8 text-center">
-                No interactions use this scaffold.
-              </div>
-            ))}
+            {tab === 'pages' &&
+              (pagePaths.length > 0 ? (
+                <Card
+                  variant="bordered"
+                  padding="none"
+                  className="divide-y divide-gray-200 dark:divide-gray-700"
+                >
+                  {pagePaths.map((path: string) => (
+                    <div
+                      key={path}
+                      className="px-4 py-2.5 text-sm font-mono text-gray-700 dark:text-gray-300"
+                    >
+                      {path}
+                    </div>
+                  ))}
+                </Card>
+              ) : (
+                <div className="text-sm text-gray-400 dark:text-gray-500 py-8 text-center">
+                  No pages use this scaffold.
+                </div>
+              ))}
+
+            {tab === 'interactions' &&
+              (scaffoldInteractions.length > 0 ? (
+                <div className="space-y-2">
+                  {scaffoldInteractions.map(i => (
+                    <InteractionCell
+                      key={i.id}
+                      interaction={i}
+                      onClick={() => navigate(r.testInteraction(i.id))}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-sm text-gray-400 dark:text-gray-500 py-8 text-center">
+                  No interactions use this scaffold.
+                </div>
+              ))}
+          </div>
         </div>
       </div>
-    </div>
+    </ContentLayout>
   );
 }
 

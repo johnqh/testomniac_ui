@@ -12,6 +12,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import { usePageStates, buildArtifactUrl } from '@sudobility/testomniac_client';
 import { layoutDagreGraph } from '@sudobility/testomniac_lib';
+import { ContentLayout } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams, useEnvRoutes } from '../context/routing';
 import BackLink from '../components/navigation/BackLink';
@@ -130,31 +131,40 @@ export function PageGraphPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <SEOHead title="Page Graph" description="" noIndex />
-      <BackLink label="Page Detail" onClick={() => navigate(pagesBasePath)} />
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Page Graph</h1>
-
+    <ContentLayout
+      contentClassName="min-h-0"
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title="Page Graph" description="" noIndex />
+          <BackLink label="Page Detail" onClick={() => navigate(pagesBasePath)} />
+          <h1 className="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">Page Graph</h1>
+        </div>
+      }
+    >
       {pageStates.length === 0 ? (
-        <p className="text-gray-500 dark:text-gray-400">No page states found.</p>
+        <div className="px-4 py-4 sm:px-6">
+          <p className="text-gray-500 dark:text-gray-400">No page states found.</p>
+        </div>
       ) : (
-        <div className="w-full h-[70vh] sm:h-[600px] border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onNodeClick={onNodeClick}
-            nodeTypes={nodeTypes}
-            fitView
-            className="bg-gray-50 dark:bg-gray-900"
-          >
-            <Background />
-            <Controls />
-            <MiniMap />
-          </ReactFlow>
+        <div className="h-full min-h-0 p-4 sm:p-6">
+          <div className="h-full min-h-[400px] w-full overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onNodeClick={onNodeClick}
+              nodeTypes={nodeTypes}
+              fitView
+              className="bg-gray-50 dark:bg-gray-900"
+            >
+              <Background />
+              <Controls />
+              <MiniMap />
+            </ReactFlow>
+          </div>
         </div>
       )}
-    </div>
+    </ContentLayout>
   );
 }

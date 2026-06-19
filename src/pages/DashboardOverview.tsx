@@ -10,7 +10,7 @@ import type {
   TestRunResponse,
 } from '@sudobility/testomniac_types';
 import { formatDuration } from '@sudobility/testomniac_lib';
-import { Alert, Card } from '@sudobility/components';
+import { Alert, Card, ContentLayout } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams, useRoutes } from '../context/routing';
 import { StatusBadge } from '../components/scanner/StatusBadge';
@@ -466,193 +466,200 @@ export function DashboardOverview() {
   }, [firstProductRuns]);
 
   return (
-    <div className="p-4 sm:p-6 max-w-5xl">
-      <SEOHead title="Dashboard" description="" noIndex />
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Dashboard</h1>
-      <p className="text-gray-500 dark:text-gray-400 mb-8">
-        Manage your web application tests and discovery run results.
-      </p>
-
-      {/* ----------------------------------------------------------------- */}
-      {/* Summary Stats Tiles                                                */}
-      {/* ----------------------------------------------------------------- */}
-      {!isLoading && !error && totalProducts > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          <StatTile
-            label="Products"
-            value={totalProducts}
-            accent="blue"
-            icon={
-              <svg
-                className="w-5 h-5"
-                viewBox="0 0 20 20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="3" y="3" width="14" height="14" rx="2" />
-                <path d="M3 8h14" />
-                <path d="M8 8v9" />
-              </svg>
-            }
-          />
-          <StatTile
-            label="Total Runs"
-            value={runsLoading ? '--' : runStats.totalRuns}
-            accent="emerald"
-            icon={
-              <svg
-                className="w-5 h-5"
-                viewBox="0 0 20 20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M6 3v14l8-7-8-7z" />
-              </svg>
-            }
-          />
-          <StatTile
-            label="Pages Discovered"
-            value={runsLoading ? '--' : runStats.totalPages}
-            accent="amber"
-            icon={
-              <svg
-                className="w-5 h-5"
-                viewBox="0 0 20 20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="3" y="2" width="14" height="16" rx="2" />
-                <path d="M7 6h6M7 10h6M7 14h4" />
-              </svg>
-            }
-          />
-          <StatTile
-            label="Tests Completed"
-            value={runsLoading ? '--' : runStats.totalTests}
-            accent={runStats.failedRuns > 0 ? 'red' : 'gray'}
-            icon={
-              <svg
-                className="w-5 h-5"
-                viewBox="0 0 20 20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M4 10l4 4 8-8" />
-              </svg>
-            }
-          />
+    <ContentLayout
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title="Dashboard" description="" noIndex />
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
         </div>
-      )}
+      }
+    >
+      <div className="max-w-5xl px-4 py-4 sm:px-6">
+        <p className="text-gray-500 dark:text-gray-400 mb-8">
+          Manage your web application tests and discovery run results.
+        </p>
 
-      {/* Start new discovery run CTA */}
-      <div className="mb-8">
-        <button
-          onClick={() => navigate(routes.scanNew(entitySlug ?? ''))}
-          className="w-full sm:w-auto flex items-center gap-4 p-5 text-left rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 transition-all group"
-        >
-          <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-600 dark:bg-blue-500 flex items-center justify-center">
-            <svg
-              className="w-5 h-5 text-white"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            >
-              <circle cx="10" cy="10" r="7" />
-              <path d="M10 7v6M7 10h6" />
-            </svg>
+        {/* ----------------------------------------------------------------- */}
+        {/* Summary Stats Tiles                                                */}
+        {/* ----------------------------------------------------------------- */}
+        {!isLoading && !error && totalProducts > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            <StatTile
+              label="Products"
+              value={totalProducts}
+              accent="blue"
+              icon={
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="3" y="3" width="14" height="14" rx="2" />
+                  <path d="M3 8h14" />
+                  <path d="M8 8v9" />
+                </svg>
+              }
+            />
+            <StatTile
+              label="Total Runs"
+              value={runsLoading ? '--' : runStats.totalRuns}
+              accent="emerald"
+              icon={
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M6 3v14l8-7-8-7z" />
+                </svg>
+              }
+            />
+            <StatTile
+              label="Pages Discovered"
+              value={runsLoading ? '--' : runStats.totalPages}
+              accent="amber"
+              icon={
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="3" y="2" width="14" height="16" rx="2" />
+                  <path d="M7 6h6M7 10h6M7 14h4" />
+                </svg>
+              }
+            />
+            <StatTile
+              label="Tests Completed"
+              value={runsLoading ? '--' : runStats.totalTests}
+              accent={runStats.failedRuns > 0 ? 'red' : 'gray'}
+              icon={
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M4 10l4 4 8-8" />
+                </svg>
+              }
+            />
           </div>
-          <div>
-            <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-              New Discovery Run
+        )}
+
+        {/* Start new discovery run CTA */}
+        <div className="mb-8">
+          <button
+            onClick={() => navigate(routes.scanNew(entitySlug ?? ''))}
+            className="w-full sm:w-auto flex items-center gap-4 p-5 text-left rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 transition-all group"
+          >
+            <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-600 dark:bg-blue-500 flex items-center justify-center">
+              <svg
+                className="w-5 h-5 text-white"
+                viewBox="0 0 20 20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
+                <circle cx="10" cy="10" r="7" />
+                <path d="M10 7v6M7 10h6" />
+              </svg>
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-              Scan a URL to discover pages, generate tests, and find issues
-            </p>
-          </div>
-        </button>
-      </div>
-
-      {/* ----------------------------------------------------------------- */}
-      {/* Recent Runs + Status Breakdown (side by side on large screens)    */}
-      {/* ----------------------------------------------------------------- */}
-      {!isLoading && !error && totalProducts > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-          <RecentRunsSection
-            runs={firstProductRuns}
-            entitySlug={entitySlug ?? ''}
-            isLoading={runsLoading}
-          />
-          {!runsLoading && firstProductRuns.length > 0 && (
-            <RunStatusBreakdown runs={firstProductRuns} />
-          )}
-        </div>
-      )}
-
-      {/* Loading state */}
-      {isLoading && (
-        <div className="space-y-4">
-          {[1, 2].map(i => (
-            <div key={i} className="animate-pulse">
-              <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-48 mb-3" />
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div className="h-40 bg-gray-100 dark:bg-gray-800 rounded-xl" />
-                <div className="h-40 bg-gray-100 dark:bg-gray-800 rounded-xl" />
+            <div>
+              <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                New Discovery Run
               </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                Scan a URL to discover pages, generate tests, and find issues
+              </p>
             </div>
-          ))}
+          </button>
         </div>
-      )}
 
-      {/* Error state */}
-      {error && <Alert variant="error" description={`Failed to load products: ${error}`} />}
+        {/* ----------------------------------------------------------------- */}
+        {/* Recent Runs + Status Breakdown (side by side on large screens)    */}
+        {/* ----------------------------------------------------------------- */}
+        {!isLoading && !error && totalProducts > 0 && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+            <RecentRunsSection
+              runs={firstProductRuns}
+              entitySlug={entitySlug ?? ''}
+              isLoading={runsLoading}
+            />
+            {!runsLoading && firstProductRuns.length > 0 && (
+              <RunStatusBreakdown runs={firstProductRuns} />
+            )}
+          </div>
+        )}
 
-      {/* Empty state */}
-      {!isLoading && !error && products.length === 0 && (
-        <EmptyState
-          icon={
-            <svg
-              className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto"
-              viewBox="0 0 48 48"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="6" y="10" width="36" height="28" rx="3" />
-              <path d="M6 18h36" />
-              <circle cx="12" cy="14" r="1.5" fill="currentColor" stroke="none" />
-              <circle cx="18" cy="14" r="1.5" fill="currentColor" stroke="none" />
-              <path d="M16 30h16M20 26h8" />
-            </svg>
-          }
-          title="No products yet"
-          description="Start a discovery run to scan your web application, generate tests, and track issues automatically."
-        />
-      )}
+        {/* Loading state */}
+        {isLoading && (
+          <div className="space-y-4">
+            {[1, 2].map(i => (
+              <div key={i} className="animate-pulse">
+                <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-48 mb-3" />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div className="h-40 bg-gray-100 dark:bg-gray-800 rounded-xl" />
+                  <div className="h-40 bg-gray-100 dark:bg-gray-800 rounded-xl" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
-      {/* Products list */}
-      {products.length > 0 && (
-        <div className="space-y-8">
-          {products.map((product: ProductSummaryResponse) => (
-            <ProductSection key={product.id} product={product} entitySlug={entitySlug ?? ''} />
-          ))}
-        </div>
-      )}
-    </div>
+        {/* Error state */}
+        {error && <Alert variant="error" description={`Failed to load products: ${error}`} />}
+
+        {/* Empty state */}
+        {!isLoading && !error && products.length === 0 && (
+          <EmptyState
+            icon={
+              <svg
+                className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto"
+                viewBox="0 0 48 48"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="6" y="10" width="36" height="28" rx="3" />
+                <path d="M6 18h36" />
+                <circle cx="12" cy="14" r="1.5" fill="currentColor" stroke="none" />
+                <circle cx="18" cy="14" r="1.5" fill="currentColor" stroke="none" />
+                <path d="M16 30h16M20 26h8" />
+              </svg>
+            }
+            title="No products yet"
+            description="Start a discovery run to scan your web application, generate tests, and track issues automatically."
+          />
+        )}
+
+        {/* Products list */}
+        {products.length > 0 && (
+          <div className="space-y-8">
+            {products.map((product: ProductSummaryResponse) => (
+              <ProductSection key={product.id} product={product} entitySlug={entitySlug ?? ''} />
+            ))}
+          </div>
+        )}
+      </div>
+    </ContentLayout>
   );
 }

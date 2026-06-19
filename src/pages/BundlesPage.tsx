@@ -4,8 +4,17 @@ import {
   useCreateTestSurfaceBundle,
 } from '@sudobility/testomniac_client';
 import type { TestSurfaceBundleResponse } from '@sudobility/testomniac_types';
-import { Button, ActionButton, Card, Input, Label } from '@sudobility/components';
+import {
+  Button,
+  ActionButton,
+  Card,
+  Input,
+  Label,
+  ContentLayout,
+  CardGrid,
+} from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
+import { AddButton } from '../components/ui/AddButton';
 import { BundleCell } from '../components/cells';
 import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
 import { useEnvRoutes } from '../context/routing';
@@ -83,74 +92,83 @@ export function BundlesPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <SEOHead title="Bundles" description="" noIndex />
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Test Bundles</h1>
-        {primaryRunner && (
-          <Button variant="primary" onClick={() => setShowForm(!showForm)}>
-            {showForm ? 'Cancel' : 'New Bundle'}
-          </Button>
+    <ContentLayout
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title="Bundles" description="" noIndex />
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Test Bundles</h1>
+            {primaryRunner && (
+              <AddButton
+                label="New Bundle"
+                active={showForm}
+                onClick={() => setShowForm(!showForm)}
+              />
+            )}
+          </div>
+        </div>
+      }
+    >
+      <div className="px-4 py-4 sm:px-6">
+        {showForm && (
+          <Card variant="bordered" className="mb-6 space-y-3">
+            <div>
+              <Label className="mb-1 block">Title</Label>
+              <Input
+                type="text"
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+                placeholder="e.g., Checkout Flow Tests"
+                className="w-full"
+              />
+            </div>
+            <div>
+              <Label className="mb-1 block">Description</Label>
+              <Input
+                type="text"
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                placeholder="Optional description"
+                className="w-full"
+              />
+            </div>
+            {formError && <p className="text-sm text-red-600 dark:text-red-400">{formError}</p>}
+            <div className="flex gap-2">
+              <ActionButton
+                type="button"
+                variant="primary"
+                onClick={handleCreate}
+                disabled={!title.trim()}
+                isLoading={isCreating}
+                loadingText="Creating..."
+              >
+                Create Bundle
+              </ActionButton>
+              <Button variant="outline" type="button" onClick={() => setShowForm(false)}>
+                Cancel
+              </Button>
+            </div>
+          </Card>
+        )}
+
+        {bundles.length === 0 && !showForm ? (
+          <EmptyState
+            title="No bundles yet"
+            description="Bundles are created during discovery scans or can be composed manually."
+          />
+        ) : (
+          <CardGrid>
+            {bundles.map((bundle: TestSurfaceBundleResponse) => (
+              <BundleCell
+                key={bundle.id}
+                bundle={bundle}
+                variant="tile"
+                onClick={() => navigate(r.bundle(bundle.id))}
+              />
+            ))}
+          </CardGrid>
         )}
       </div>
-
-      {showForm && (
-        <Card variant="bordered" className="mb-6 space-y-3">
-          <div>
-            <Label className="mb-1 block">Title</Label>
-            <Input
-              type="text"
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              placeholder="e.g., Checkout Flow Tests"
-              className="w-full"
-            />
-          </div>
-          <div>
-            <Label className="mb-1 block">Description</Label>
-            <Input
-              type="text"
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-              placeholder="Optional description"
-              className="w-full"
-            />
-          </div>
-          {formError && <p className="text-sm text-red-600 dark:text-red-400">{formError}</p>}
-          <div className="flex gap-2">
-            <ActionButton
-              type="button"
-              variant="primary"
-              onClick={handleCreate}
-              disabled={!title.trim()}
-              isLoading={isCreating}
-              loadingText="Creating..."
-            >
-              Create Bundle
-            </ActionButton>
-            <Button variant="outline" type="button" onClick={() => setShowForm(false)}>
-              Cancel
-            </Button>
-          </div>
-        </Card>
-      )}
-
-      {bundles.length === 0 && !showForm ? (
-        <EmptyState
-          title="No bundles yet"
-          description="Bundles are created during discovery scans or can be composed manually."
-        />
-      ) : (
-        <div className="space-y-2">
-          {bundles.map((bundle: TestSurfaceBundleResponse) => (
-            <BundleCell
-              key={bundle.id}
-              bundle={bundle}
-              onClick={() => navigate(r.bundle(bundle.id))}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+    </ContentLayout>
   );
 }

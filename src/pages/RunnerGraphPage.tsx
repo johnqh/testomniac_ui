@@ -12,6 +12,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import { useRunnerPages, useRunnerPageStates } from '@sudobility/testomniac_client';
 import { layoutDagreGraph } from '@sudobility/testomniac_lib';
+import { ContentLayout } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams, useEnvRoutes } from '../context/routing';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
@@ -114,24 +115,32 @@ export function RunnerGraphPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <SEOHead title="Runner Graph" description="" noIndex />
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Runner Graph</h1>
-      <div className="w-full h-[70vh] sm:h-[600px] border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onNodeClick={onNodeClick}
-          fitView
-          className="bg-gray-50 dark:bg-gray-900"
-        >
-          <Background />
-          <Controls />
-          <MiniMap />
-        </ReactFlow>
+    <ContentLayout
+      contentClassName="min-h-0"
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title="Runner Graph" description="" noIndex />
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Runner Graph</h1>
+        </div>
+      }
+    >
+      <div className="h-full min-h-0 p-4 sm:p-6">
+        <div className="h-full min-h-[400px] w-full overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onNodeClick={onNodeClick}
+            fitView
+            className="bg-gray-50 dark:bg-gray-900"
+          >
+            <Background />
+            <Controls />
+            <MiniMap />
+          </ReactFlow>
+        </div>
       </div>
-    </div>
+    </ContentLayout>
   );
 }

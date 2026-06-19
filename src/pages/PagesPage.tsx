@@ -6,6 +6,7 @@ import {
   useRunTestInteractions,
   useRunnerPageStates,
 } from '@sudobility/testomniac_client';
+import { ContentLayout } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams } from '../context/routing';
 import { PagesListView } from '../components/pages/PagesListView';
@@ -108,58 +109,70 @@ export function PagesPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <SEOHead title="Discovered Pages" description="" noIndex />
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-          {runScoped ? `Run #${runId} Pages` : 'Discovered Pages'}
-        </h1>
-        <div className="flex rounded-lg border border-gray-200 dark:border-gray-700">
-          <button
-            onClick={() => setView('list')}
-            className={`px-4 py-1.5 text-sm font-medium transition-colors ${
-              view === 'list'
-                ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
-                : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100'
-            } rounded-l-md`}
-          >
-            List
-          </button>
-          <button
-            onClick={() => setView('map')}
-            className={`px-4 py-1.5 text-sm font-medium transition-colors ${
-              view === 'map'
-                ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
-                : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100'
-            } rounded-r-md`}
-          >
-            Map
-          </button>
+    <ContentLayout
+      contentClassName="min-h-0"
+      header={
+        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+          <SEOHead title="Discovered Pages" description="" noIndex />
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {runScoped ? `Run #${runId} Pages` : 'Discovered Pages'}
+            </h1>
+            <div className="flex rounded-lg border border-gray-200 dark:border-gray-700">
+              <button
+                onClick={() => setView('list')}
+                className={`px-4 py-1.5 text-sm font-medium transition-colors ${
+                  view === 'list'
+                    ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
+                    : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100'
+                } rounded-l-md`}
+              >
+                List
+              </button>
+              <button
+                onClick={() => setView('map')}
+                className={`px-4 py-1.5 text-sm font-medium transition-colors ${
+                  view === 'map'
+                    ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
+                    : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100'
+                } rounded-r-md`}
+              >
+                Map
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-
+      }
+    >
       {pages.length === 0 ? (
-        <p className="text-gray-500 dark:text-gray-400">No pages discovered yet.</p>
+        <div className="px-4 py-4 sm:px-6">
+          <p className="text-gray-500 dark:text-gray-400">No pages discovered yet.</p>
+        </div>
       ) : view === 'list' ? (
-        <PagesListView
-          pages={pages}
-          envId={envId!}
-          entitySlug={entitySlug!}
-          runId={runId}
-          screenshotsByPageId={screenshotsByPageId}
-          apiUrl={baseUrl}
-        />
+        <div className="px-4 py-4 sm:px-6">
+          <PagesListView
+            pages={pages}
+            envId={envId!}
+            entitySlug={entitySlug!}
+            runId={runId}
+            screenshotsByPageId={screenshotsByPageId}
+            apiUrl={baseUrl}
+          />
+        </div>
       ) : (
-        <PagesMapView
-          pages={pages}
-          testInteractions={testInteractions}
-          envId={envId!}
-          entitySlug={entitySlug!}
-          runId={runId}
-          screenshotsByPageId={screenshotsByPageId}
-          apiUrl={baseUrl}
-        />
+        <div className="h-full min-h-0 p-4 sm:p-6">
+          <PagesMapView
+            pages={pages}
+            testInteractions={testInteractions}
+            envId={envId!}
+            entitySlug={entitySlug!}
+            runId={runId}
+            screenshotsByPageId={screenshotsByPageId}
+            apiUrl={baseUrl}
+            fill
+          />
+        </div>
       )}
-    </div>
+    </ContentLayout>
   );
 }
