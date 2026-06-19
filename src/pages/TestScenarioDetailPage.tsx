@@ -43,13 +43,15 @@ function SequenceCard({
   interactions: TestInteractionResponse[];
 }) {
   const { baseUrl } = useTestomniacApi();
-  const { testInteractionLinks, isLoading } = useTestScenarioSequenceTestInteractions({
+  const interactionsQuery = useTestScenarioSequenceTestInteractions(
     networkClient,
     baseUrl,
-    testScenarioSequenceId: sequence.id,
     token,
-    enabled: isExpanded,
-  });
+    sequence.id,
+    { enabled: isExpanded }
+  );
+  const testInteractionLinks = interactionsQuery.data?.data ?? [];
+  const isLoading = interactionsQuery.isLoading;
 
   const sorted = [...testInteractionLinks].sort((a, b) => (a.stepOrder ?? 0) - (b.stepOrder ?? 0));
 
@@ -144,60 +146,52 @@ export function TestScenarioDetailPage() {
   const r = useEnvRoutes();
 
   // Fetch the scenario from the list (no single-get endpoint needed)
-  const { testScenarios } = useRunnerTestScenarios({
+  const scenariosQuery = useRunnerTestScenarios(
     networkClient,
     baseUrl,
-    runnerId: primaryRunner?.id ?? 0,
     token,
-    enabled: !!envId && !!token && !!primaryRunner,
-  });
+    primaryRunner?.id ?? 0,
+    { enabled: !!envId && !!token && !!primaryRunner }
+  );
+  const testScenarios = scenariosQuery.data?.data ?? [];
 
   const scenario = testScenarios.find(s => s.id === Number(scenarioId));
 
-  const { personas } = useProductPersonas({
-    networkClient,
-    baseUrl,
-    productId,
-    token,
+  const personasQuery = useProductPersonas(networkClient, baseUrl, token, productId, {
     enabled: !!productId && !!token,
   });
+  const personas = personasQuery.data?.data ?? [];
 
   // Use the same source as the Test Interactions screen so every sequence step
   // resolves to a full InteractionCell (title + path + type badge).
-  const { testInteractions, refetch: refetchInteractions } = useEnvironmentTestInteractions({
+  const interactionsQuery = useEnvironmentTestInteractions(
     networkClient,
     baseUrl,
-    envId: numericEnvId,
     token,
-    enabled: !!envId && !!token,
-  });
+    numericEnvId,
+    { enabled: !!envId && !!token }
+  );
+  const testInteractions = interactionsQuery.data?.data ?? [];
+  const refetchInteractions = interactionsQuery.refetch;
 
   const personaName = scenario?.personaId
     ? personas.find(p => p.id === scenario.personaId)?.title
     : null;
 
-  const {
-    sequences,
-    isLoading: sequencesLoading,
-    error: sequencesError,
-    refetch: refetchSequences,
-  } = useTestScenarioSequences({
+  const sequencesQuery = useTestScenarioSequences(
     networkClient,
     baseUrl,
-    testScenarioId: Number(scenarioId),
-    token: token ?? '',
-    enabled: !!scenarioId && !!token,
-  });
+    token ?? '',
+    Number(scenarioId),
+    { enabled: !!scenarioId && !!token }
+  );
+  const sequences = sequencesQuery.data?.data ?? [];
+  const sequencesLoading = sequencesQuery.isLoading;
+  const sequencesError = sequencesQuery.error?.message ?? null;
+  const refetchSequences = sequencesQuery.refetch;
 
-  const {
-    generateSequence,
-    isGenerating,
-    error: generateError,
-  } = useGenerateSequence({
-    networkClient,
-    baseUrl,
-    token,
-  });
+  const generateSequenceMutation = useGenerateSequence(networkClient, baseUrl);
+  const isGenerating = generateSequenceMutation.isPending;
 
   const [generateErrorMsg, setGenerateErrorMsg] = useState<string | null>(null);
   const [expandedSequenceId, setExpandedSequenceId] = useState<number | null>(null);
@@ -205,18 +199,21 @@ export function TestScenarioDetailPage() {
   const handleGenerateSequence = async () => {
     setGenerateErrorMsg(null);
     try {
-      await generateSequence({
+      const json = await generateSequenceMutation.mutateAsync({
+        token: token ?? '',
         scenarioId: Number(scenarioId),
-        testEnvironmentId: numericEnvId,
+        data: { testEnvironmentId: numericEnvId },
       });
+      if (!json.success) {
+        setGenerateErrorMsg(json.error ?? 'Failed to generate sequence');
+        return;
+      }
       refetchSequences();
       // The generated interactions are new rows; refresh the interaction list
       // so each sequence step resolves to a full cell without a page reload.
       refetchInteractions();
     } catch (err) {
-      setGenerateErrorMsg(
-        err instanceof Error ? err.message : generateError || 'Failed to generate sequence'
-      );
+      setGenerateErrorMsg(err instanceof Error ? err.message : 'Failed to generate sequence');
     }
   };
 
@@ -288,12 +285,8 @@ export function TestScenarioDetailPage() {
         </ActionButton>
       </div>
 
-      {(generateErrorMsg || generateError) && (
-        <Alert
-          variant="error"
-          description={generateErrorMsg || generateError || undefined}
-          className="mb-3"
-        />
+      {generateErrorMsg && (
+        <Alert variant="error" description={generateErrorMsg} className="mb-3" />
       )}
 
       {sequencesLoading && (

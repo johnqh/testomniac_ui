@@ -43,23 +43,23 @@ export function AddScenarioForm({
   const [error, setError] = useState<string | null>(null);
   const { baseUrl } = useTestomniacApi();
 
-  const { createTestScenario, isCreating } = useCreateTestScenario({
-    networkClient,
-    baseUrl,
-    runnerId,
-    token,
-  });
+  const createTestScenarioMutation = useCreateTestScenario(networkClient, baseUrl);
+  const isCreating = createTestScenarioMutation.isPending;
 
   const handleCreate = async () => {
     if (!title.trim() || !prompt.trim()) return;
     setError(null);
     try {
-      await createTestScenario({
+      await createTestScenarioMutation.mutateAsync({
+        token,
         runnerId,
-        title: title.trim(),
-        startingPath: startingPath.trim(),
-        prompt: prompt.trim(),
-        personaId,
+        data: {
+          runnerId,
+          title: title.trim(),
+          startingPath: startingPath.trim(),
+          prompt: prompt.trim(),
+          personaId,
+        },
       });
       setTitle('');
       setStartingPath(defaultStartingPath);

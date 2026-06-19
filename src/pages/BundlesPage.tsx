@@ -31,29 +31,29 @@ export function BundlesPage() {
   const runnerId = primaryRunner?.id ?? 0;
   const r = useEnvRoutes();
 
-  const { bundles, isLoading, error, refetch } = useRunnerTestSurfaceBundles({
-    networkClient,
-    baseUrl,
-    runnerId,
-    token,
+  const bundlesQuery = useRunnerTestSurfaceBundles(networkClient, baseUrl, token ?? '', runnerId, {
     enabled: !!token && !!primaryRunner,
   });
+  const bundles = bundlesQuery.data?.data ?? [];
+  const isLoading = bundlesQuery.isLoading;
+  const error = bundlesQuery.error?.message ?? null;
+  const refetch = bundlesQuery.refetch;
 
-  const { createBundle, isCreating } = useCreateTestSurfaceBundle({
-    networkClient,
-    baseUrl,
-    runnerId,
-    token,
-  });
+  const createBundleMutation = useCreateTestSurfaceBundle(networkClient, baseUrl);
+  const isCreating = createBundleMutation.isPending;
 
   const handleCreate = async () => {
     if (!title.trim()) return;
     setFormError(null);
     try {
-      await createBundle({
+      await createBundleMutation.mutateAsync({
+        token: token ?? '',
         runnerId,
-        title: title.trim(),
-        description: description.trim() || undefined,
+        data: {
+          runnerId,
+          title: title.trim(),
+          description: description.trim() || undefined,
+        },
       });
       setTitle('');
       setDescription('');

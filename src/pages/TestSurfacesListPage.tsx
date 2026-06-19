@@ -21,13 +21,16 @@ export function TestSurfacesListPage() {
   const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
 
-  const { testSurfaces, isLoading, error } = useEnvironmentTestSurfaces({
+  const surfacesQuery = useEnvironmentTestSurfaces(
     networkClient,
     baseUrl,
-    envId: Number(envId),
-    token: token ?? '',
-    enabled: !!envId && !!token,
-  });
+    token ?? '',
+    Number(envId),
+    { enabled: !!envId && !!token }
+  );
+  const testSurfaces = useMemo(() => surfacesQuery.data?.data ?? [], [surfacesQuery.data]);
+  const isLoading = surfacesQuery.isLoading;
+  const error = surfacesQuery.error?.message ?? null;
 
   const typeOptions = useMemo(() => {
     const types = new Set<string>();

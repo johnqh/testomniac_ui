@@ -20,27 +20,18 @@ export function AddToBundleButton({ itemType, itemId }: AddToBundleButtonProps) 
   const [feedback, setFeedback] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const { bundles } = useRunnerTestSurfaceBundles({
-    networkClient,
-    baseUrl,
-    runnerId,
-    token,
+  const bundlesQuery = useRunnerTestSurfaceBundles(networkClient, baseUrl, token, runnerId, {
     enabled: !!token && !!primaryRunner,
   });
+  const bundles = useMemo(() => bundlesQuery.data?.data ?? [], [bundlesQuery.data]);
 
   const nonDiscoveryBundles = useMemo(
     () => bundles.filter(b => b.title !== 'Discovery'),
     [bundles]
   );
 
-  const { addToBundle, isAdding } = useAddToBundle({
-    networkClient,
-    baseUrl,
-    runnerId,
-    token,
-    itemType,
-    itemId,
-  });
+  const addToBundleMutation = useAddToBundle(networkClient, baseUrl);
+  const isAdding = addToBundleMutation.isPending;
 
   useEffect(() => {
     if (!open) return;
@@ -57,7 +48,13 @@ export function AddToBundleButton({ itemType, itemId }: AddToBundleButtonProps) 
     setOpen(false);
     setFeedback(null);
     try {
-      await addToBundle(bundleId);
+      await addToBundleMutation.mutateAsync({
+        token,
+        runnerId,
+        bundleId,
+        itemType,
+        itemId,
+      });
       setFeedback(`Added to "${bundleTitle}"`);
       setTimeout(() => setFeedback(null), 3000);
     } catch (err) {

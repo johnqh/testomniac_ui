@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   useRunnerTestSurfaceBundles,
   useBundleSurfaces,
@@ -36,17 +36,12 @@ export function BundleDetailPage() {
   const runnerId = primaryRunner?.id ?? 0;
   const r = useEnvRoutes();
 
-  const {
-    bundles,
-    isLoading: bundlesLoading,
-    refetch,
-  } = useRunnerTestSurfaceBundles({
-    networkClient,
-    baseUrl,
-    runnerId,
-    token,
+  const bundlesQuery = useRunnerTestSurfaceBundles(networkClient, baseUrl, token ?? '', runnerId, {
     enabled: !!token && !!primaryRunner,
   });
+  const bundles = useMemo(() => bundlesQuery.data?.data ?? [], [bundlesQuery.data]);
+  const bundlesLoading = bundlesQuery.isLoading;
+  const refetch = bundlesQuery.refetch;
 
   const bundle = bundles.find(b => b.id === numericBundleId);
   const isDiscovery = bundle?.title === 'Discovery';
@@ -57,98 +52,79 @@ export function BundleDetailPage() {
   const [editDescription, setEditDescription] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  const { updateBundle, isUpdating } = useUpdateTestSurfaceBundle({
-    networkClient,
-    baseUrl,
-    runnerId,
-    token,
-  });
+  const updateBundleMutation = useUpdateTestSurfaceBundle(networkClient, baseUrl);
+  const isUpdating = updateBundleMutation.isPending;
 
-  const { deleteBundle } = useDeleteTestSurfaceBundle({
-    networkClient,
-    baseUrl,
-    runnerId,
-    token,
-  });
+  const deleteBundleMutation = useDeleteTestSurfaceBundle(networkClient, baseUrl);
 
-  const {
-    surfaces,
-    isLoading: surfacesLoading,
-    refetch: refetchSurfaces,
-  } = useBundleSurfaces({
+  const surfacesQuery = useBundleSurfaces(
     networkClient,
     baseUrl,
+    token ?? '',
     runnerId,
-    bundleId: numericBundleId,
-    token,
-    enabled: !!token && !!primaryRunner && tab === 'surfaces',
-  });
+    numericBundleId,
+    { enabled: !!token && !!primaryRunner && tab === 'surfaces' }
+  );
+  const surfaces = surfacesQuery.data?.data ?? [];
+  const surfacesLoading = surfacesQuery.isLoading;
+  const refetchSurfaces = surfacesQuery.refetch;
 
-  const {
-    interactions,
-    isLoading: interactionsLoading,
-    refetch: refetchInteractions,
-  } = useBundleInteractions({
+  const interactionsQuery = useBundleInteractions(
     networkClient,
     baseUrl,
+    token ?? '',
     runnerId,
-    bundleId: numericBundleId,
-    token,
-    enabled: !!token && !!primaryRunner && tab === 'interactions',
-  });
+    numericBundleId,
+    { enabled: !!token && !!primaryRunner && tab === 'interactions' }
+  );
+  const interactions = interactionsQuery.data?.data ?? [];
+  const interactionsLoading = interactionsQuery.isLoading;
+  const refetchInteractions = interactionsQuery.refetch;
 
-  const {
-    scenarios,
-    isLoading: scenariosLoading,
-    refetch: refetchScenarios,
-  } = useBundleScenarios({
+  const scenariosQuery = useBundleScenarios(
     networkClient,
     baseUrl,
+    token ?? '',
     runnerId,
-    bundleId: numericBundleId,
-    token,
-    enabled: !!token && !!primaryRunner && tab === 'scenarios',
-  });
+    numericBundleId,
+    { enabled: !!token && !!primaryRunner && tab === 'scenarios' }
+  );
+  const scenarios = scenariosQuery.data?.data ?? [];
+  const scenariosLoading = scenariosQuery.isLoading;
+  const refetchScenarios = scenariosQuery.refetch;
 
-  const { removeFromBundle: removeSurface } = useRemoveFromBundle({
-    networkClient,
-    baseUrl,
-    runnerId,
-    bundleId: numericBundleId,
-    token,
-    itemType: 'surface',
-  });
-
-  const { removeFromBundle: removeInteraction } = useRemoveFromBundle({
-    networkClient,
-    baseUrl,
-    runnerId,
-    bundleId: numericBundleId,
-    token,
-    itemType: 'interaction',
-  });
-
-  const { removeFromBundle: removeScenario } = useRemoveFromBundle({
-    networkClient,
-    baseUrl,
-    runnerId,
-    bundleId: numericBundleId,
-    token,
-    itemType: 'scenario',
-  });
+  const removeFromBundleMutation = useRemoveFromBundle(networkClient, baseUrl);
 
   const handleRemove = useCallback(
     async (type: ContentTab, itemId: number) => {
       setError(null);
       try {
         if (type === 'surfaces') {
-          await removeSurface(itemId);
+          await removeFromBundleMutation.mutateAsync({
+            token: token ?? '',
+            runnerId,
+            bundleId: numericBundleId,
+            itemType: 'surface',
+            itemId,
+          });
           await refetchSurfaces();
         } else if (type === 'interactions') {
-          await removeInteraction(itemId);
+          await removeFromBundleMutation.mutateAsync({
+            token: token ?? '',
+            runnerId,
+            bundleId: numericBundleId,
+            itemType: 'interaction',
+            itemId,
+          });
           await refetchInteractions();
         } else {
-          await removeScenario(itemId);
+          await removeFromBundleMutation.mutateAsync({
+            token: token ?? '',
+            runnerId,
+            bundleId: numericBundleId,
+            itemType: 'scenario',
+            itemId,
+          });
           await refetchScenarios();
         }
       } catch (err) {
@@ -159,9 +135,10 @@ export function BundleDetailPage() {
       refetchInteractions,
       refetchScenarios,
       refetchSurfaces,
-      removeInteraction,
-      removeScenario,
-      removeSurface,
+      removeFromBundleMutation,
+      token,
+      runnerId,
+      numericBundleId,
     ]
   );
 
@@ -177,7 +154,9 @@ export function BundleDetailPage() {
     if (!editTitle.trim()) return;
     setError(null);
     try {
-      await updateBundle({
+      await updateBundleMutation.mutateAsync({
+        token: token ?? '',
+        runnerId,
         bundleId: numericBundleId,
         data: { title: editTitle.trim(), description: editDescription.trim() || undefined },
       });
@@ -191,7 +170,11 @@ export function BundleDetailPage() {
   const handleDelete = async () => {
     setError(null);
     try {
-      await deleteBundle(numericBundleId);
+      await deleteBundleMutation.mutateAsync({
+        token: token ?? '',
+        runnerId,
+        bundleId: numericBundleId,
+      });
       navigate(r.bundles());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete bundle');

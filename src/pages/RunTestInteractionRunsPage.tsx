@@ -17,13 +17,12 @@ export function RunTestInteractionRunsPage() {
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const { navigate } = useLocalizedNavigate();
 
-  const { structure, isLoading, error } = useRunStructure({
-    networkClient,
-    baseUrl,
-    runId: Number(runId),
-    token: token ?? '',
+  const structureQuery = useRunStructure(networkClient, baseUrl, token ?? '', Number(runId), {
     enabled: !!runId && !!token,
   });
+  const structure = structureQuery.data?.data;
+  const isLoading = structureQuery.isLoading;
+  const error = structureQuery.error?.message ?? null;
 
   const r = useEnvRoutes();
   const surface =

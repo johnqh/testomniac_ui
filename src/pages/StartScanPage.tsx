@@ -38,24 +38,24 @@ export function StartScanPage() {
   const [loginUrl, setLoginUrl] = useState('');
 
   // Credentials hook
-  const { credentials: storedCredentials, isLoading: loadingCredentials } = useEntityCredentials({
+  const credentialsQuery = useEntityCredentials(
     networkClient,
     baseUrl,
-    entitySlug: entitySlug ?? '',
-    token: token ?? '',
-    enabled: !!entitySlug && !!token,
-  });
+    token ?? '',
+    entitySlug ?? '',
+    { enabled: !!entitySlug && !!token }
+  );
+  const storedCredentials = credentialsQuery.data?.data ?? [];
+  const loadingCredentials = credentialsQuery.isLoading;
 
   // Scan submission hook
-  const { submitScan, isSubmitting } = useSubmitScan({
-    networkClient,
-    baseUrl,
-  });
+  const submitScanMutation = useSubmitScan(networkClient, baseUrl);
+  const isSubmitting = submitScanMutation.isPending;
 
   async function handleSubmit(url: string, email?: string) {
     setError(null);
     try {
-      const response = await submitScan({
+      const response = await submitScanMutation.mutateAsync({
         url,
         sizeClass,
         ...(email ? { reportEmail: email } : {}),

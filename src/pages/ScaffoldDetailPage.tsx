@@ -25,13 +25,12 @@ export function ScaffoldDetailPage() {
 
   const r = useEnvRoutes();
 
-  const { scaffolds, isLoading, error } = useRunScaffolds({
-    networkClient,
-    baseUrl,
-    runId: latestRun?.id ?? 0,
-    token,
+  const scaffoldsQuery = useRunScaffolds(networkClient, baseUrl, token ?? '', latestRun?.id ?? 0, {
     enabled: !!envId && !!token && !!latestRun,
   });
+  const scaffolds = scaffoldsQuery.data?.data ?? [];
+  const isLoading = scaffoldsQuery.isLoading;
+  const error = scaffoldsQuery.error?.message ?? null;
 
   const numericScaffoldId = Number(scaffoldId);
   const scaffold = scaffolds.find(s => s.id === numericScaffoldId);
@@ -39,13 +38,17 @@ export function ScaffoldDetailPage() {
     ? (scaffold as unknown as { pagePaths: string[] }).pagePaths
     : [];
 
-  const { testInteractions } = useEnvironmentTestInteractions({
+  const testInteractionsQuery = useEnvironmentTestInteractions(
     networkClient,
     baseUrl,
-    envId: Number(envId),
-    token,
-    enabled: !!envId && !!token,
-  });
+    token ?? '',
+    Number(envId),
+    { enabled: !!envId && !!token }
+  );
+  const testInteractions = useMemo(
+    () => testInteractionsQuery.data?.data ?? [],
+    [testInteractionsQuery.data]
+  );
 
   const scaffoldInteractions = useMemo(
     () => testInteractions.filter(i => i.scaffoldId === numericScaffoldId),

@@ -22,61 +22,64 @@ export function PagesPage() {
 
   const runScoped = Boolean(runId);
 
-  const environmentPagesQuery = useEnvironmentPages({
+  const environmentPagesQuery = useEnvironmentPages(
     networkClient,
     baseUrl,
-    envId: Number(envId),
-    token: token ?? '',
-    enabled: !!envId && !!token && !runScoped,
-  });
+    token ?? '',
+    Number(envId),
+    { enabled: !!envId && !!token && !runScoped }
+  );
 
-  const runPagesQuery = useRunPages({
-    networkClient,
-    baseUrl,
-    runId: Number(runId),
-    token: token ?? '',
+  const runPagesQuery = useRunPages(networkClient, baseUrl, token ?? '', Number(runId), {
     enabled: !!runId && !!token,
   });
 
-  const environmentElementsQuery = useEnvironmentTestInteractions({
+  const environmentElementsQuery = useEnvironmentTestInteractions(
     networkClient,
     baseUrl,
-    envId: Number(envId),
-    token: token ?? '',
-    enabled: !!envId && !!token && !runScoped,
-  });
+    token ?? '',
+    Number(envId),
+    { enabled: !!envId && !!token && !runScoped }
+  );
 
-  const runElementsQuery = useRunTestInteractions({
+  const runElementsQuery = useRunTestInteractions(
     networkClient,
     baseUrl,
-    runId: Number(runId),
-    token: token ?? '',
-    enabled: !!runId && !!token,
-  });
+    token ?? '',
+    Number(runId),
+    { enabled: !!runId && !!token }
+  );
 
-  const pages = runScoped ? runPagesQuery.pages : environmentPagesQuery.pages;
+  const pages = runScoped
+    ? (runPagesQuery.data?.data ?? [])
+    : (environmentPagesQuery.data?.data ?? []);
   const testInteractions = runScoped
-    ? runElementsQuery.testInteractions
-    : environmentElementsQuery.testInteractions;
+    ? (runElementsQuery.data?.data ?? [])
+    : (environmentElementsQuery.data?.data ?? []);
   const pagesLoading = runScoped ? runPagesQuery.isLoading : environmentPagesQuery.isLoading;
   const elementsLoading = runScoped
     ? runElementsQuery.isLoading
     : environmentElementsQuery.isLoading;
-  const pagesError = runScoped ? runPagesQuery.error : environmentPagesQuery.error;
-  const elementsError = runScoped ? runElementsQuery.error : environmentElementsQuery.error;
+  const pagesError = runScoped
+    ? (runPagesQuery.error?.message ?? null)
+    : (environmentPagesQuery.error?.message ?? null);
+  const elementsError = runScoped
+    ? (runElementsQuery.error?.message ?? null)
+    : (environmentElementsQuery.error?.message ?? null);
 
   const isLoading = pagesLoading || elementsLoading;
   const error = pagesError || elementsError;
 
   // Fetch page states for screenshot paths (used in both list and map views)
   const primaryRunnerId = pages.length > 0 ? pages[0].runnerId : 0;
-  const { pageStates } = useRunnerPageStates({
+  const pageStatesQuery = useRunnerPageStates(
     networkClient,
     baseUrl,
-    runnerId: primaryRunnerId,
-    token: token ?? '',
-    enabled: !!primaryRunnerId && !!token,
-  });
+    token ?? '',
+    primaryRunnerId,
+    { enabled: !!primaryRunnerId && !!token }
+  );
+  const pageStates = useMemo(() => pageStatesQuery.data?.data ?? [], [pageStatesQuery.data]);
 
   const screenshotsByPageId = useMemo(() => {
     const map = new Map<number, string>();

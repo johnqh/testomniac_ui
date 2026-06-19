@@ -123,18 +123,24 @@ export function TestInteractionsPage() {
     setPageIndex(0);
   };
 
-  const { testInteractions, total, isLoading, error } = useEnvironmentTestInteractionsPage({
+  const interactionsQuery = useEnvironmentTestInteractionsPage(
     networkClient,
     baseUrl,
-    envId: Number(envId),
-    token: token ?? '',
-    enabled: !!envId && !!token,
-    limit: PAGE_SIZE,
-    offset: pageIndex * PAGE_SIZE,
-    testType: typeFilter || undefined,
-    priority: priorityFilter !== '' ? Number(priorityFilter) : undefined,
-    sizeClass: deviceFilter !== 'All' ? deviceFilter.toLowerCase() : undefined,
-  });
+    token ?? '',
+    Number(envId),
+    {
+      limit: PAGE_SIZE,
+      offset: pageIndex * PAGE_SIZE,
+      testType: typeFilter || undefined,
+      priority: priorityFilter !== '' ? Number(priorityFilter) : undefined,
+      sizeClass: deviceFilter !== 'All' ? deviceFilter.toLowerCase() : undefined,
+    },
+    { enabled: !!envId && !!token }
+  );
+  const testInteractions = interactionsQuery.data?.data?.items ?? [];
+  const total = interactionsQuery.data?.data?.total ?? 0;
+  const isLoading = interactionsQuery.isLoading;
+  const error = interactionsQuery.error?.message ?? null;
 
   if (error) {
     return <ErrorState message={error} />;

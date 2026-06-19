@@ -35,50 +35,44 @@ export function TestRunDetailPage() {
   const r = useEnvRoutes();
   const testRunId = Number(runId);
 
-  const {
-    run,
-    isLoading: isRunLoading,
-    error: runError,
-  } = useRun({
-    networkClient,
-    baseUrl,
-    runId: testRunId,
-    token: token ?? '',
+  const runQuery = useRun(networkClient, baseUrl, token ?? '', testRunId, {
     enabled: !!runId && !!token,
   });
-  const { summary } = useRunSummary({
-    networkClient,
-    baseUrl,
-    runId: testRunId,
-    token: token ?? '',
-    enabled: !!runId && !!token,
-  });
-  const { structure } = useRunStructure({
-    networkClient,
-    baseUrl,
-    runId: testRunId,
-    token: token ?? '',
-    enabled: !!runId && !!token,
-  });
+  const run = runQuery.data?.data;
+  const isRunLoading = runQuery.isLoading;
+  const runError = runQuery.error?.message ?? null;
 
-  const { findings, isLoading, error } = useTestRunFindings({
+  const summaryQuery = useRunSummary(networkClient, baseUrl, token ?? '', testRunId, {
+    enabled: !!runId && !!token,
+  });
+  const summary = summaryQuery.data?.data;
+
+  const structureQuery = useRunStructure(networkClient, baseUrl, token ?? '', testRunId, {
+    enabled: !!runId && !!token,
+  });
+  const structure = structureQuery.data?.data;
+
+  const findingsQuery = useTestRunFindings(
     networkClient,
     baseUrl,
-    testInteractionRunId: run?.testInteractionRunId ?? 0,
-    token: token ?? '',
-    enabled: !!run?.testInteractionRunId && !!token,
-  });
-  const {
-    testInteractionRun,
-    isLoading: isCaseRunLoading,
-    error: elementRunError,
-  } = useTestInteractionRun({
+    token ?? '',
+    run?.testInteractionRunId ?? 0,
+    { enabled: !!run?.testInteractionRunId && !!token }
+  );
+  const findings = findingsQuery.data?.data ?? [];
+  const isLoading = findingsQuery.isLoading;
+  const error = findingsQuery.error?.message ?? null;
+
+  const interactionRunQuery = useTestInteractionRun(
     networkClient,
     baseUrl,
-    testInteractionRunId: run?.testInteractionRunId ?? 0,
-    token: token ?? '',
-    enabled: !!run?.testInteractionRunId && !!token,
-  });
+    token ?? '',
+    run?.testInteractionRunId ?? 0,
+    { enabled: !!run?.testInteractionRunId && !!token }
+  );
+  const testInteractionRun = interactionRunQuery.data?.data;
+  const isCaseRunLoading = interactionRunQuery.isLoading;
+  const elementRunError = interactionRunQuery.error?.message ?? null;
 
   if (runError || error || elementRunError) {
     return (

@@ -21,12 +21,9 @@ import { ErrorState, LoadingState, EmptyState } from '../components/states';
 
 function PersonaUseCases({ personaId }: { personaId: number }) {
   const { networkClient, token, baseUrl } = useTestomniacApi();
-  const { useCases, isLoading } = usePersonaUseCases({
-    networkClient,
-    baseUrl,
-    personaId,
-    token: token ?? '',
-  });
+  const useCasesQuery = usePersonaUseCases(networkClient, baseUrl, token ?? '', personaId);
+  const useCases = useCasesQuery.data?.data ?? [];
+  const isLoading = useCasesQuery.isLoading;
 
   if (isLoading) {
     return <div className="text-xs text-gray-400 py-2">Loading use cases...</div>;
@@ -66,35 +63,22 @@ export function PersonasPage() {
   } = useDashboardEnvironmentContext();
 
   // Data
-  const { personas, isLoading, error, refetch } = useProductPersonas({
-    networkClient,
-    baseUrl,
-    productId: productId ?? 0,
-    token,
+  const personasQuery = useProductPersonas(networkClient, baseUrl, token ?? '', productId ?? 0, {
     enabled: !!envId && !!token && !!productId,
   });
+  const personas = personasQuery.data?.data ?? [];
+  const isLoading = personasQuery.isLoading;
+  const error = personasQuery.error?.message ?? null;
+  const refetch = personasQuery.refetch;
 
   // Mutations
-  const { createPersona, isCreating } = useCreatePersona({
-    networkClient,
-    baseUrl,
-    token,
-  });
-  const { updatePersona, isUpdating } = useUpdatePersona({
-    networkClient,
-    baseUrl,
-    token,
-  });
-  const { deletePersona } = useDeletePersona({
-    networkClient,
-    baseUrl,
-    token,
-  });
-  const { detectPersonas, isDetecting } = useDetectPersonas({
-    networkClient,
-    baseUrl,
-    token,
-  });
+  const createPersonaMutation = useCreatePersona(networkClient, baseUrl);
+  const isCreating = createPersonaMutation.isPending;
+  const updatePersonaMutation = useUpdatePersona(networkClient, baseUrl);
+  const isUpdating = updatePersonaMutation.isPending;
+  const deletePersonaMutation = useDeletePersona(networkClient, baseUrl);
+  const detectPersonasMutation = useDetectPersonas(networkClient, baseUrl);
+  const isDetecting = detectPersonasMutation.isPending;
 
   // Form state
   const [showForm, setShowForm] = useState(false);
@@ -141,16 +125,22 @@ export function PersonasPage() {
     setFormError(null);
     try {
       if (editingPersona) {
-        await updatePersona({
+        await updatePersonaMutation.mutateAsync({
+          token: token ?? '',
           personaId: editingPersona.id,
-          title: formTitle.trim(),
-          description: formDescription.trim() || undefined,
+          data: {
+            title: formTitle.trim(),
+            description: formDescription.trim() || undefined,
+          },
         });
       } else {
-        await createPersona({
-          productId: productId!,
-          title: formTitle.trim(),
-          description: formDescription.trim(),
+        await createPersonaMutation.mutateAsync({
+          token: token ?? '',
+          data: {
+            productId: productId!,
+            title: formTitle.trim(),
+            description: formDescription.trim(),
+          },
         });
       }
       closeForm();
@@ -161,7 +151,7 @@ export function PersonasPage() {
   };
 
   const handleDelete = async (personaId: number) => {
-    await deletePersona(personaId);
+    await deletePersonaMutation.mutateAsync({ token: token ?? '', personaId });
     refetch();
   };
 
@@ -177,7 +167,10 @@ export function PersonasPage() {
     setShowDetectWarning(false);
     setDetectError(null);
     try {
-      await detectPersonas({ productId: productId! });
+      await detectPersonasMutation.mutateAsync({
+        token: token ?? '',
+        data: { productId: productId! },
+      });
       refetch();
     } catch (err) {
       setDetectError(err instanceof Error ? err.message : 'Detection failed');

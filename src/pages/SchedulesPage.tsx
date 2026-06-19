@@ -49,57 +49,55 @@ export function SchedulesPage() {
   const [sizeClass, setSizeClass] = useState<CreateTestScheduleRequest['sizeClass']>('desktop');
   const [discovery, setDiscovery] = useState(true);
 
-  const {
-    schedules,
-    isLoading: schedulesLoading,
-    error: schedulesError,
-    refetch,
-  } = useRunnerSchedules({
+  const schedulesQuery = useRunnerSchedules(
     networkClient,
     baseUrl,
-    runnerId: primaryRunner?.id ?? 0,
-    token,
-    enabled: !!envId && !!token && !!primaryRunner,
-  });
+    token ?? '',
+    primaryRunner?.id ?? 0,
+    { enabled: !!envId && !!token && !!primaryRunner }
+  );
+  const schedules = schedulesQuery.data?.data ?? [];
+  const schedulesLoading = schedulesQuery.isLoading;
+  const schedulesError = schedulesQuery.error?.message ?? null;
+  const refetch = schedulesQuery.refetch;
 
   // Bundles / surfaces / interactions are only needed to populate the
   // "New Schedule" form selects, so they are fetched lazily once the form is
   // opened. This keeps the initial schedules list fast to load.
-  const { bundles, error: bundlesError } = useRunnerTestSurfaceBundles({
+  const bundlesQuery = useRunnerTestSurfaceBundles(
     networkClient,
     baseUrl,
-    runnerId: primaryRunner?.id ?? 0,
-    token,
-    enabled: !!envId && !!token && !!primaryRunner && showForm,
-  });
+    token ?? '',
+    primaryRunner?.id ?? 0,
+    { enabled: !!envId && !!token && !!primaryRunner && showForm }
+  );
+  const bundles = bundlesQuery.data?.data ?? [];
+  const bundlesError = bundlesQuery.error?.message ?? null;
 
-  const { testSurfaces, error: surfacesError } = useEnvironmentTestSurfaces({
+  const surfacesQuery = useEnvironmentTestSurfaces(
     networkClient,
     baseUrl,
-    envId: numericEnvId,
-    token,
-    enabled: !!envId && !!token && showForm,
-  });
+    token ?? '',
+    numericEnvId,
+    { enabled: !!envId && !!token && showForm }
+  );
+  const testSurfaces = surfacesQuery.data?.data ?? [];
+  const surfacesError = surfacesQuery.error?.message ?? null;
 
-  const { testInteractions, error: elementsError } = useEnvironmentTestInteractions({
+  const interactionsQuery = useEnvironmentTestInteractions(
     networkClient,
     baseUrl,
-    envId: numericEnvId,
-    token,
-    enabled: !!envId && !!token && showForm,
-  });
+    token ?? '',
+    numericEnvId,
+    { enabled: !!envId && !!token && showForm }
+  );
+  const testInteractions = interactionsQuery.data?.data ?? [];
+  const elementsError = interactionsQuery.error?.message ?? null;
 
-  const {
-    createTestSchedule,
-    isCreating,
-    error: createError,
-    reset,
-  } = useCreateTestSchedule({
-    networkClient,
-    baseUrl,
-    runnerId: primaryRunner?.id ?? 0,
-    token,
-  });
+  const createTestScheduleMutation = useCreateTestSchedule(networkClient, baseUrl);
+  const isCreating = createTestScheduleMutation.isPending;
+  const createError = createTestScheduleMutation.error?.message ?? null;
+  const reset = createTestScheduleMutation.reset;
 
   const pageError =
     contextError ||
@@ -162,7 +160,11 @@ export function SchedulesPage() {
       ...(recurrenceType === 'weekly' ? { dayOfWeek: Number(dayOfWeek) } : {}),
     };
 
-    await createTestSchedule(payload);
+    await createTestScheduleMutation.mutateAsync({
+      token: token ?? '',
+      runnerId: primaryRunner.id,
+      data: payload,
+    });
     await refetch();
     closeForm();
   };

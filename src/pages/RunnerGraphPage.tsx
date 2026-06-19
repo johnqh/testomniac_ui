@@ -38,21 +38,17 @@ export function RunnerGraphPage() {
 
   const numericEnvId = Number(envId);
 
-  const { pages, isLoading: pagesLoading } = useRunnerPages({
-    networkClient,
-    baseUrl,
-    runnerId: numericEnvId,
-    token: token ?? '',
+  const pagesQuery = useRunnerPages(networkClient, baseUrl, token ?? '', numericEnvId, {
     enabled: !!envId && !!token,
   });
+  const pages = useMemo(() => pagesQuery.data?.data ?? [], [pagesQuery.data]);
+  const pagesLoading = pagesQuery.isLoading;
 
-  const { pageStates, isLoading: pageStatesLoading } = useRunnerPageStates({
-    networkClient,
-    baseUrl,
-    runnerId: numericEnvId,
-    token: token ?? '',
+  const pageStatesQuery = useRunnerPageStates(networkClient, baseUrl, token ?? '', numericEnvId, {
     enabled: !!envId && !!token,
   });
+  const pageStates = useMemo(() => pageStatesQuery.data?.data ?? [], [pageStatesQuery.data]);
+  const pageStatesLoading = pageStatesQuery.isLoading;
 
   const isLoading = pagesLoading || pageStatesLoading;
 

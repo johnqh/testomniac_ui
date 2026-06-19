@@ -35,17 +35,16 @@ export function TestSurfaceDetailPage() {
 
   const r = useEnvRoutes();
 
-  const {
-    testInteractions,
-    isLoading: casesLoading,
-    error: casesError,
-  } = useTestSurfaceTestInteractions({
+  const interactionsQuery = useTestSurfaceTestInteractions(
     networkClient,
     baseUrl,
-    testSurfaceId: Number(surfaceId),
-    token: token ?? '',
-    enabled: !!surfaceId && !!token,
-  });
+    token ?? '',
+    Number(surfaceId),
+    { enabled: !!surfaceId && !!token }
+  );
+  const testInteractions = interactionsQuery.data?.data ?? [];
+  const casesLoading = interactionsQuery.isLoading;
+  const casesError = interactionsQuery.error?.message ?? null;
 
   const isLoading = casesLoading;
   const error = casesError;

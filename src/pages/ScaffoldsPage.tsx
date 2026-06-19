@@ -16,13 +16,12 @@ export function ScaffoldsPage() {
   } = useDashboardEnvironmentContext();
   const r = useEnvRoutes();
 
-  const { scaffolds, isLoading, error } = useRunScaffolds({
-    networkClient,
-    baseUrl,
-    runId: latestRun?.id ?? 0,
-    token: token ?? '',
+  const scaffoldsQuery = useRunScaffolds(networkClient, baseUrl, token ?? '', latestRun?.id ?? 0, {
     enabled: !!envId && !!token && !!latestRun,
   });
+  const scaffolds = scaffoldsQuery.data?.data ?? [];
+  const isLoading = scaffoldsQuery.isLoading;
+  const error = scaffoldsQuery.error?.message ?? null;
 
   if (contextLoading || isLoading) {
     return (

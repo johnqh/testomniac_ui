@@ -355,13 +355,12 @@ export function PatternsPage() {
     error: contextError,
   } = useDashboardEnvironmentContext();
 
-  const { patterns, isLoading, error } = useRunPatterns({
-    networkClient,
-    baseUrl,
-    runId: latestRun?.id ?? 0,
-    token: token ?? '',
+  const patternsQuery = useRunPatterns(networkClient, baseUrl, token ?? '', latestRun?.id ?? 0, {
     enabled: !!envId && !!token && !!latestRun,
   });
+  const patterns = useMemo(() => patternsQuery.data?.data ?? [], [patternsQuery.data]);
+  const isLoading = patternsQuery.isLoading;
+  const error = patternsQuery.error?.message ?? null;
 
   const grouped = useMemo(() => {
     const map = new Map<string, GroupedPattern>();

@@ -131,13 +131,16 @@ function ProductSection({
 }) {
   const { networkClient, token, baseUrl } = useTestomniacApi();
 
-  const { environments, isLoading, error } = useProductEnvironments({
+  const environmentsQuery = useProductEnvironments(
     networkClient,
     baseUrl,
-    productId: product.id,
-    token: token ?? '',
-    enabled: !!token,
-  });
+    token ?? '',
+    product.id,
+    { enabled: !!token }
+  );
+  const environments = environmentsQuery.data?.data ?? [];
+  const isLoading = environmentsQuery.isLoading;
+  const error = environmentsQuery.error?.message ?? null;
 
   return (
     <section>
@@ -413,13 +416,12 @@ function useFirstProductRuns(products: ProductSummaryResponse[]) {
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const firstProduct = products[0];
 
-  const { runs, isLoading, error } = useProductRuns({
-    networkClient,
-    baseUrl,
-    productId: firstProduct?.id ?? 0,
-    token: token ?? '',
+  const runsQuery = useProductRuns(networkClient, baseUrl, token ?? '', firstProduct?.id ?? 0, {
     enabled: !!firstProduct && !!token,
   });
+  const runs = runsQuery.data?.data ?? [];
+  const isLoading = runsQuery.isLoading;
+  const error = runsQuery.error?.message ?? null;
 
   return { runs, isLoading, error };
 }
@@ -434,13 +436,12 @@ export function DashboardOverview() {
   const routes = useRoutes();
   const { networkClient, token, baseUrl } = useTestomniacApi();
 
-  const { products, isLoading, error } = useEntityProducts({
-    networkClient,
-    baseUrl,
-    entitySlug: entitySlug ?? '',
-    token: token ?? '',
+  const productsQuery = useEntityProducts(networkClient, baseUrl, token ?? '', entitySlug ?? '', {
     enabled: !!token && !!entitySlug,
   });
+  const products = productsQuery.data?.data ?? [];
+  const isLoading = productsQuery.isLoading;
+  const error = productsQuery.error?.message ?? null;
 
   // Fetch runs for the first product for the overview stats
   const { runs: firstProductRuns, isLoading: runsLoading } = useFirstProductRuns(products);

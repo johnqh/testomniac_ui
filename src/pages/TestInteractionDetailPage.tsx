@@ -100,24 +100,30 @@ export function TestInteractionDetailPage() {
   const r = useEnvRoutes();
   const numericElementId = Number(elementId);
 
-  const { actions, isLoading, error } = useTestInteractionActions({
+  const actionsQuery = useTestInteractionActions(
     networkClient,
     baseUrl,
-    testInteractionId: numericElementId,
-    token: token ?? '',
-    enabled: !!elementId && !!token,
-  });
-  const {
-    testInteractions,
-    isLoading: elementsLoading,
-    error: elementsError,
-  } = useEnvironmentTestInteractions({
+    token ?? '',
+    numericElementId,
+    { enabled: !!elementId && !!token }
+  );
+  const actions = actionsQuery.data?.data ?? [];
+  const isLoading = actionsQuery.isLoading;
+  const error = actionsQuery.error?.message ?? null;
+
+  const interactionsQuery = useEnvironmentTestInteractions(
     networkClient,
     baseUrl,
-    envId: Number(envId),
-    token: token ?? '',
-    enabled: !!envId && !!token,
-  });
+    token ?? '',
+    Number(envId),
+    { enabled: !!envId && !!token }
+  );
+  const testInteractions = useMemo(
+    () => interactionsQuery.data?.data ?? [],
+    [interactionsQuery.data]
+  );
+  const elementsLoading = interactionsQuery.isLoading;
+  const elementsError = interactionsQuery.error?.message ?? null;
 
   const currentElement = useMemo(
     () => testInteractions.find(element => element.id === numericElementId) ?? null,

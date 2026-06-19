@@ -7,13 +7,12 @@ export function RunRedirect() {
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const routes = useRoutes();
 
-  const { run, isLoading, error } = useRun({
-    networkClient,
-    baseUrl,
-    runId: Number(runId),
-    token: token ?? '',
+  const runQuery = useRun(networkClient, baseUrl, token ?? '', Number(runId), {
     enabled: !!runId && !!token,
   });
+  const run = runQuery.data?.data;
+  const isLoading = runQuery.isLoading;
+  const error = runQuery.error?.message ?? null;
 
   if (isLoading) {
     return (

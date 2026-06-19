@@ -83,25 +83,19 @@ export function CredentialManagementSection({
   emptyDescription = 'Add credentials to enable authenticated test scenarios.',
 }: CredentialManagementSectionProps) {
   const { networkClient, token, baseUrl } = useTestomniacApi();
-  const hookConfig = {
-    networkClient,
-    baseUrl,
-    entitySlug,
-    token,
-  };
 
-  const {
-    credentials,
-    isLoading: loadingCredentials,
-    error: credentialsFetchError,
-  } = useEntityCredentials({
-    ...hookConfig,
+  const credentialsQuery = useEntityCredentials(networkClient, baseUrl, token, entitySlug, {
     enabled: !!entitySlug && !!token,
   });
+  const credentials = credentialsQuery.data?.data ?? [];
+  const loadingCredentials = credentialsQuery.isLoading;
+  const credentialsFetchError = credentialsQuery.error?.message ?? null;
 
-  const { createCredential, isCreating } = useCreateEntityCredential(hookConfig);
-  const { updateCredential, isUpdating } = useUpdateEntityCredential(hookConfig);
-  const { deleteCredential } = useDeleteEntityCredential(hookConfig);
+  const createCredentialMutation = useCreateEntityCredential(networkClient, baseUrl);
+  const isCreating = createCredentialMutation.isPending;
+  const updateCredentialMutation = useUpdateEntityCredential(networkClient, baseUrl);
+  const isUpdating = updateCredentialMutation.isPending;
+  const deleteCredentialMutation = useDeleteEntityCredential(networkClient, baseUrl);
 
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -152,12 +146,21 @@ export function CredentialManagementSection({
       if (formData.loginUrl.trim()) body.loginUrl = formData.loginUrl.trim();
 
       if (editingId) {
-        await updateCredential({ credentialId: editingId, data: body });
+        await updateCredentialMutation.mutateAsync({
+          token,
+          entitySlug,
+          credentialId: editingId,
+          data: body,
+        });
       } else {
-        await createCredential({
-          entityId: entitySlug,
-          ...body,
-        } as CreateEntityCredentialRequest);
+        await createCredentialMutation.mutateAsync({
+          token,
+          entitySlug,
+          data: {
+            entityId: entitySlug,
+            ...body,
+          } as CreateEntityCredentialRequest,
+        });
       }
       cancelForm();
     } catch (err) {
@@ -170,7 +173,7 @@ export function CredentialManagementSection({
     setDeletingId(id);
     setMutationError(null);
     try {
-      await deleteCredential(id);
+      await deleteCredentialMutation.mutateAsync({ token, entitySlug, credentialId: id });
     } catch (err) {
       setMutationError(err instanceof Error ? err.message : 'Failed to delete credential');
     } finally {

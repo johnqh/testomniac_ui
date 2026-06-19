@@ -28,42 +28,46 @@ export function PageStateDetailPage() {
   const [bodyView, setBodyView] = useState<'rendered' | 'source'>('rendered');
   const [contentView, setContentView] = useState<'rendered' | 'source'>('rendered');
 
-  const { pageStates, isLoading: statesLoading } = usePageStates({
-    networkClient,
-    baseUrl,
-    pageId: Number(pageId),
-    token: token ?? '',
+  const pageStatesQuery = usePageStates(networkClient, baseUrl, token ?? '', Number(pageId), {
     enabled: !!pageId && !!token,
   });
+  const pageStates = useMemo(() => pageStatesQuery.data?.data ?? [], [pageStatesQuery.data]);
+  const statesLoading = pageStatesQuery.isLoading;
 
   const state = useMemo(
     () => pageStates.find(s => s.id === Number(pageStateId)) ?? null,
     [pageStates, pageStateId]
   );
 
-  const { htmlElement: bodyHtmlElement, isLoading: bodyLoading } = useHtmlElement({
+  const bodyHtmlElementQuery = useHtmlElement(
     networkClient,
     baseUrl,
-    id: state?.bodyHtmlElementId ?? 0,
-    token: token ?? '',
-    enabled: !!state?.bodyHtmlElementId && !!token,
-  });
+    token ?? '',
+    state?.bodyHtmlElementId ?? 0,
+    { enabled: !!state?.bodyHtmlElementId && !!token }
+  );
+  const bodyHtmlElement = bodyHtmlElementQuery.data?.data;
+  const bodyLoading = bodyHtmlElementQuery.isLoading;
 
-  const { htmlElement: contentHtmlElement, isLoading: contentLoading } = useHtmlElement({
+  const contentHtmlElementQuery = useHtmlElement(
     networkClient,
     baseUrl,
-    id: state?.contentHtmlElementId ?? 0,
-    token: token ?? '',
-    enabled: !!state?.contentHtmlElementId && !!token,
-  });
+    token ?? '',
+    state?.contentHtmlElementId ?? 0,
+    { enabled: !!state?.contentHtmlElementId && !!token }
+  );
+  const contentHtmlElement = contentHtmlElementQuery.data?.data;
+  const contentLoading = contentHtmlElementQuery.isLoading;
 
-  const { scaffolds, isLoading: scaffoldsLoading } = usePageStateScaffolds({
+  const scaffoldsQuery = usePageStateScaffolds(
     networkClient,
     baseUrl,
-    pageStateId: Number(pageStateId),
-    token: token ?? '',
-    enabled: !!pageStateId && !!token,
-  });
+    token ?? '',
+    Number(pageStateId),
+    { enabled: !!pageStateId && !!token }
+  );
+  const scaffolds = scaffoldsQuery.data?.data ?? [];
+  const scaffoldsLoading = scaffoldsQuery.isLoading;
 
   if (statesLoading) {
     return (

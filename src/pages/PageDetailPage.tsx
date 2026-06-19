@@ -33,82 +33,70 @@ export function PageDetailPage() {
   const { primaryRunner, productId } = useDashboardEnvironmentContext();
   const [showScenarioForm, setShowScenarioForm] = useState(false);
 
-  const { personas } = useProductPersonas({
-    networkClient,
-    baseUrl,
-    productId,
-    token: token ?? '',
+  const personasQuery = useProductPersonas(networkClient, baseUrl, token ?? '', productId, {
     enabled: !!productId && !!token,
   });
+  const personas = personasQuery.data?.data ?? [];
 
   const numericPageId = Number(pageId);
 
   const runScoped = Boolean(runId);
 
-  const envPagesQuery = useEnvironmentPages({
-    networkClient,
-    baseUrl,
-    envId: Number(envId),
-    token: token ?? '',
+  const envPagesQuery = useEnvironmentPages(networkClient, baseUrl, token ?? '', Number(envId), {
     enabled: !!envId && !!token && !runScoped,
   });
 
-  const runPagesQuery = useRunPages({
-    networkClient,
-    baseUrl,
-    runId: Number(runId),
-    token: token ?? '',
+  const runPagesQuery = useRunPages(networkClient, baseUrl, token ?? '', Number(runId), {
     enabled: !!runId && !!token,
   });
 
-  const envElementsQuery = useEnvironmentTestInteractions({
+  const envElementsQuery = useEnvironmentTestInteractions(
     networkClient,
     baseUrl,
-    envId: Number(envId),
-    token: token ?? '',
-    enabled: !!envId && !!token && !runScoped,
-  });
+    token ?? '',
+    Number(envId),
+    { enabled: !!envId && !!token && !runScoped }
+  );
 
-  const runElementsQuery = useRunTestInteractions({
+  const runElementsQuery = useRunTestInteractions(
     networkClient,
     baseUrl,
-    runId: Number(runId),
-    token: token ?? '',
-    enabled: !!runId && !!token,
-  });
+    token ?? '',
+    Number(runId),
+    { enabled: !!runId && !!token }
+  );
 
-  const envPages = runScoped ? runPagesQuery.pages : envPagesQuery.pages;
+  const envPages = runScoped ? (runPagesQuery.data?.data ?? []) : (envPagesQuery.data?.data ?? []);
   const currentPage = envPages.find(p => p.id === numericPageId);
   const testInteractions = runScoped
-    ? runElementsQuery.testInteractions
-    : envElementsQuery.testInteractions;
+    ? (runElementsQuery.data?.data ?? [])
+    : (envElementsQuery.data?.data ?? []);
 
-  const { createRun } = useCreateTestInteractionRun({
-    networkClient,
-    baseUrl,
-    token: token ?? '',
-  });
+  const createTestInteractionRunMutation = useCreateTestInteractionRun(networkClient, baseUrl);
+  const createRun = (data: { testInteractionId: number }) =>
+    createTestInteractionRunMutation.mutateAsync({ token: token ?? '', data });
 
   const { startingElements, landingElements, onPageElements } = usePageInteractionGroups(
     testInteractions,
     numericPageId
   );
 
-  const { pageStates, isLoading } = usePageStates({
-    networkClient,
-    baseUrl,
-    pageId: Number(pageId),
-    token: token ?? '',
+  const pageStatesQuery = usePageStates(networkClient, baseUrl, token ?? '', Number(pageId), {
     enabled: !!pageId && !!token,
   });
-  const { summary, isLoading: summaryLoading } = useRunPageSummary({
+  const pageStates = pageStatesQuery.data?.data ?? [];
+  const isLoading = pageStatesQuery.isLoading;
+
+  const summaryQuery = useRunPageSummary(
     networkClient,
     baseUrl,
-    runId: Number(runId),
-    pageId: Number(pageId),
-    token: token ?? '',
-    enabled: !!runId && !!pageId && !!token,
-  });
+    token ?? '',
+    Number(runId),
+    Number(pageId),
+    { enabled: !!runId && !!pageId && !!token }
+  );
+  const summary = summaryQuery.data?.data;
+  const summaryLoading = summaryQuery.isLoading;
 
   if (isLoading || summaryLoading) {
     return (

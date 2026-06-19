@@ -31,47 +31,47 @@ export function TestScenariosPage() {
   } = useDashboardEnvironmentContext();
   const [showForm, setShowForm] = useState(false);
 
-  const { testScenarios, isLoading, error, refetch } = useRunnerTestScenarios({
+  const scenariosQuery = useRunnerTestScenarios(
     networkClient,
     baseUrl,
-    runnerId: primaryRunner?.id ?? 0,
     token,
-    enabled: !!envId && !!token && !!primaryRunner,
-  });
+    primaryRunner?.id ?? 0,
+    { enabled: !!envId && !!token && !!primaryRunner }
+  );
+  const testScenarios = scenariosQuery.data?.data ?? [];
+  const isLoading = scenariosQuery.isLoading;
+  const error = scenariosQuery.error?.message ?? null;
+  const refetch = scenariosQuery.refetch;
 
-  const { personas } = useProductPersonas({
-    networkClient,
-    baseUrl,
-    productId,
-    token,
+  const personasQuery = useProductPersonas(networkClient, baseUrl, token, productId, {
     enabled: !!productId && !!token,
   });
+  const personas = personasQuery.data?.data ?? [];
 
-  const { deleteTestScenario } = useDeleteTestScenario({
-    networkClient,
-    baseUrl,
-    runnerId: primaryRunner?.id ?? 0,
-    token,
-  });
+  const deleteTestScenarioMutation = useDeleteTestScenario(networkClient, baseUrl);
 
-  const { detectTestScenarios, isDetecting } = useDetectTestScenarios({
-    networkClient,
-    baseUrl,
-    token,
-  });
+  const detectTestScenariosMutation = useDetectTestScenarios(networkClient, baseUrl);
+  const isDetecting = detectTestScenariosMutation.isPending;
 
   // Detect state
   const [detectError, setDetectError] = useState<string | null>(null);
 
   const handleDelete = async (scenarioId: number) => {
-    await deleteTestScenario(scenarioId);
+    await deleteTestScenarioMutation.mutateAsync({
+      token,
+      runnerId: primaryRunner?.id ?? 0,
+      scenarioId,
+    });
     refetch();
   };
 
   const handleDetect = async () => {
     setDetectError(null);
     try {
-      await detectTestScenarios({ productId: productId! });
+      await detectTestScenariosMutation.mutateAsync({
+        token,
+        data: { productId: productId! },
+      });
       refetch();
     } catch (err) {
       // The API returns an actionable message (e.g. naming the missing

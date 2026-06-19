@@ -28,23 +28,17 @@ interface EntityApiKeysPanelProps {
 
 export function EntityApiKeysPanel({ entitySlug, personalEntityId }: EntityApiKeysPanelProps) {
   const { networkClient, token, baseUrl } = useTestomniacApi();
-  const hookConfig = {
-    networkClient,
-    baseUrl,
-    entitySlug,
-    token,
-  };
 
-  const {
-    apiKeys,
-    isLoading: keysLoading,
-    error: fetchError,
-  } = useEntityApiKeys({
-    ...hookConfig,
+  const apiKeysQuery = useEntityApiKeys(networkClient, baseUrl, token, entitySlug, {
     enabled: !!entitySlug && !!token,
   });
-  const { createApiKey, isCreating } = useCreateEntityApiKey(hookConfig);
-  const { deleteApiKey } = useDeleteEntityApiKey(hookConfig);
+  const apiKeys = apiKeysQuery.data?.data ?? [];
+  const keysLoading = apiKeysQuery.isLoading;
+  const fetchError = apiKeysQuery.error?.message ?? null;
+
+  const createApiKeyMutation = useCreateEntityApiKey(networkClient, baseUrl);
+  const isCreating = createApiKeyMutation.isPending;
+  const deleteApiKeyMutation = useDeleteEntityApiKey(networkClient, baseUrl);
 
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
@@ -79,9 +73,14 @@ export function EntityApiKeysPanel({ entitySlug, personalEntityId }: EntityApiKe
     if (!title.trim()) return;
     setMutationError(null);
     try {
-      const result = await createApiKey({
-        title: title.trim(),
-        associatedPersonalEntityId: associatePersonal && personalEntityId ? personalEntityId : null,
+      const result = await createApiKeyMutation.mutateAsync({
+        token,
+        entitySlug,
+        data: {
+          title: title.trim(),
+          associatedPersonalEntityId:
+            associatePersonal && personalEntityId ? personalEntityId : null,
+        },
       });
       setShowForm(false);
       setTitle('');
@@ -110,7 +109,7 @@ export function EntityApiKeysPanel({ entitySlug, personalEntityId }: EntityApiKe
     setDeletingId(id);
     setMutationError(null);
     try {
-      await deleteApiKey(id);
+      await deleteApiKeyMutation.mutateAsync({ token, entitySlug, apiKeyId: id });
     } catch (err) {
       setMutationError(err instanceof Error ? err.message : 'Failed to delete API key');
     } finally {

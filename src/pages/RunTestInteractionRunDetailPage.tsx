@@ -23,31 +23,32 @@ export function RunTestInteractionRunDetailPage() {
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const { navigate } = useLocalizedNavigate();
 
-  const {
-    structure,
-    isLoading: structureLoading,
-    error: structureError,
-  } = useRunStructure({
-    networkClient,
-    baseUrl,
-    runId: Number(runId),
-    token: token ?? '',
+  const structureQuery = useRunStructure(networkClient, baseUrl, token ?? '', Number(runId), {
     enabled: !!runId && !!token,
   });
-  const { testInteractionRun, isLoading, error } = useTestInteractionRun({
+  const structure = structureQuery.data?.data;
+  const structureLoading = structureQuery.isLoading;
+  const structureError = structureQuery.error?.message ?? null;
+
+  const interactionRunQuery = useTestInteractionRun(
     networkClient,
     baseUrl,
-    testInteractionRunId: Number(elementRunId),
-    token: token ?? '',
-    enabled: !!elementRunId && !!token,
-  });
-  const { findings } = useTestRunFindings({
+    token ?? '',
+    Number(elementRunId),
+    { enabled: !!elementRunId && !!token }
+  );
+  const testInteractionRun = interactionRunQuery.data?.data;
+  const isLoading = interactionRunQuery.isLoading;
+  const error = interactionRunQuery.error?.message ?? null;
+
+  const findingsQuery = useTestRunFindings(
     networkClient,
     baseUrl,
-    testInteractionRunId: Number(elementRunId),
-    token: token ?? '',
-    enabled: !!elementRunId && !!token,
-  });
+    token ?? '',
+    Number(elementRunId),
+    { enabled: !!elementRunId && !!token }
+  );
+  const findings = findingsQuery.data?.data ?? [];
 
   const r = useEnvRoutes();
   const surface =

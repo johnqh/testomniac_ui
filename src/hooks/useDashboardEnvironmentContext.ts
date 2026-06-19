@@ -7,14 +7,14 @@ export function useDashboardEnvironmentContext() {
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const numericEnvId = Number(envId);
 
-  const data = useDashboardEnvironmentContextData({
+  const data = useDashboardEnvironmentContextData(
     networkClient,
     baseUrl,
-    entitySlug: entitySlug ?? '',
-    envId: numericEnvId,
-    token: token ?? '',
-    enabled: !!entitySlug && !!token,
-  });
+    token ?? '',
+    entitySlug ?? '',
+    numericEnvId,
+    !!entitySlug && !!token
+  );
 
   return {
     entitySlug: entitySlug ?? '',

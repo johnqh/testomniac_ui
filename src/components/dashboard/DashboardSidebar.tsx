@@ -213,13 +213,11 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
   const { pathname } = useTestomniacRouting();
   const routes = useRoutes();
 
-  const { products, isLoading: productsLoading } = useEntityProducts({
-    networkClient,
-    baseUrl,
-    entitySlug,
-    token: token ?? '',
+  const productsQuery = useEntityProducts(networkClient, baseUrl, token ?? '', entitySlug, {
     enabled: !!token,
   });
+  const products = useMemo(() => productsQuery.data?.data ?? [], [productsQuery.data]);
+  const productsLoading = productsQuery.isLoading;
 
   // Tracks explicit user selection; null means "no manual choice yet"
   const [userSelectedProductId, setUserSelectedProductId] = useState<string | null>(null);
@@ -233,13 +231,15 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
     return null;
   }, [products, userSelectedProductId]);
 
-  const { environments, isLoading: environmentsLoading } = useProductEnvironments({
+  const environmentsQuery = useProductEnvironments(
     networkClient,
     baseUrl,
-    productId: Number(selectedProductId),
-    token: token ?? '',
-    enabled: !!selectedProductId && !!token,
-  });
+    token ?? '',
+    Number(selectedProductId),
+    { enabled: !!selectedProductId && !!token }
+  );
+  const environments = useMemo(() => environmentsQuery.data?.data ?? [], [environmentsQuery.data]);
+  const environmentsLoading = environmentsQuery.isLoading;
 
   // The environment selector only appears once a product is chosen; the menu
   // only appears once the route's environment is a real one in the loaded list.

@@ -78,13 +78,11 @@ export function PageGraphPage() {
   const r = useEnvRoutes();
 
   const numericPageId = Number(pageId);
-  const { pageStates, isLoading: statesLoading } = usePageStates({
-    networkClient,
-    baseUrl,
-    pageId: numericPageId,
-    token: token ?? '',
+  const pageStatesQuery = usePageStates(networkClient, baseUrl, token ?? '', numericPageId, {
     enabled: !!pageId && !!token,
   });
+  const pageStates = useMemo(() => pageStatesQuery.data?.data ?? [], [pageStatesQuery.data]);
+  const statesLoading = pageStatesQuery.isLoading;
 
   const isLoading = statesLoading;
 

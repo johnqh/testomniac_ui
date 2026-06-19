@@ -60,31 +60,24 @@ export function FindingsListPage() {
 
   const effectiveRunId = Number(runId ?? latestRun?.id ?? 0);
 
-  const runFindingsQuery = useRunFindings({
-    networkClient,
-    baseUrl,
-    runId: effectiveRunId,
-    token: token ?? '',
+  const runFindingsQuery = useRunFindings(networkClient, baseUrl, token ?? '', effectiveRunId, {
     enabled: !!token && !!effectiveRunId,
   });
-  const findings = runFindingsQuery.findings;
+  const findings = useMemo(() => runFindingsQuery.data?.data ?? [], [runFindingsQuery.data]);
 
   // Map page paths -> page id so a finding can deep-link to its page detail,
   // which shows the finding in context (runtime signals, console/network logs).
-  const runPagesQuery = useRunPages({
-    networkClient,
-    baseUrl,
-    runId: effectiveRunId,
-    token: token ?? '',
+  const runPagesQuery = useRunPages(networkClient, baseUrl, token ?? '', effectiveRunId, {
     enabled: !!token && !!effectiveRunId,
   });
+  const runPages = useMemo(() => runPagesQuery.data?.data ?? [], [runPagesQuery.data]);
   const pageIdByPath = useMemo(() => {
     const map = new Map<string, number>();
-    for (const page of runPagesQuery.pages) {
+    for (const page of runPages) {
       map.set(page.relativePath, page.id);
     }
     return map;
-  }, [runPagesQuery.pages]);
+  }, [runPages]);
 
   const openFinding = (finding: TestRunFindingResponse) => {
     const pageId = finding.path ? pageIdByPath.get(finding.path) : undefined;
@@ -93,7 +86,7 @@ export function FindingsListPage() {
     }
   };
   const isLoading = contextLoading || runFindingsQuery.isLoading;
-  const error = contextError || runFindingsQuery.error;
+  const error = contextError || (runFindingsQuery.error?.message ?? null);
 
   // Derive unique paths from findings
   const uniquePaths = useMemo(() => {

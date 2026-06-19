@@ -36,14 +36,12 @@ export function ScriptPanel({
   enabled = true,
 }: ScriptPanelProps) {
   const { networkClient, token, baseUrl } = useTestomniacApi();
-  const { script, isLoading, error } = useObjectScript({
-    networkClient,
-    baseUrl,
-    kind,
-    id,
-    token: token ?? '',
+  const scriptQuery = useObjectScript(networkClient, baseUrl, token ?? '', kind, id, {
     enabled,
   });
+  const script = scriptQuery.data;
+  const isLoading = scriptQuery.isLoading;
+  const error = scriptQuery.error?.message ?? null;
 
   return (
     <div className="space-y-2">
