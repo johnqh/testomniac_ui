@@ -27,6 +27,7 @@ export interface TestomniacRoutes {
   environment(entitySlug: string, envId: Id): string;
 
   // environment-scoped collections + details
+  status(entitySlug: string, envId: Id): string;
   bundles(entitySlug: string, envId: Id): string;
   bundle(entitySlug: string, envId: Id, bundleId: Id): string;
   testSurfaces(entitySlug: string, envId: Id): string;

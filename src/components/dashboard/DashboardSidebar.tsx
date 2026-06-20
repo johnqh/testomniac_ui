@@ -40,6 +40,13 @@ const iconProps = {
   strokeLinejoin: 'round' as const,
 };
 
+/** Activity pulse / live status */
+const StatusIcon = () => (
+  <svg {...iconProps}>
+    <path d="M2 8h3l2-5 2 10 2-7 1.5 2H14" />
+  </svg>
+);
+
 /** 4-square grid */
 const BundlesIcon = () => (
   <svg {...iconProps}>
@@ -167,6 +174,7 @@ const MENU_SECTIONS: MenuSection[] = [
   {
     title: 'OVERVIEW',
     items: [
+      { label: 'Status', to: (r, s, e) => r.status(s, e), icon: StatusIcon },
       { label: 'Bundles', to: (r, s, e) => r.bundles(s, e), icon: BundlesIcon },
       { label: 'Surfaces', to: (r, s, e) => r.testSurfaces(s, e), icon: SurfacesIcon },
       {
