@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   Select,
   SelectTrigger,
@@ -11,6 +11,7 @@ import {
   useEntityProducts,
   useProductEnvironments,
 } from '@sudobility/testomniac_client';
+import { useProductSelectionStore } from '@sudobility/testomniac_lib';
 import { useLocalizedNavigate } from '../../hooks/useLocalizedNavigate';
 import { useTestomniacApi } from '../../context/config';
 import {
@@ -231,8 +232,10 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
   const products = useMemo(() => productsQuery.data?.data ?? [], [productsQuery.data]);
   const productsLoading = productsQuery.isLoading;
 
-  // Tracks explicit user selection; null means "no manual choice yet"
-  const [userSelectedProductId, setUserSelectedProductId] = useState<string | null>(null);
+  // Explicit user selection, held in a shared store so other surfaces (e.g. the
+  // create-product flow) can select a product and have the sidebar reflect it.
+  const userSelectedProductId = useProductSelectionStore(s => s.selectedProductId);
+  const setUserSelectedProductId = useProductSelectionStore(s => s.setSelectedProductId);
 
   // Effective selection: user's choice if still valid, otherwise auto-select single product
   const selectedProductId = useMemo(() => {
@@ -305,6 +308,13 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
     return currentPath === target || currentPath.startsWith(target + '/');
   };
 
+  // When on the "create product" route, show the selector as "Create New..."
+  // rather than the placeholder, even though no product is selected yet.
+  const onProductNewRoute = useMemo(() => {
+    const target = routes.productNew(entitySlug);
+    return currentPath === target || currentPath.startsWith(`${target}/`);
+  }, [currentPath, routes, entitySlug]);
+
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800">
       {/* Workspace, Product & Environment Selectors */}
@@ -334,7 +344,10 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
             Product
           </span>
           <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-0.5">
-            <Select value={selectedProductId ?? ''} onValueChange={handleProductChange}>
+            <Select
+              value={onProductNewRoute ? 'new' : (selectedProductId ?? '')}
+              onValueChange={handleProductChange}
+            >
               <SelectTrigger className="w-full border-0 bg-transparent shadow-none text-[13px] font-medium">
                 <SelectValue placeholder={productsLoading ? 'Loading...' : 'Select product'} />
               </SelectTrigger>
