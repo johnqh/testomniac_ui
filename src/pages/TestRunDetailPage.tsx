@@ -6,7 +6,12 @@ import {
   useTestRunFindings,
 } from '@sudobility/testomniac_client';
 import type { TestRunFindingResponse } from '@sudobility/testomniac_types';
-import { formatDate, formatMultilineLog } from '@sudobility/testomniac_lib';
+import {
+  formatDate,
+  formatMultilineLog,
+  getFindingDisplayTitle,
+  getFindingExpertiseSlug,
+} from '@sudobility/testomniac_lib';
 import { useTestomniacApi } from '../context/config';
 import { useRouteParams, useEnvRoutes } from '../context/routing';
 import BackLink from '../components/navigation/BackLink';
@@ -305,26 +310,36 @@ export function TestRunDetailPage() {
 
         {run.testInteractionRunId !== null && !isLoading && findings.length > 0 && (
           <div className="space-y-3">
-            {(findings as TestRunFindingResponse[]).map(finding => (
-              <Card key={finding.id} variant="bordered" padding="md">
-                <div className="flex items-start gap-3">
-                  <FindingTypeBadge type={finding.type} />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {finding.title}
-                    </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      {finding.description}
-                    </p>
-                    {finding.createdAt && (
-                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                        {formatDate(finding.createdAt)}
+            {(findings as TestRunFindingResponse[]).map(finding => {
+              const tag = getFindingExpertiseSlug(finding);
+              return (
+                <Card key={finding.id} variant="bordered" padding="md">
+                  <div className="flex items-start gap-3">
+                    <FindingTypeBadge type={finding.type} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        {tag && (
+                          <span className="inline-flex shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                            {tag}
+                          </span>
+                        )}
+                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {getFindingDisplayTitle(finding)}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        {finding.description}
                       </p>
-                    )}
+                      {finding.createdAt && (
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                          {formatDate(finding.createdAt)}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              );
+            })}
           </div>
         )}
 

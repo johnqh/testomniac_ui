@@ -1,7 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useRunFindings, useRunPages } from '@sudobility/testomniac_client';
 import type { TestRunFindingResponse } from '@sudobility/testomniac_types';
-import { parseExpertiseTitle, PRIORITY_LEVELS, formatDate } from '@sudobility/testomniac_lib';
+import {
+  getFindingDisplayTitle,
+  getFindingExpertiseSlug,
+  PRIORITY_LEVELS,
+  formatDate,
+} from '@sudobility/testomniac_lib';
 import { Badge, Button, ContentLayout } from '@sudobility/components';
 import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams, useEnvRoutes } from '../context/routing';
@@ -97,12 +102,12 @@ export function FindingsListPage() {
     return Array.from(paths).sort();
   }, [findings]);
 
-  // Derive unique categories (tags) from finding titles using parseExpertiseTitle
+  // Derive unique categories from canonical rule IDs, falling back to legacy title prefixes.
   const uniqueCategories = useMemo(() => {
     const cats = new Set<string>();
     for (const f of findings) {
-      const { tag } = parseExpertiseTitle(f.title);
-      if (tag) cats.add(tag);
+      const slug = getFindingExpertiseSlug(f);
+      if (slug) cats.add(slug);
     }
     return Array.from(cats).sort();
   }, [findings]);
@@ -126,8 +131,7 @@ export function FindingsListPage() {
 
     if (categoryFilter !== '') {
       result = result.filter(f => {
-        const { tag } = parseExpertiseTitle(f.title);
-        return tag === categoryFilter;
+        return getFindingExpertiseSlug(f) === categoryFilter;
       });
     }
 
@@ -278,7 +282,8 @@ export function FindingsListPage() {
         {!isLoading && filteredFindings.length > 0 && (
           <div className="space-y-2">
             {filteredFindings.map(finding => {
-              const { tag, title } = parseExpertiseTitle(finding.title);
+              const tag = getFindingExpertiseSlug(finding);
+              const title = getFindingDisplayTitle(finding);
               const canOpen = !!(finding.path && pageIdByPath.has(finding.path) && effectiveRunId);
               return (
                 <div key={finding.id}>

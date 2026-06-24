@@ -7,6 +7,7 @@ import {
   type RunSummary,
 } from '@sudobility/testomniac_client';
 import type { TestRunFindingResponse } from '@sudobility/testomniac_types';
+import { getFindingDisplayTitle, getFindingExpertiseSlug } from '@sudobility/testomniac_lib';
 import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
 import { useTestomniacApi } from '../context/config';
 
@@ -195,8 +196,15 @@ function IssuesTab({
               {f.type}
             </span>
             <div className="min-w-0 flex-1">
-              <div className="text-[13px] font-medium text-gray-900 dark:text-gray-100">
-                {f.title}
+              <div className="flex items-center gap-1.5">
+                {getFindingExpertiseSlug(f) && (
+                  <span className="inline-flex shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                    {getFindingExpertiseSlug(f)}
+                  </span>
+                )}
+                <span className="text-[13px] font-medium text-gray-900 dark:text-gray-100">
+                  {getFindingDisplayTitle(f)}
+                </span>
               </div>
               {f.description && (
                 <div className="mt-0.5 text-[12px] leading-snug text-gray-600 dark:text-gray-400">
