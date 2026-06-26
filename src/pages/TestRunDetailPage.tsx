@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   useRun,
   useRunSummary,
@@ -11,6 +12,8 @@ import {
   formatMultilineLog,
   getFindingDisplayTitle,
   getFindingExpertiseSlug,
+  getFindingRemediation,
+  groupFindingsByRule,
 } from '@sudobility/testomniac_lib';
 import { useTestomniacApi } from '../context/config';
 import { useRouteParams, useEnvRoutes } from '../context/routing';
@@ -39,6 +42,8 @@ export function TestRunDetailPage() {
 
   const r = useEnvRoutes();
   const testRunId = Number(runId);
+  const [findingTypeFilter, setFindingTypeFilter] = useState<'all' | 'error' | 'warning'>('all');
+  const [expertiseFilter, setExpertiseFilter] = useState('all');
 
   const runQuery = useRun(networkClient, baseUrl, token ?? '', testRunId, {
     enabled: !!runId && !!token,
@@ -111,6 +116,21 @@ export function TestRunDetailPage() {
     })) ?? [];
   const consoleLog = formatMultilineLog(testInteractionRun?.consoleLog);
   const networkLog = formatMultilineLog(testInteractionRun?.networkLog);
+  const typedFindings = findings as TestRunFindingResponse[];
+  const expertiseFilters = Array.from(
+    new Set(
+      typedFindings
+        .map(finding => getFindingExpertiseSlug(finding))
+        .filter((expertise): expertise is string => Boolean(expertise))
+    )
+  ).sort();
+  const filteredFindings = typedFindings.filter(finding => {
+    const matchesType = findingTypeFilter === 'all' || finding.type === findingTypeFilter;
+    const matchesExpertise =
+      expertiseFilter === 'all' || getFindingExpertiseSlug(finding) === expertiseFilter;
+    return matchesType && matchesExpertise;
+  });
+  const findingGroups = Array.from(groupFindingsByRule(filteredFindings).values());
 
   return (
     <ContentLayout
@@ -310,10 +330,43 @@ export function TestRunDetailPage() {
 
         {run.testInteractionRunId !== null && !isLoading && findings.length > 0 && (
           <div className="space-y-3">
-            {(findings as TestRunFindingResponse[]).map(finding => {
+            <div className="flex flex-wrap items-center gap-3 border-b border-gray-200 pb-3 dark:border-gray-800">
+              <div className="inline-flex overflow-hidden rounded border border-gray-300 dark:border-gray-700">
+                {(['all', 'error', 'warning'] as const).map(type => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setFindingTypeFilter(type)}
+                    className={`px-3 py-1.5 text-xs font-medium capitalize ${
+                      findingTypeFilter === type
+                        ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
+                        : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+              <select
+                value={expertiseFilter}
+                onChange={event => setExpertiseFilter(event.target.value)}
+                className="h-8 rounded border border-gray-300 bg-white px-2 text-xs text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
+                aria-label="Filter findings by expertise"
+              >
+                <option value="all">All expertises</option>
+                {expertiseFilters.map(expertise => (
+                  <option key={expertise} value={expertise}>
+                    {expertise}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {findingGroups.map(group => {
+              const finding = group[0];
               const tag = getFindingExpertiseSlug(finding);
+              const remediation = getFindingRemediation(finding);
               return (
-                <Card key={finding.id} variant="bordered" padding="md">
+                <Card key={`${finding.ruleId ?? finding.id}`} variant="bordered" padding="md">
                   <div className="flex items-start gap-3">
                     <FindingTypeBadge type={finding.type} />
                     <div className="flex-1 min-w-0">
@@ -326,10 +379,20 @@ export function TestRunDetailPage() {
                         <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                           {getFindingDisplayTitle(finding)}
                         </span>
+                        {group.length > 1 && (
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            {group.length} occurrences
+                          </span>
+                        )}
                       </div>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         {finding.description}
                       </p>
+                      {remediation && (
+                        <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">
+                          {remediation}
+                        </p>
+                      )}
                       {finding.createdAt && (
                         <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
                           {formatDate(finding.createdAt)}
@@ -340,6 +403,9 @@ export function TestRunDetailPage() {
                 </Card>
               );
             })}
+            {findingGroups.length === 0 && (
+              <EmptyState description="No findings match the active filters." />
+            )}
           </div>
         )}
 
