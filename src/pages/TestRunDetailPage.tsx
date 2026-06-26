@@ -1,12 +1,17 @@
 import { useState } from 'react';
 import {
   useRun,
+  useRunFindingExpertiseSummary,
+  useRunFindingSummary,
   useRunSummary,
   useRunStructure,
   useTestInteractionRun,
   useTestRunFindings,
 } from '@sudobility/testomniac_client';
-import type { TestRunFindingResponse } from '@sudobility/testomniac_types';
+import type {
+  TestRunFindingResponse,
+  TestRunFindingRuleSummary,
+} from '@sudobility/testomniac_types';
 import {
   formatDate,
   formatMultilineLog,
@@ -56,6 +61,20 @@ export function TestRunDetailPage() {
     enabled: !!runId && !!token,
   });
   const summary = summaryQuery.data?.data;
+  const rootFindingSummaryQuery = useRunFindingSummary(
+    networkClient,
+    baseUrl,
+    token ?? '',
+    testRunId,
+    { enabled: !!runId && !!token && run?.testInteractionRunId === null }
+  );
+  const rootFindingExpertiseSummaryQuery = useRunFindingExpertiseSummary(
+    networkClient,
+    baseUrl,
+    token ?? '',
+    testRunId,
+    { enabled: !!runId && !!token && run?.testInteractionRunId === null }
+  );
 
   const structureQuery = useRunStructure(networkClient, baseUrl, token ?? '', testRunId, {
     enabled: !!runId && !!token,
@@ -103,9 +122,11 @@ export function TestRunDetailPage() {
   }
 
   const isRootLikeRun = run.testInteractionRunId === null;
-  const expertiseEntries = Object.entries(summary?.expertiseSummary ?? {}).sort(([left], [right]) =>
-    left.localeCompare(right)
-  );
+  const rootFindingSummaries = rootFindingSummaryQuery.data?.data ?? [];
+  const rootExpertiseSummary = rootFindingExpertiseSummaryQuery.data?.data ?? [];
+  const expertiseEntries = rootExpertiseSummary
+    .map(item => [item.expertiseId ?? 'unknown', item] as const)
+    .sort(([left], [right]) => left.localeCompare(right));
   const surfaceCoverage =
     structure?.surfaces.map(surface => ({
       id: surface.id,
@@ -119,9 +140,16 @@ export function TestRunDetailPage() {
   const typedFindings = findings as TestRunFindingResponse[];
   const expertiseFilters = Array.from(
     new Set(
-      typedFindings
-        .map(finding => getFindingExpertiseSlug(finding))
-        .filter((expertise): expertise is string => Boolean(expertise))
+      isRootLikeRun
+        ? rootFindingSummaries
+            .map(finding => finding.expertiseId)
+            .filter(
+              (expertise): expertise is NonNullable<TestRunFindingRuleSummary['expertiseId']> =>
+                expertise !== null
+            )
+        : typedFindings
+            .map(finding => getFindingExpertiseSlug(finding))
+            .filter((expertise): expertise is string => Boolean(expertise))
     )
   ).sort();
   const filteredFindings = typedFindings.filter(finding => {
@@ -131,6 +159,14 @@ export function TestRunDetailPage() {
     return matchesType && matchesExpertise;
   });
   const findingGroups = Array.from(groupFindingsByRule(filteredFindings).values());
+  const filteredRootFindingSummaries = rootFindingSummaries.filter(finding => {
+    const matchesType = findingTypeFilter === 'all' || finding.type === findingTypeFilter;
+    const matchesExpertise = expertiseFilter === 'all' || finding.expertiseId === expertiseFilter;
+    return matchesType && matchesExpertise;
+  });
+  const rootFindingsLoading = rootFindingSummaryQuery.isLoading;
+  const effectiveExpertises = run.expertiseSlugsJson ?? [];
+  const effectiveRuleOverrides = run.ruleOverridesJson ?? [];
 
   return (
     <ContentLayout
@@ -292,13 +328,13 @@ export function TestRunDetailPage() {
                       </div>
                       <div className="mt-3 flex gap-4 text-xs">
                         <span className="text-red-600 dark:text-red-400">
-                          {counts.errors} error{counts.errors === 1 ? '' : 's'}
+                          {counts.errorCount} error{counts.errorCount === 1 ? '' : 's'}
                         </span>
                         <span className="text-amber-600 dark:text-amber-400">
-                          {counts.warnings} warning{counts.warnings === 1 ? '' : 's'}
+                          {counts.warningCount} warning{counts.warningCount === 1 ? '' : 's'}
                         </span>
                         <span className="text-gray-500 dark:text-gray-400">
-                          {counts.findings} total
+                          {counts.findingCount} total
                         </span>
                       </div>
                     </Card>
@@ -306,6 +342,38 @@ export function TestRunDetailPage() {
                 </div>
               </div>
             )}
+
+            <Card variant="bordered" padding="md" className="mb-8">
+              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                Effective Scan Settings
+              </h2>
+              <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                <div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">Expertises</div>
+                  <div className="mt-1 flex flex-wrap gap-2">
+                    {effectiveExpertises.length > 0 ? (
+                      effectiveExpertises.map(expertise => (
+                        <span
+                          key={expertise}
+                          className="rounded bg-gray-100 px-2 py-1 text-xs capitalize dark:bg-gray-800"
+                        >
+                          {expertise}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        No expertise settings recorded.
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400">
+                  <span>{effectiveRuleOverrides.length} rule override(s)</span>
+                  <span>Scan mode: {run.scanMode}</span>
+                  <span>{run.quickScan ? 'Quick scan enabled' : 'Full discovery flow'}</span>
+                </div>
+              </div>
+            </Card>
           </>
         )}
 
@@ -314,11 +382,13 @@ export function TestRunDetailPage() {
           Findings
         </h2>
 
-        {run.testInteractionRunId === null && (
-          <EmptyState description="This test run tracks a surface or discovery workflow and does not map directly to a single test interaction run." />
+        {run.testInteractionRunId !== null && isLoading && (
+          <div className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">
+            Loading findings...
+          </div>
         )}
 
-        {run.testInteractionRunId !== null && isLoading && (
+        {run.testInteractionRunId === null && rootFindingsLoading && (
           <div className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">
             Loading findings...
           </div>
@@ -328,7 +398,16 @@ export function TestRunDetailPage() {
           <EmptyState description="No findings for this test run." />
         )}
 
-        {run.testInteractionRunId !== null && !isLoading && findings.length > 0 && (
+        {run.testInteractionRunId === null &&
+          !rootFindingsLoading &&
+          rootFindingSummaries.length === 0 && (
+            <EmptyState description="No grouped findings for this scan run." />
+          )}
+
+        {((run.testInteractionRunId !== null && !isLoading && findings.length > 0) ||
+          (run.testInteractionRunId === null &&
+            !rootFindingsLoading &&
+            rootFindingSummaries.length > 0)) && (
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-3 border-b border-gray-200 pb-3 dark:border-gray-800">
               <div className="inline-flex overflow-hidden rounded border border-gray-300 dark:border-gray-700">
@@ -361,49 +440,89 @@ export function TestRunDetailPage() {
                 ))}
               </select>
             </div>
-            {findingGroups.map(group => {
-              const finding = group[0];
-              const tag = getFindingExpertiseSlug(finding);
-              const remediation = getFindingRemediation(finding);
-              return (
-                <Card key={`${finding.ruleId ?? finding.id}`} variant="bordered" padding="md">
-                  <div className="flex items-start gap-3">
-                    <FindingTypeBadge type={finding.type} />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        {tag && (
-                          <span className="inline-flex shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400">
-                            {tag}
+            {run.testInteractionRunId === null
+              ? filteredRootFindingSummaries.map((finding: TestRunFindingRuleSummary) => (
+                  <Card key={`${finding.ruleId ?? finding.title}`} variant="bordered" padding="md">
+                    <div className="flex items-start gap-3">
+                      <FindingTypeBadge type={finding.type} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {finding.expertiseId && (
+                            <span className="inline-flex shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium capitalize text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                              {finding.expertiseId}
+                            </span>
+                          )}
+                          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {finding.label}
                           </span>
-                        )}
-                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {getFindingDisplayTitle(finding)}
-                        </span>
-                        {group.length > 1 && (
                           <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {group.length} occurrences
+                            {finding.findingCount} occurrence{finding.findingCount === 1 ? '' : 's'}
                           </span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            {finding.affectedPages} page{finding.affectedPages === 1 ? '' : 's'}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          {finding.description}
+                        </p>
+                        {finding.remediation && (
+                          <p className="mt-2 text-xs text-gray-600 dark:text-gray-300">
+                            {finding.remediation}
+                          </p>
+                        )}
+                        {finding.samplePaths.length > 0 && (
+                          <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
+                            {finding.samplePaths.join(' | ')}
+                          </p>
                         )}
                       </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        {finding.description}
-                      </p>
-                      {remediation && (
-                        <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">
-                          {remediation}
-                        </p>
-                      )}
-                      {finding.createdAt && (
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                          {formatDate(finding.createdAt)}
-                        </p>
-                      )}
                     </div>
-                  </div>
-                </Card>
-              );
-            })}
-            {findingGroups.length === 0 && (
+                  </Card>
+                ))
+              : findingGroups.map(group => {
+                  const finding = group[0];
+                  const tag = getFindingExpertiseSlug(finding);
+                  const remediation = getFindingRemediation(finding);
+                  return (
+                    <Card key={`${finding.ruleId ?? finding.id}`} variant="bordered" padding="md">
+                      <div className="flex items-start gap-3">
+                        <FindingTypeBadge type={finding.type} />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            {tag && (
+                              <span className="inline-flex shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                                {tag}
+                              </span>
+                            )}
+                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              {getFindingDisplayTitle(finding)}
+                            </span>
+                            {group.length > 1 && (
+                              <span className="text-xs text-gray-500 dark:text-gray-400">
+                                {group.length} occurrences
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {finding.description}
+                          </p>
+                          {remediation && (
+                            <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">
+                              {remediation}
+                            </p>
+                          )}
+                          {finding.createdAt && (
+                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                              {formatDate(finding.createdAt)}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })}
+            {((run.testInteractionRunId === null && filteredRootFindingSummaries.length === 0) ||
+              (run.testInteractionRunId !== null && findingGroups.length === 0)) && (
               <EmptyState description="No findings match the active filters." />
             )}
           </div>
