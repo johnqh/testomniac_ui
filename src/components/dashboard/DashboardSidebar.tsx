@@ -245,14 +245,33 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
   const userSelectedProductId = useProductSelectionStore(s => s.selectedProductId);
   const setUserSelectedProductId = useProductSelectionStore(s => s.setSelectedProductId);
 
-  // Effective selection: user's choice if still valid, otherwise auto-select single product
+  // Path with the language prefix stripped, used for active-state and route
+  // detection below. Computed before the product selection so the create-product
+  // route can suppress any auto-selection.
+  const currentPath = useMemo(() => {
+    const langPrefix = pathname.match(/^\/[a-z]{2}(-[a-z]+)?\//)?.[0] || '/';
+    return pathname.slice(langPrefix.length - 1);
+  }, [pathname]);
+
+  // When on the "create product" route, show the selector as "Create New..."
+  // rather than the placeholder, even though no product is selected yet.
+  const onProductNewRoute = useMemo(() => {
+    const target = routes.productNew(entitySlug);
+    return currentPath === target || currentPath.startsWith(`${target}/`);
+  }, [currentPath, routes, entitySlug]);
+
+  // Effective selection: none while creating a new product (otherwise the
+  // existing product's environments would load and the auto-select effect below
+  // would navigate straight back out of the create page); user's choice if still
+  // valid; otherwise auto-select a single product.
   const selectedProductId = useMemo(() => {
+    if (onProductNewRoute) return null;
     if (userSelectedProductId && products.some(p => String(p.id) === userSelectedProductId)) {
       return userSelectedProductId;
     }
     if (products.length === 1) return String(products[0].id);
     return null;
-  }, [products, userSelectedProductId]);
+  }, [products, userSelectedProductId, onProductNewRoute]);
 
   const environmentsQuery = useProductEnvironments(
     networkClient,
@@ -306,22 +325,9 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
     navigate(routes.bundles(entitySlug, value));
   };
 
-  // Active path detection
-  const currentPath = useMemo(() => {
-    const langPrefix = pathname.match(/^\/[a-z]{2}(-[a-z]+)?\//)?.[0] || '/';
-    return pathname.slice(langPrefix.length - 1);
-  }, [pathname]);
-
   const isActive = (target: string) => {
     return currentPath === target || currentPath.startsWith(target + '/');
   };
-
-  // When on the "create product" route, show the selector as "Create New..."
-  // rather than the placeholder, even though no product is selected yet.
-  const onProductNewRoute = useMemo(() => {
-    const target = routes.productNew(entitySlug);
-    return currentPath === target || currentPath.startsWith(`${target}/`);
-  }, [currentPath, routes, entitySlug]);
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800">
