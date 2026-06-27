@@ -19,6 +19,8 @@ export interface TestomniacRoutes {
   entityHome(entitySlug: string): string;
   scanNew(entitySlug: string): string;
   productNew(entitySlug: string): string;
+  /** Product-level settings: /dashboard/:slug/products/:productId/settings */
+  productSettings(entitySlug: string, productId: Id): string;
   environmentNew(entitySlug: string): string;
   /** Legacy run redirect at the entity level: /dashboard/:slug/runs/:runId */
   entityRun(entitySlug: string, runId: Id): string;

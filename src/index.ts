@@ -63,6 +63,7 @@ export { formatDateTime } from './utils/formatDateTime';
 export { DashboardOverview } from './pages/DashboardOverview';
 export { StartScanPage } from './pages/StartScanPage';
 export { CreateProductPage } from './pages/CreateProductPage';
+export { ProductSettingsPage } from './pages/ProductSettingsPage';
 export { StatusPage } from './pages/StatusPage';
 export { ScanProgressPage } from './pages/ScanProgressPage';
 export { BundlesPage } from './pages/BundlesPage';

@@ -450,7 +450,7 @@ export function StatusPage() {
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-3xl space-y-4 p-4">
         <div className="flex items-center justify-between gap-2">
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Status</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Status</h1>
           <StatusPill status={runStatus} live={live} />
         </div>
 

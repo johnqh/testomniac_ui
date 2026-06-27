@@ -1,5 +1,6 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
+  ConfirmationDialog,
   Select,
   SelectTrigger,
   SelectContent,
@@ -11,7 +12,7 @@ import {
   useEntityProducts,
   useProductEnvironments,
 } from '@sudobility/testomniac_client';
-import { useProductSelectionStore } from '@sudobility/testomniac_lib';
+import { useCreateProductDraftStore, useProductSelectionStore } from '@sudobility/testomniac_lib';
 import { useLocalizedNavigate } from '../../hooks/useLocalizedNavigate';
 import { useTestomniacApi } from '../../context/config';
 import {
@@ -245,6 +246,15 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
   const userSelectedProductId = useProductSelectionStore(s => s.selectedProductId);
   const setUserSelectedProductId = useProductSelectionStore(s => s.setSelectedProductId);
 
+  // Whether the create-product form holds unsaved input. When it does, a
+  // workspace/product switch must confirm before navigating away and discarding
+  // it. `pendingSwitch` holds the switch awaiting that confirmation.
+  const draftDirty = useCreateProductDraftStore(s => s.dirty);
+  const setDraftDirty = useCreateProductDraftStore(s => s.setDirty);
+  const [pendingSwitch, setPendingSwitch] = useState<
+    { type: 'product'; value: string } | { type: 'workspace'; value: string } | null
+  >(null);
+
   // Path with the language prefix stripped, used for active-state and route
   // detection below. Computed before the product selection so the create-product
   // route can suppress any auto-selection.
@@ -259,6 +269,15 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
     const target = routes.productNew(entitySlug);
     return currentPath === target || currentPath.startsWith(`${target}/`);
   }, [currentPath, routes, entitySlug]);
+
+  // The entity home (`/dashboard/:slug`) is the only place we auto-deep-link the
+  // user into a single environment. On other env-less routes (create-product,
+  // create-environment, scan/new) that auto-redirect would yank the user off the
+  // page they intentionally opened.
+  const onEntityHome = useMemo(
+    () => currentPath === routes.entityHome(entitySlug),
+    [currentPath, routes, entitySlug]
+  );
 
   // Effective selection: none while creating a new product (otherwise the
   // existing product's environments would load and the auto-select effect below
@@ -287,19 +306,53 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
   // only appears once the route's environment is a real one in the loaded list.
   const selectedEnvValid = !!routeEnvId && environments.some(env => String(env.id) === routeEnvId);
 
-  // Auto-select environment if only one exists and no environment in route
+  // Auto-select environment if only one exists and no environment in route —
+  // but ONLY on the entity home, so we don't bounce the user off the
+  // create-product / create-environment / scan pages (which also have no envId).
   useEffect(() => {
-    if (environments.length === 1 && !routeEnvId) {
+    if (onEntityHome && environments.length === 1 && !routeEnvId) {
       navigate(routes.bundles(entitySlug, environments[0].id));
     }
-  }, [environments, routeEnvId, entitySlug, navigate, routes]);
+  }, [environments, routeEnvId, entitySlug, navigate, routes, onEntityHome]);
 
-  const handleWorkspaceChange = (value: string) => {
-    if (value === entitySlug) return;
+  // Switching product re-scopes the dashboard to that product's home, where the
+  // single-environment auto-select takes over. Done unconditionally (not only
+  // when a `routeEnvId` is present) so the switch also works from env-less pages
+  // such as the create-product route.
+  const switchToProduct = (value: string) => {
+    setUserSelectedProductId(value);
+    navigate(routes.entityHome(entitySlug));
+  };
+
+  const switchToWorkspace = (value: string) => {
     // Reset any product selection so it re-derives for the new workspace, then
     // re-scope the whole dashboard to the chosen entity.
     setUserSelectedProductId(null);
     navigate(routes.entityHome(value));
+  };
+
+  // A selector switch that would leave a dirty create-product form is deferred
+  // until the user confirms discarding it; otherwise it happens immediately.
+  const guardedSwitch = (next: NonNullable<typeof pendingSwitch>) => {
+    if (onProductNewRoute && draftDirty) {
+      setPendingSwitch(next);
+      return;
+    }
+    if (next.type === 'product') switchToProduct(next.value);
+    else switchToWorkspace(next.value);
+  };
+
+  const confirmPendingSwitch = () => {
+    if (!pendingSwitch) return;
+    setDraftDirty(false);
+    if (pendingSwitch.type === 'product') switchToProduct(pendingSwitch.value);
+    else switchToWorkspace(pendingSwitch.value);
+    setPendingSwitch(null);
+  };
+
+  const handleWorkspaceChange = (value: string) => {
+    if (value === entitySlug) return;
+    guardedSwitch({ type: 'workspace', value });
   };
 
   const handleProductChange = (value: string) => {
@@ -307,14 +360,7 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
       navigate(routes.productNew(entitySlug));
       return;
     }
-    setUserSelectedProductId(value);
-    // Clear any environment selected for a previously-chosen product so the
-    // navigation sections stay hidden until an environment for this product is
-    // selected. If the new product has exactly one environment, the auto-select
-    // effect below will navigate straight into it.
-    if (routeEnvId) {
-      navigate(routes.entityHome(entitySlug));
-    }
+    guardedSwitch({ type: 'product', value });
   };
 
   const handleEnvironmentChange = (value: string) => {
@@ -357,23 +403,36 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
           <span className="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5 px-0.5">
             Product
           </span>
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-0.5">
-            <Select
-              value={onProductNewRoute ? 'new' : (selectedProductId ?? '')}
-              onValueChange={handleProductChange}
-            >
-              <SelectTrigger className="w-full border-0 bg-transparent shadow-none text-[13px] font-medium">
-                <SelectValue placeholder={productsLoading ? 'Loading...' : 'Select product'} />
-              </SelectTrigger>
-              <SelectContent>
-                {products.map(p => (
-                  <SelectItem key={p.id} value={String(p.id)}>
-                    {p.title}
-                  </SelectItem>
-                ))}
-                <SelectItem value="new">+ Create New...</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex items-center gap-1.5">
+            <div className="min-w-0 flex-1 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-0.5">
+              <Select
+                value={onProductNewRoute ? 'new' : (selectedProductId ?? '')}
+                onValueChange={handleProductChange}
+              >
+                <SelectTrigger className="w-full border-0 bg-transparent shadow-none text-[13px] font-medium">
+                  <SelectValue placeholder={productsLoading ? 'Loading...' : 'Select product'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {products.map(p => (
+                    <SelectItem key={p.id} value={String(p.id)}>
+                      {p.title}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="new">+ Create New...</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {selectedProductId && (
+              <button
+                type="button"
+                onClick={() => navigate(routes.productSettings(entitySlug, selectedProductId))}
+                aria-label="Product settings"
+                title="Product settings"
+                className="flex-shrink-0 rounded-lg border border-gray-200 bg-gray-50 p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+              >
+                <SettingsIcon />
+              </button>
+            )}
           </div>
         </div>
 
@@ -473,6 +532,17 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
           </p>
         </div>
       )}
+
+      <ConfirmationDialog
+        isOpen={pendingSwitch !== null}
+        onClose={() => setPendingSwitch(null)}
+        onConfirm={confirmPendingSwitch}
+        title="Discard new product?"
+        message="You have unsaved details for a new product. Switch anyway and discard them?"
+        confirmText="Discard & switch"
+        cancelText="Keep editing"
+        variant="warning"
+      />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useResolveProductByUrl } from '@sudobility/testomniac_client';
 import {
   useCreateProductFlow,
   useProductSelectionStore,
+  useCreateProductDraftStore,
   EXPERTISE_OPTIONS,
   DEFAULT_EXPERTISE_SLUGS,
   SCAN_MODE_OPTIONS,
@@ -45,6 +46,7 @@ export function CreateProductPage() {
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const queryClient = useQueryClient();
   const setSelectedProductId = useProductSelectionStore(s => s.setSelectedProductId);
+  const setDraftDirty = useCreateProductDraftStore(s => s.setDirty);
 
   const [url, setUrl] = useState('');
   const [debouncedUrl, setDebouncedUrl] = useState('');
@@ -64,6 +66,21 @@ export function CreateProductPage() {
     const handle = setTimeout(() => setDebouncedUrl(url.trim()), 500);
     return () => clearTimeout(handle);
   }, [url]);
+
+  // Has the user entered anything worth keeping? Mirrored into a shared store so
+  // the sidebar can warn before a workspace/product switch discards it. Reset on
+  // unmount so leaving the page by any route clears the guard.
+  const draftDirty =
+    url.trim() !== '' ||
+    continueWithLogin ||
+    loginUrl.trim() !== '' ||
+    credEmail.trim() !== '' ||
+    credPassword !== '' ||
+    customEnvironmentLabel.trim() !== '';
+  useEffect(() => {
+    setDraftDirty(draftDirty);
+  }, [draftDirty, setDraftDirty]);
+  useEffect(() => () => setDraftDirty(false), [setDraftDirty]);
 
   const isValidUrl = useMemo(() => {
     if (!debouncedUrl) return false;
@@ -119,6 +136,7 @@ export function CreateProductPage() {
 
   function openExisting() {
     if (!existing) return;
+    setDraftDirty(false);
     setSelectedProductId(String(existing.product.id));
     navigate(routes.bundles(entitySlug, existing.testEnvironment.id));
   }
@@ -164,6 +182,7 @@ export function CreateProductPage() {
     if (result) {
       // Select the new product so the sidebar reflects it, refresh the product
       // list, and land on its Runs page where the new (pending) run appears.
+      setDraftDirty(false);
       setSelectedProductId(String(result.productId));
       queryClient.invalidateQueries({
         predicate: q => Array.isArray(q.queryKey) && (q.queryKey as unknown[]).includes('products'),

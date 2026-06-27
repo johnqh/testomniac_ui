@@ -10,7 +10,7 @@
         "@sudobility/components": "^5.0.82",
         "@sudobility/design": "^1.1.32",
         "@sudobility/testomniac_client": "^0.0.110",
-        "@sudobility/testomniac_lib": "^0.0.120",
+        "@sudobility/testomniac_lib": "^0.0.121",
         "@sudobility/testomniac_types": "^0.0.85",
         "@sudobility/types": "^1.9.62",
         "@tanstack/react-query": "^5.90.5",
@@ -33,7 +33,7 @@
         "@sudobility/components": "^5.0.82",
         "@sudobility/design": "^1.1.32",
         "@sudobility/testomniac_client": "^0.0.110",
-        "@sudobility/testomniac_lib": "^0.0.120",
+        "@sudobility/testomniac_lib": "^0.0.121",
         "@sudobility/testomniac_types": "^0.0.85",
         "@sudobility/types": "^1.9.62",
         "@tanstack/react-query": ">=5.0.0",
@@ -247,7 +247,7 @@
 
     "@sudobility/testomniac_client": ["@sudobility/testomniac_client@0.0.110", "", { "peerDependencies": { "@sudobility/types": "^1.9.62", "@tanstack/react-query": ">=5.0.0", "react": ">=18.0.0" } }, "sha512-Dt4pZsO2RDBDDtnobbMmd73NWoUuShw1qRCpICCzsuquyfKpVfB48lZKYH7ardfZMZw0xibfvWeDV8omqswgzg=="],
 
-    "@sudobility/testomniac_lib": ["@sudobility/testomniac_lib@0.0.120", "", { "dependencies": { "dagre": "^0.8.5" }, "peerDependencies": { "@sudobility/testomniac_client": "^0.0.110", "@sudobility/testomniac_types": "^0.0.85", "@sudobility/types": "^1.9.62", "@tanstack/react-query": ">=5.0.0", "react": ">=18.0.0", "zustand": ">=5.0.0" } }, "sha512-A1aEQb6pZvmvlqBXu6Hgpyy5VExd9QomdTrYjww0eElLetTmXySoGzYu7THmvehnWY1L7PRN/uurxVVg52KAZA=="],
+    "@sudobility/testomniac_lib": ["@sudobility/testomniac_lib@0.0.121", "", { "dependencies": { "dagre": "^0.8.5" }, "peerDependencies": { "@sudobility/testomniac_client": "^0.0.110", "@sudobility/testomniac_types": "^0.0.85", "@sudobility/types": "^1.9.62", "@tanstack/react-query": ">=5.0.0", "react": ">=18.0.0", "zustand": ">=5.0.0" } }, "sha512-n7t3fDP/MxP1RxXJwXqpD2+Sz6Dp1tgQfUQjWkJEPrHK2IRXPAAAjZ1CHDRyqu3RqxvxMotBktrAP8Ne2AtIiQ=="],
 
     "@sudobility/testomniac_types": ["@sudobility/testomniac_types@0.0.85", "", { "peerDependencies": { "@sudobility/types": "^1.9.62" } }, "sha512-0XRSqFYBnxjYxRV9WAMcVpXxmF3nINDhNoSK24gsp/afskGUWEX7VKs5lNretyT7MxaTaIN78puVjkuERUWjOg=="],
 

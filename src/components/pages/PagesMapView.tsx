@@ -279,18 +279,20 @@ export function PagesMapView({
     }
 
     // --- 5. Test interaction edges (cross-page) ---
+    // Only interactions that declare a distinct target page represent a
+    // cross-page connection. Direct-navigation tests ("Navigate to /x") carry
+    // no page IDs (pageId/targetPageId are null), so they are NOT connections
+    // and must not be reported as omitted. Mirrors the filter in
+    // testomniac_lib's usePageMapData.
     let hiddenInteractionCount = 0;
     const interactionCounts = new Map<string, { source: string; target: string; count: number }>();
 
     for (const ti of testInteractions) {
       if (!MAP_TEST_TYPES.has(ti.testType)) continue;
+      if (ti.targetPageId == null || ti.pageId === ti.targetPageId) continue;
 
-      const sourcePath = ti.pageId != null ? (pageIdToPath.get(ti.pageId) ?? null) : null;
-      const targetPath =
-        ti.targetPageId != null ? (pageIdToPath.get(ti.targetPageId) ?? null) : null;
-
-      const src = ti.testType === 'navigation' ? null : sourcePath;
-      const tgt = targetPath ?? (ti.testType === 'navigation' ? sourcePath : null);
+      const src = ti.pageId != null ? (pageIdToPath.get(ti.pageId) ?? null) : null;
+      const tgt = pageIdToPath.get(ti.targetPageId) ?? null;
 
       if (src && tgt && src !== tgt) {
         const key = `${src}\0${tgt}`;
@@ -300,9 +302,13 @@ export function PagesMapView({
         } else {
           interactionCounts.set(key, { source: src, target: tgt, count: 1 });
         }
-      } else {
+      } else if (!(src && tgt)) {
+        // A declared cross-page target whose source or target page isn't part
+        // of this view — a genuine omission worth surfacing.
         hiddenInteractionCount++;
       }
+      // src === tgt: both endpoints consolidated to the same node (e.g.
+      // parameterised URLs merged) — a self-loop, not a missing connection.
     }
 
     for (const [key, edge] of interactionCounts) {
@@ -360,7 +366,7 @@ export function PagesMapView({
   }
 
   return (
-    <div className={fill ? 'flex h-full flex-col gap-2' : 'space-y-2'}>
+    <div className={fill ? 'flex h-full min-h-[400px] flex-col gap-2' : 'space-y-2'}>
       {hiddenInteractionCount > 0 && (
         <p className="flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">
           {hiddenInteractionCount} interaction

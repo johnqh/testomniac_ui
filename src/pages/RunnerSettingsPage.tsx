@@ -2,6 +2,7 @@ import { ContentLayout } from '@sudobility/components';
 import { SEOHead } from '../context/config';
 import { useRouteParams } from '../context/routing';
 import { CredentialManagementSection } from '../components/credentials';
+import { EnvironmentScanSettingsSection } from '../components/scan-settings';
 
 export function RunnerSettingsPage() {
   const { entitySlug, envId } = useRouteParams<{
@@ -25,8 +26,9 @@ export function RunnerSettingsPage() {
         </div>
       }
     >
-      <div className="mx-auto max-w-2xl px-4 py-6">
+      <div className="mx-auto max-w-2xl space-y-8 px-4 py-6">
         <CredentialManagementSection entitySlug={entitySlug ?? ''} />
+        <EnvironmentScanSettingsSection />
       </div>
     </ContentLayout>
   );
