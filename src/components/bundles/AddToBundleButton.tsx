@@ -74,16 +74,14 @@ export function AddToBundleButton({ itemType, itemId }: AddToBundleButtonProps) 
       >
         {isAdding ? 'Adding...' : 'Add to Bundle'}
       </Button>
-      {feedback && (
-        <span className="ml-2 text-xs text-green-600 dark:text-green-400">{feedback}</span>
-      )}
+      {feedback && <span className="ml-2 text-xs text-success">{feedback}</span>}
       {open && (
-        <div className="absolute right-0 top-full z-10 mt-1 w-56 rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-800">
+        <div className="absolute right-0 top-full z-10 mt-1 w-56 rounded-lg border border-border bg-popover py-1 shadow-lg">
           {nonDiscoveryBundles.map(bundle => (
             <button
               key={bundle.id}
               onClick={() => handleSelect(bundle.id, bundle.title)}
-              className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+              className="w-full px-3 py-2 text-left text-sm text-popover-foreground hover:bg-accent"
             >
               {bundle.title}
             </button>

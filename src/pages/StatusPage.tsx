@@ -28,19 +28,18 @@ function fmtTime(iso: string | null): string {
 }
 
 function typeColor(type: string): string {
-  if (type === 'error') return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40';
-  if (type === 'warning')
-    return 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40';
-  return 'text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800';
+  if (type === 'error') return 'text-destructive bg-destructive/10';
+  if (type === 'warning') return 'text-warning bg-warning/10';
+  return 'text-muted-foreground bg-muted';
 }
 
 function StatusPill({ status, live }: { status: string; live: boolean }) {
   const done = TERMINAL.includes(status);
   const cls = !done
-    ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300'
+    ? 'bg-info/10 text-info'
     : status === 'completed'
-      ? 'bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-300'
-      : 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300';
+      ? 'bg-success/10 text-success'
+      : 'bg-destructive/10 text-destructive';
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium ${cls}`}
@@ -54,15 +53,13 @@ function StatusPill({ status, live }: { status: string; live: boolean }) {
 const mainTabCls = (active: boolean) =>
   `whitespace-nowrap px-3 py-2 text-[13px] font-medium border-b-2 transition-colors ${
     active
-      ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-400'
-      : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+      ? 'border-primary text-primary'
+      : 'border-transparent text-muted-foreground hover:text-foreground'
   }`;
 
 const subTabCls = (active: boolean) =>
   `whitespace-nowrap rounded-full px-3 py-1 text-[12px] font-medium transition-colors ${
-    active
-      ? 'bg-blue-600 text-white'
-      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+    active ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-accent'
   }`;
 
 /* ------------------------------------------------------------------ */
@@ -80,6 +77,7 @@ function CountsBar({
   tests: number;
   errors: number;
 }) {
+  // Distinct per-metric category palette (purple has no semantic equivalent); kept as decorative data.
   const cells = [
     { label: 'Pages', value: pages, color: 'text-blue-600 dark:text-blue-400' },
     {
@@ -95,15 +93,13 @@ function CountsBar({
     { label: 'Errors', value: errors, color: 'text-red-600 dark:text-red-400' },
   ];
   return (
-    <div className="grid grid-cols-4 gap-1 rounded-lg border border-gray-200 bg-white py-1 dark:border-gray-800 dark:bg-gray-950">
+    <div className="grid grid-cols-4 gap-1 rounded-lg border border-border bg-card py-1">
       {cells.map(c => (
         <div key={c.label} className="py-1.5 text-center">
           <div className={`font-mono text-lg font-bold tabular-nums sm:text-xl ${c.color}`}>
             {c.value}
           </div>
-          <div className="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
-            {c.label}
-          </div>
+          <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{c.label}</div>
         </div>
       ))}
     </div>
@@ -122,7 +118,9 @@ function OverviewTab({
   screenshot: string | null;
 }) {
   if (!summary) {
-    return <p className="py-8 text-center text-[13px] text-gray-400">Waiting for run data…</p>;
+    return (
+      <p className="py-8 text-center text-[13px] text-muted-foreground">Waiting for run data…</p>
+    );
   }
   const expertise = Object.entries(summary.expertiseSummary ?? {});
   return (
@@ -131,34 +129,31 @@ function OverviewTab({
         <img
           src={screenshot}
           alt="Latest page"
-          className="w-full rounded-lg border border-gray-200 dark:border-gray-800"
+          className="w-full rounded-lg border border-border"
         />
       )}
       {summary.aiSummary && (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-[13px] leading-relaxed text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
+        <div className="rounded-lg border border-border bg-muted px-3 py-2 text-[13px] leading-relaxed text-foreground">
           {summary.aiSummary}
         </div>
       )}
       {expertise.length > 0 && (
         <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
           {expertise.map(([slug, s]) => (
-            <div
-              key={slug}
-              className="rounded-md border border-gray-200 px-2.5 py-1.5 dark:border-gray-800"
-            >
-              <div className="truncate text-[12px] font-medium capitalize text-gray-800 dark:text-gray-200">
+            <div key={slug} className="rounded-md border border-border px-2.5 py-1.5">
+              <div className="truncate text-[12px] font-medium capitalize text-foreground">
                 {slug}
               </div>
               <div className="mt-0.5 flex gap-2 text-[11px]">
-                <span className="text-red-600 dark:text-red-400">{s.errors} err</span>
-                <span className="text-amber-600 dark:text-amber-400">{s.warnings} warn</span>
+                <span className="text-destructive">{s.errors} err</span>
+                <span className="text-warning">{s.warnings} warn</span>
               </div>
             </div>
           ))}
         </div>
       )}
       {!summary.aiSummary && expertise.length === 0 && !screenshot && (
-        <p className="py-8 text-center text-[13px] text-gray-400">No summary yet.</p>
+        <p className="py-8 text-center text-[13px] text-muted-foreground">No summary yet.</p>
       )}
     </div>
   );
@@ -176,19 +171,16 @@ function IssuesTab({
   loading: boolean;
 }) {
   if (loading && findings.length === 0) {
-    return <p className="py-8 text-center text-[13px] text-gray-400">Loading issues…</p>;
+    return <p className="py-8 text-center text-[13px] text-muted-foreground">Loading issues…</p>;
   }
   if (findings.length === 0) {
-    return <p className="py-8 text-center text-[13px] text-gray-400">No issues found.</p>;
+    return <p className="py-8 text-center text-[13px] text-muted-foreground">No issues found.</p>;
   }
   const sorted = [...findings].sort((a, b) => a.priority - b.priority);
   return (
     <div className="space-y-1.5">
       {sorted.map(f => (
-        <div
-          key={f.id}
-          className="rounded-md border border-gray-200 px-3 py-2 dark:border-gray-800"
-        >
+        <div key={f.id} className="rounded-md border border-border px-3 py-2">
           <div className="flex items-start gap-2">
             <span
               className={`mt-0.5 shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${typeColor(f.type)}`}
@@ -198,21 +190,23 @@ function IssuesTab({
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
                 {getFindingExpertiseSlug(f) && (
-                  <span className="inline-flex shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                  <span className="inline-flex shrink-0 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
                     {getFindingExpertiseSlug(f)}
                   </span>
                 )}
-                <span className="text-[13px] font-medium text-gray-900 dark:text-gray-100">
+                <span className="text-[13px] font-medium text-foreground">
                   {getFindingDisplayTitle(f)}
                 </span>
               </div>
               {f.description && (
-                <div className="mt-0.5 text-[12px] leading-snug text-gray-600 dark:text-gray-400">
+                <div className="mt-0.5 text-[12px] leading-snug text-muted-foreground">
                   {f.description}
                 </div>
               )}
               {f.path && (
-                <div className="mt-0.5 truncate font-mono text-[11px] text-gray-400">{f.path}</div>
+                <div className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">
+                  {f.path}
+                </div>
               )}
             </div>
           </div>
@@ -229,26 +223,23 @@ function IssuesTab({
 function NavigationDetail({ navMap }: { navMap: RunNavigationMap | undefined }) {
   const pages = navMap?.discoveredPages ?? [];
   if (pages.length === 0) {
-    return <p className="py-6 text-center text-[13px] text-gray-400">No pages discovered yet.</p>;
+    return (
+      <p className="py-6 text-center text-[13px] text-muted-foreground">No pages discovered yet.</p>
+    );
   }
   return (
     <div className="space-y-1">
       {pages.map(page => {
         const visit = navMap?.pageVisits.find(v => v.relativePath === page.relativePath);
         return (
-          <div
-            key={page.id}
-            className="rounded-md border border-gray-100 px-2.5 py-1.5 text-[12px] dark:border-gray-800"
-          >
+          <div key={page.id} className="rounded-md border border-border px-2.5 py-1.5 text-[12px]">
             <div className="flex items-center justify-between gap-2">
-              <span className="truncate font-mono text-gray-700 dark:text-gray-300">
-                {page.relativePath}
-              </span>
-              <span className="shrink-0 text-[11px] text-blue-600 dark:text-blue-400">
+              <span className="truncate font-mono text-foreground">{page.relativePath}</span>
+              <span className="shrink-0 text-[11px] text-info">
                 {visit?.status ?? 'discovered'}
               </span>
             </div>
-            <div className="mt-0.5 text-[11px] text-gray-400">
+            <div className="mt-0.5 text-[11px] text-muted-foreground">
               from {page.sourcePagePath || 'root'}
               {page.sourceLabel ? ` via ${page.sourceLabel}` : ''}
             </div>
@@ -266,7 +257,9 @@ function NavigationDetail({ navMap }: { navMap: RunNavigationMap | undefined }) 
 function CoverageDetail({ structure }: { structure: RunStructure | null }) {
   if (!structure || structure.surfaces.length === 0) {
     return (
-      <p className="py-6 text-center text-[13px] text-gray-400">Coverage not available yet.</p>
+      <p className="py-6 text-center text-[13px] text-muted-foreground">
+        Coverage not available yet.
+      </p>
     );
   }
   return (
@@ -274,36 +267,29 @@ function CoverageDetail({ structure }: { structure: RunStructure | null }) {
       {structure.surfaces.map(surface => {
         const status = surface.surfaceRuns.map(r => r.status).join(', ') || 'pending';
         return (
-          <details
-            key={surface.id}
-            className="rounded-md border border-gray-200 dark:border-gray-800"
-          >
+          <details key={surface.id} className="rounded-md border border-border">
             <summary className="flex cursor-pointer items-center justify-between gap-2 px-2.5 py-1.5 text-[12px]">
-              <span className="truncate font-medium text-gray-800 dark:text-gray-200">
-                {surface.title}
-              </span>
-              <span className="flex shrink-0 items-center gap-2 text-[11px] text-gray-400">
+              <span className="truncate font-medium text-foreground">{surface.title}</span>
+              <span className="flex shrink-0 items-center gap-2 text-[11px] text-muted-foreground">
                 <span>{surface.testInteractions.length} tests</span>
-                <span className="text-blue-600 dark:text-blue-400">{status}</span>
+                <span className="text-info">{status}</span>
               </span>
             </summary>
-            <div className="space-y-1 border-t border-gray-100 px-2 py-1.5 dark:border-gray-800">
+            <div className="space-y-1 border-t border-border px-2 py-1.5">
               {surface.testInteractions.map(ti => {
                 const runStatus = ti.interactionRuns.map(r => r.status).join(', ') || 'pending';
                 return (
                   <details key={ti.id} className="pl-1">
                     <summary className="flex cursor-pointer items-center justify-between gap-2 py-0.5 text-[11px]">
-                      <span className="truncate text-gray-700 dark:text-gray-300">{ti.title}</span>
-                      <span className="flex shrink-0 items-center gap-1.5 text-gray-400">
-                        <span className="rounded bg-gray-100 px-1 dark:bg-gray-800">
-                          {ti.testType}
-                        </span>
+                      <span className="truncate text-foreground">{ti.title}</span>
+                      <span className="flex shrink-0 items-center gap-1.5 text-muted-foreground">
+                        <span className="rounded bg-muted px-1">{ti.testType}</span>
                         <span>{runStatus}</span>
                       </span>
                     </summary>
                     <div className="space-y-0.5 pl-2 pt-0.5">
                       {ti.interactionRuns.map(r => (
-                        <div key={r.id} className="text-[11px] text-gray-500 dark:text-gray-400">
+                        <div key={r.id} className="text-[11px] text-muted-foreground">
                           run {r.id} · {r.status}
                           {r.durationMs != null ? ` · ${r.durationMs}ms` : ''} · {r.findings.length}{' '}
                           finding
@@ -311,7 +297,7 @@ function CoverageDetail({ structure }: { structure: RunStructure | null }) {
                         </div>
                       ))}
                       {ti.interactionRuns.length === 0 && (
-                        <div className="text-[11px] text-gray-400">not run yet</div>
+                        <div className="text-[11px] text-muted-foreground">not run yet</div>
                       )}
                     </div>
                   </details>
@@ -358,19 +344,14 @@ function EventsDetail({
   }, [navMap, summary]);
 
   if (events.length === 0) {
-    return <p className="py-6 text-center text-[13px] text-gray-400">No events yet.</p>;
+    return <p className="py-6 text-center text-[13px] text-muted-foreground">No events yet.</p>;
   }
   return (
     <div className="space-y-0.5 font-mono">
       {events.map(e => (
-        <div
-          key={e.key}
-          className="flex gap-2 rounded px-1.5 py-1 text-[11px] odd:bg-gray-50 dark:odd:bg-gray-900/50"
-        >
-          <span className="shrink-0 text-gray-400">{e.label}</span>
-          <span className="min-w-0 flex-1 break-words text-gray-700 dark:text-gray-300">
-            {e.msg}
-          </span>
+        <div key={e.key} className="flex gap-2 rounded px-1.5 py-1 text-[11px] odd:bg-muted">
+          <span className="shrink-0 text-muted-foreground">{e.label}</span>
+          <span className="min-w-0 flex-1 break-words text-foreground">{e.msg}</span>
         </div>
       ))}
     </div>
@@ -439,7 +420,7 @@ export function StatusPage() {
   if (!ctxLoading && runId === 0) {
     return (
       <div className="flex h-full items-center justify-center p-6">
-        <p className="max-w-xs text-center text-[13px] leading-relaxed text-gray-400 dark:text-gray-500">
+        <p className="max-w-xs text-center text-[13px] leading-relaxed text-muted-foreground">
           No runs yet for this environment. Start a scan to see live status here.
         </p>
       </div>
@@ -450,14 +431,14 @@ export function StatusPage() {
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-3xl space-y-4 p-4">
         <div className="flex items-center justify-between gap-2">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Status</h1>
+          <h1 className="text-2xl font-bold text-foreground">Status</h1>
           <StatusPill status={runStatus} live={live} />
         </div>
 
         <CountsBar pages={pages} states={states} tests={tests} errors={errors} />
 
         {/* Main tabs */}
-        <div className="flex gap-1 overflow-x-auto border-b border-gray-200 dark:border-gray-800">
+        <div className="flex gap-1 overflow-x-auto border-b border-border">
           {(
             [
               { key: 'overview', label: 'Overview' },

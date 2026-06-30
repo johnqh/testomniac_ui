@@ -35,10 +35,10 @@ function layoutGraph(nodes: Node[], edges: Edge[]): Node[] {
 function PageStateNode({ data }: { data: { label: string; screenshotUrl?: string } }) {
   return (
     <div
-      className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm"
+      className="bg-card border border-border rounded-lg overflow-hidden shadow-sm"
       style={{ width: NODE_WIDTH, height: NODE_HEIGHT }}
     >
-      <div className="w-full h-[120px] bg-gray-100 dark:bg-gray-900 flex items-center justify-center overflow-hidden">
+      <div className="w-full h-[120px] bg-muted flex items-center justify-center overflow-hidden">
         {data.screenshotUrl ? (
           <img
             src={data.screenshotUrl}
@@ -48,7 +48,7 @@ function PageStateNode({ data }: { data: { label: string; screenshotUrl?: string
           />
         ) : (
           <svg
-            className="w-8 h-8 text-gray-300 dark:text-gray-600"
+            className="w-8 h-8 text-muted-foreground"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -60,9 +60,7 @@ function PageStateNode({ data }: { data: { label: string; screenshotUrl?: string
         )}
       </div>
       <div className="px-2 py-1.5 text-center">
-        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate block">
-          {data.label}
-        </span>
+        <span className="text-xs font-medium text-foreground truncate block">{data.label}</span>
       </div>
     </div>
   );
@@ -125,7 +123,7 @@ export function PageGraphPage() {
   if (isLoading) {
     return (
       <div className="p-4 sm:p-6">
-        <div className="text-center text-gray-500 dark:text-gray-400 py-8">Loading graph...</div>
+        <div className="text-center text-muted-foreground py-8">Loading graph...</div>
       </div>
     );
   }
@@ -134,20 +132,20 @@ export function PageGraphPage() {
     <ContentLayout
       contentClassName="min-h-0"
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title="Page Graph" description="" noIndex />
           <BackLink label="Page Detail" onClick={() => navigate(pagesBasePath)} />
-          <h1 className="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">Page Graph</h1>
+          <h1 className="mt-2 text-2xl font-bold text-foreground">Page Graph</h1>
         </div>
       }
     >
       {pageStates.length === 0 ? (
         <div className="px-4 py-4 sm:px-6">
-          <p className="text-gray-500 dark:text-gray-400">No page states found.</p>
+          <p className="text-muted-foreground">No page states found.</p>
         </div>
       ) : (
         <div className="h-full min-h-0 p-4 sm:p-6">
-          <div className="h-full min-h-[400px] w-full overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="h-full min-h-[400px] w-full overflow-hidden rounded-lg border border-border">
             <ReactFlow
               nodes={nodes}
               edges={edges}
@@ -156,7 +154,7 @@ export function PageGraphPage() {
               onNodeClick={onNodeClick}
               nodeTypes={nodeTypes}
               fitView
-              className="bg-gray-50 dark:bg-gray-900"
+              className="bg-muted"
             >
               <Background />
               <Controls />

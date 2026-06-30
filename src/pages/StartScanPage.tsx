@@ -89,11 +89,9 @@ export function StartScanPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title="Start Discovery Run" description="" noIndex />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Start Discovery Run
-          </h1>
+          <h1 className="text-2xl font-bold text-foreground">Start Discovery Run</h1>
         </div>
       }
     >
@@ -106,8 +104,8 @@ export function StartScanPage() {
             showEmail={false}
           />
 
-          <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Options</h3>
+          <div className="border-t border-border pt-4">
+            <h3 className="text-sm font-medium text-foreground mb-3">Options</h3>
 
             <div className="space-y-4">
               <div>
@@ -118,8 +116,8 @@ export function StartScanPage() {
                     onClick={() => setSizeClass('desktop')}
                     className={`px-3 py-1.5 text-sm rounded-md border ${
                       sizeClass === 'desktop'
-                        ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-                        : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300'
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border text-foreground'
                     }`}
                   >
                     Desktop
@@ -129,8 +127,8 @@ export function StartScanPage() {
                     onClick={() => setSizeClass('mobile')}
                     className={`px-3 py-1.5 text-sm rounded-md border ${
                       sizeClass === 'mobile'
-                        ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-                        : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300'
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border text-foreground'
                     }`}
                   >
                     Mobile
@@ -146,10 +144,10 @@ export function StartScanPage() {
                   value={scanScopePath}
                   onChange={e => setScanScopePath(e.target.value)}
                   placeholder="/store/"
-                  className="w-full px-3 py-1.5 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  className="w-full px-3 py-1.5 text-sm rounded-md border border-input bg-background text-foreground"
                   disabled={isSubmitting}
                 />
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-xs text-muted-foreground">
                   Restrict scanning to URLs under this path prefix
                 </p>
               </div>
@@ -161,11 +159,11 @@ export function StartScanPage() {
                     type="checkbox"
                     checked={quickScan}
                     onChange={e => setQuickScan(e.target.checked)}
-                    className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                    className="rounded border-input text-primary focus:ring-ring"
                   />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Quick scan</span>
+                  <span className="text-sm text-muted-foreground">Quick scan</span>
                 </label>
-                <p className="mt-1 ml-6 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-1 ml-6 text-xs text-muted-foreground">
                   Skip hover interactions on linked elements for faster discovery
                 </p>
               </div>
@@ -183,11 +181,9 @@ export function StartScanPage() {
                         setLoginUrl('');
                       }
                     }}
-                    className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                    className="rounded border-input text-primary focus:ring-ring"
                   />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
-                    Continue with login
-                  </span>
+                  <span className="text-sm text-muted-foreground">Continue with login</span>
                 </label>
 
                 {continueWithLogin && (
@@ -212,7 +208,7 @@ export function StartScanPage() {
                         ]}
                       />
                       {!loadingCredentials && storedCredentials.length === 0 && (
-                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        <p className="mt-1 text-xs text-muted-foreground">
                           No stored credentials. Add them in Settings.
                         </p>
                       )}
@@ -225,14 +221,14 @@ export function StartScanPage() {
                         value={loginUrl}
                         onChange={e => setLoginUrl(e.target.value)}
                         placeholder="https://example.com/login"
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
                       />
                     </div>
                   </div>
                 )}
               </div>
 
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-muted-foreground">
                 Discovery creates a root test run and captures page states for the selected device
                 size.
               </p>

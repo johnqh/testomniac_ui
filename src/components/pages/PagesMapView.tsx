@@ -45,24 +45,23 @@ function PageNode({
     screenshotUrl?: string | null;
   };
 }) {
+  // Decorative map-node category colors (external vs internal): distinct
+  // identity palette for graph nodes, no semantic token equivalent.
   const borderColor = data.isExternal ? '#f97316' : '#374151';
 
   return (
     <div
-      className="rounded-lg bg-white text-xs dark:bg-gray-900 overflow-hidden shadow-sm"
+      className="rounded-lg bg-card text-xs overflow-hidden shadow-sm"
       style={{
         border: `2px solid ${borderColor}`,
         width: PAGE_NODE_WIDTH,
         minHeight: PAGE_NODE_HEIGHT,
       }}
     >
-      <Handle type="target" position={Position.Top} className="!bg-gray-400" />
+      <Handle type="target" position={Position.Top} className="!bg-muted-foreground" />
 
       {/* Screenshot thumbnail */}
-      <div
-        className="bg-gray-100 dark:bg-gray-800 flex items-center justify-center"
-        style={{ height: 130 }}
-      >
+      <div className="bg-muted flex items-center justify-center" style={{ height: 130 }}>
         {data.screenshotUrl ? (
           <img
             src={data.screenshotUrl}
@@ -72,7 +71,7 @@ function PageNode({
           />
         ) : (
           <svg
-            className="w-8 h-8 text-gray-300 dark:text-gray-600"
+            className="w-8 h-8 text-muted-foreground"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -86,16 +85,16 @@ function PageNode({
       </div>
 
       {/* Path label */}
-      <div className="px-2 py-1.5 text-center border-t border-gray-100 dark:border-gray-700/50">
-        <span className="block max-w-[190px] truncate text-gray-900 dark:text-gray-100 font-medium">
+      <div className="px-2 py-1.5 text-center border-t border-border">
+        <span className="block max-w-[190px] truncate text-foreground font-medium">
           {data.label}
         </span>
         {data.count > 1 && (
-          <span className="text-[10px] text-gray-400 dark:text-gray-500">{data.count} URLs</span>
+          <span className="text-[10px] text-muted-foreground">{data.count} URLs</span>
         )}
       </div>
 
-      <Handle type="source" position={Position.Bottom} className="!bg-gray-400" />
+      <Handle type="source" position={Position.Bottom} className="!bg-muted-foreground" />
     </div>
   );
 }
@@ -133,11 +132,6 @@ function getConsolidationKey(page: PageResponse): string {
   const normalized = normalizePath(raw);
   if (normalized) return patternizePath(normalized);
   return raw;
-}
-
-function getPathDepth(path: string): number {
-  if (path === '/') return 0;
-  return path.split('/').filter(Boolean).length;
 }
 
 // --- Component ---
@@ -189,7 +183,6 @@ export function PagesMapView({
     const nodeEntries = Array.from(consolidated.entries()).map(([path, data]) => ({
       path,
       ...data,
-      depth: getPathDepth(path),
     }));
 
     // --- 2. Map original page IDs → consolidated path ---
@@ -200,85 +193,135 @@ export function PagesMapView({
       }
     }
 
-    // --- 3. Position nodes by depth (rows) ---
-    const depthGroups = new Map<number, typeof nodeEntries>();
+    // --- 3. Build parent → child hierarchy from URL paths ---
+    // Each non-root node attaches to its nearest *existing* ancestor path, so a
+    // deep page whose intermediate segments were never discovered still hangs
+    // off the closest known page rather than floating.
+    const pathSet = new Set(nodeEntries.map(n => n.path));
+    const parentOf = new Map<string, string | null>();
+    const childrenOf = new Map<string, string[]>();
+
     for (const entry of nodeEntries) {
-      const arr = depthGroups.get(entry.depth) || [];
-      arr.push(entry);
-      depthGroups.set(entry.depth, arr);
-    }
-
-    const sortedDepths = Array.from(depthGroups.keys()).sort((a, b) => a - b);
-    const rfNodes: Node[] = [];
-
-    for (let rowIdx = 0; rowIdx < sortedDepths.length; rowIdx++) {
-      const group = depthGroups.get(sortedDepths[rowIdx])!;
-      group.sort((a, b) => a.path.localeCompare(b.path));
-      const totalWidth = group.length * COL_GAP;
-      const startX = -totalWidth / 2 + COL_GAP / 2;
-
-      for (let i = 0; i < group.length; i++) {
-        const entry = group[i];
-        // Find screenshot for first page ID in this group
-        let screenshotUrl: string | null = null;
-        if (screenshotsByPageId && apiUrl) {
-          for (const pid of entry.pageIds) {
-            const path = screenshotsByPageId.get(pid);
-            if (path) {
-              screenshotUrl = buildArtifactUrl(apiUrl, path, { thumbnail: true });
-              break;
-            }
+      let parent: string | null = null;
+      if (entry.path !== '/' && !entry.isExternal) {
+        const segments = entry.path.split('/').filter(Boolean);
+        for (let i = segments.length - 1; i >= 0; i--) {
+          const candidate = i === 0 ? '/' : '/' + segments.slice(0, i).join('/');
+          if (pathSet.has(candidate)) {
+            parent = candidate;
+            break;
           }
         }
-
-        rfNodes.push({
-          id: entry.path,
-          type: 'pageNode',
-          data: {
-            label: entry.path,
-            isExternal: entry.isExternal,
-            count: entry.pageIds.length,
-            pageIds: entry.pageIds,
-            screenshotUrl,
-          },
-          position: {
-            x: startX + i * COL_GAP,
-            y: rowIdx * ROW_GAP,
-          },
-        });
+      }
+      parentOf.set(entry.path, parent);
+      if (parent) {
+        const siblings = childrenOf.get(parent) ?? [];
+        siblings.push(entry.path);
+        childrenOf.set(parent, siblings);
       }
     }
 
-    // --- 4. URL hierarchy edges (parent → child) ---
-    const pathSet = new Set(nodeEntries.map(n => n.path));
+    for (const siblings of childrenOf.values()) {
+      siblings.sort((a, b) => a.localeCompare(b));
+    }
+
+    // Roots: the home page, external links, and any orphan whose ancestors
+    // weren't discovered. '/' is forced first so it owns the top-left corner.
+    const roots = nodeEntries
+      .filter(e => parentOf.get(e.path) == null)
+      .map(e => e.path)
+      .sort((a, b) => (a === '/' ? -1 : b === '/' ? 1 : a.localeCompare(b)));
+
+    // --- 4. Position nodes as a left-aligned tree ---
+    // Leaves are packed left→right; every parent sits directly above its FIRST
+    // child (the top-left of its subtree) instead of being centered over it.
+    // This keeps the root page pinned to (0,0), so the default top-left
+    // viewport always shows it, and reads as a true hierarchy. y is the tree
+    // depth (parent depth + 1), not the raw URL depth, so branches stay
+    // vertically compact.
+    const xByPath = new Map<string, number>();
+    const depthByPath = new Map<string, number>();
+    let leafCursor = 0;
+
+    const placeSubtree = (path: string, depth: number): number => {
+      depthByPath.set(path, depth);
+      const kids = childrenOf.get(path) ?? [];
+      if (kids.length === 0) {
+        const x = leafCursor * COL_GAP;
+        leafCursor++;
+        xByPath.set(path, x);
+        return x;
+      }
+      let firstChildX: number | null = null;
+      for (const child of kids) {
+        const childX = placeSubtree(child, depth + 1);
+        if (firstChildX === null) firstChildX = childX;
+      }
+      const x = firstChildX ?? leafCursor * COL_GAP;
+      xByPath.set(path, x);
+      return x;
+    };
+
+    for (const root of roots) {
+      placeSubtree(root, 0);
+    }
+
+    const rfNodes: Node[] = [];
+    for (const entry of nodeEntries) {
+      // Find screenshot for the first page ID that has one.
+      let screenshotUrl: string | null = null;
+      if (screenshotsByPageId && apiUrl) {
+        for (const pid of entry.pageIds) {
+          const shotPath = screenshotsByPageId.get(pid);
+          if (shotPath) {
+            screenshotUrl = buildArtifactUrl(apiUrl, shotPath, { thumbnail: true });
+            break;
+          }
+        }
+      }
+
+      rfNodes.push({
+        id: entry.path,
+        type: 'pageNode',
+        data: {
+          label: entry.path,
+          isExternal: entry.isExternal,
+          count: entry.pageIds.length,
+          pageIds: entry.pageIds,
+          screenshotUrl,
+        },
+        position: {
+          x: xByPath.get(entry.path) ?? 0,
+          y: (depthByPath.get(entry.path) ?? 0) * ROW_GAP,
+        },
+      });
+    }
+
+    // --- 5. URL hierarchy edges (parent → child) ---
     const rfEdges: Edge[] = [];
     const edgeKeySet = new Set<string>();
 
     for (const entry of nodeEntries) {
-      if (entry.path === '/' || entry.isExternal) continue;
-      const segments = entry.path.split('/').filter(Boolean);
-      for (let i = segments.length - 1; i >= 0; i--) {
-        const parentPath = i === 0 ? '/' : '/' + segments.slice(0, i).join('/');
-        if (pathSet.has(parentPath)) {
-          const key = `${parentPath}\0${entry.path}`;
-          edgeKeySet.add(key);
-          rfEdges.push({
-            id: `h-${rfEdges.length}`,
-            source: parentPath,
-            target: entry.path,
-            type: 'curved',
-            style: { stroke: '#94a3b8' },
-            markerEnd: {
-              type: MarkerType.ArrowClosed,
-              color: '#94a3b8',
-            },
-          });
-          break;
-        }
-      }
+      const parent = parentOf.get(entry.path);
+      if (!parent) continue;
+      const key = `${parent}\0${entry.path}`;
+      edgeKeySet.add(key);
+      rfEdges.push({
+        id: `h-${rfEdges.length}`,
+        source: parent,
+        target: entry.path,
+        type: 'curved',
+        // Decorative graph-edge colors (hierarchy vs interaction): distinct
+        // identity palette for the map, no semantic token equivalent.
+        style: { stroke: '#94a3b8' },
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          color: '#94a3b8',
+        },
+      });
     }
 
-    // --- 5. Test interaction edges (cross-page) ---
+    // --- 6. Test interaction edges (cross-page) ---
     // Only interactions that declare a distinct target page represent a
     // cross-page connection. Direct-navigation tests ("Navigate to /x") carry
     // no page IDs (pageId/targetPageId are null), so they are NOT connections
@@ -320,6 +363,7 @@ export function PagesMapView({
           target: edge.target,
           type: 'smoothstep',
           animated: true,
+          // Decorative cross-page interaction edge color (see hierarchy edge above).
           style: { stroke: '#60a5fa' },
           label: edge.count > 1 ? String(edge.count) : undefined,
           markerEnd: {
@@ -357,8 +401,8 @@ export function PagesMapView({
 
   if (pages.length === 0) {
     return (
-      <div className="flex h-[500px] items-center justify-center rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
-        <p className="text-gray-500 dark:text-gray-400">
+      <div className="flex h-[500px] items-center justify-center rounded-lg border border-border bg-muted">
+        <p className="text-muted-foreground">
           No page connections to display. Run a scan to discover navigation flows.
         </p>
       </div>
@@ -368,13 +412,13 @@ export function PagesMapView({
   return (
     <div className={fill ? 'flex h-full min-h-[400px] flex-col gap-2' : 'space-y-2'}>
       {hiddenInteractionCount > 0 && (
-        <p className="flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">
+        <p className="flex-shrink-0 text-xs text-muted-foreground">
           {hiddenInteractionCount} interaction
           {hiddenInteractionCount === 1 ? '' : 's'} omitted (no cross-page connection).
         </p>
       )}
       <div
-        className={`w-full overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 ${
+        className={`w-full overflow-hidden rounded-lg border border-border ${
           fill ? 'min-h-0 flex-1' : 'h-[600px]'
         }`}
       >
@@ -386,8 +430,9 @@ export function PagesMapView({
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeDoubleClick={handleNodeDoubleClick}
-          fitView
-          className="bg-gray-50 dark:bg-gray-900"
+          defaultViewport={{ x: 40, y: 40, zoom: 0.7 }}
+          minZoom={0.1}
+          className="bg-muted"
         >
           <Background />
           <Controls />

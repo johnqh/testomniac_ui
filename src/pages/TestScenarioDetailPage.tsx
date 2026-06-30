@@ -61,14 +61,12 @@ function SequenceCard({
     <Card variant="bordered" padding="none" className="overflow-hidden">
       <button
         onClick={onToggle}
-        className="flex items-center gap-3 w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+        className="flex items-center gap-3 w-full px-4 py-2 text-left hover:bg-accent transition-colors"
       >
-        <span className="text-xs text-gray-400">{isExpanded ? '▼' : '▶'}</span>
+        <span className="text-xs text-muted-foreground">{isExpanded ? '▼' : '▶'}</span>
         <div className="flex-1 min-w-0">
-          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-            Sequence #{sequence.id}
-          </div>
-          <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+          <div className="text-sm font-medium text-foreground">Sequence #{sequence.id}</div>
+          <div className="text-xs text-muted-foreground mt-0.5">
             Environment ID: {sequence.testEnvironmentId}
             {sequence.createdAt &&
               ` — Created: ${new Date(sequence.createdAt).toLocaleDateString()}`}
@@ -77,10 +75,14 @@ function SequenceCard({
       </button>
 
       {isExpanded && (
-        <div className="border-t border-gray-100 dark:border-gray-700 px-4 py-3">
-          {isLoading && <div className="text-xs text-gray-400 py-2">Loading interactions...</div>}
+        <div className="border-t border-border px-4 py-3">
+          {isLoading && (
+            <div className="text-xs text-muted-foreground py-2">Loading interactions...</div>
+          )}
           {!isLoading && sorted.length === 0 && (
-            <div className="text-xs text-gray-400 py-2">No interactions in this sequence.</div>
+            <div className="text-xs text-muted-foreground py-2">
+              No interactions in this sequence.
+            </div>
           )}
           {!isLoading && sorted.length > 0 && (
             <div className="space-y-1">
@@ -88,7 +90,7 @@ function SequenceCard({
                 const interaction = interactionById.get(link.testInteractionId);
                 const onOpen = () => navigate(interactionPath(link.testInteractionId));
                 const stepLabel = (
-                  <span className="w-6 text-right font-mono text-xs text-gray-400">
+                  <span className="w-6 text-right font-mono text-xs text-muted-foreground">
                     {link.stepOrder}.
                   </span>
                 );
@@ -114,7 +116,7 @@ function SequenceCard({
           )}
 
           {!isLoading && sorted.length > 0 && (
-            <div className="mt-4 border-t border-gray-100 pt-3 dark:border-gray-700">
+            <div className="mt-4 border-t border-border pt-3">
               <ScriptPanel
                 kind="sequence"
                 id={sequence.id}
@@ -222,7 +224,7 @@ export function TestScenarioDetailPage() {
   if (contextError || sequencesError) {
     return (
       <div className="p-4 sm:p-6">
-        <div className="text-center text-red-600 dark:text-red-400 py-8">
+        <div className="text-center text-destructive py-8">
           Error: {contextError || sequencesError}
         </div>
       </div>
@@ -232,13 +234,13 @@ export function TestScenarioDetailPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title={scenario?.title ?? `Scenario #${scenarioId}`} description="" noIndex />
 
           <BackLink label="Test Scenarios" onClick={() => navigate(r.testScenarios())} />
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-2xl font-bold text-foreground">
               {scenario?.title ?? `Test Scenario #${scenarioId}`}
             </h1>
             <AddToBundleButton itemType="scenario" itemId={Number(scenarioId)} />
@@ -249,42 +251,35 @@ export function TestScenarioDetailPage() {
       <div className="px-4 py-4 sm:px-6">
         {scenario && (
           <div className="mb-6 space-y-3">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
               <span>
-                Starting path:{' '}
-                <code className="text-gray-900 dark:text-gray-100">{scenario.startingPath}</code>
+                Starting path: <code className="text-foreground">{scenario.startingPath}</code>
               </span>
               <span>
-                Device:{' '}
-                <code className="text-gray-900 dark:text-gray-100">{scenario.sizeClass}</code>
+                Device: <code className="text-foreground">{scenario.sizeClass}</code>
               </span>
               {scenario.personaId && (
                 <span>
                   Persona:{' '}
-                  <code className="text-gray-900 dark:text-gray-100">
-                    {personaName ?? `#${scenario.personaId}`}
-                  </code>
+                  <code className="text-foreground">{personaName ?? `#${scenario.personaId}`}</code>
                 </span>
               )}
             </div>
             <Card variant="bordered" padding="sm">
-              <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
-                Prompt
-              </div>
-              <p className="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap">
-                {scenario.prompt}
-              </p>
+              <div className="text-xs font-medium text-muted-foreground mb-1">Prompt</div>
+              <p className="text-sm text-foreground whitespace-pre-wrap">{scenario.prompt}</p>
             </Card>
           </div>
         )}
 
         {/* Sequences */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-3">
-          <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
             Sequences
           </h2>
           <ActionButton
             variant="primary"
+            // distinct purple brand accent for the AI "Generate" action; no semantic token equivalent
             className="bg-purple-600 hover:bg-purple-700"
             onClick={handleGenerateSequence}
             disabled={!scenarioId}
@@ -300,9 +295,7 @@ export function TestScenarioDetailPage() {
         )}
 
         {sequencesLoading && (
-          <div className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">
-            Loading...
-          </div>
+          <div className="text-sm text-muted-foreground py-8 text-center">Loading...</div>
         )}
 
         {!sequencesLoading && sequences.length === 0 && (

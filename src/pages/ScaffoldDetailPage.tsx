@@ -60,7 +60,7 @@ export function ScaffoldDetailPage() {
   if (contextLoading || isLoading) {
     return (
       <div className="p-4 sm:p-6">
-        <div className="text-center text-gray-500 dark:text-gray-400 py-8">Loading...</div>
+        <div className="text-center text-muted-foreground py-8">Loading...</div>
       </div>
     );
   }
@@ -68,9 +68,7 @@ export function ScaffoldDetailPage() {
   if (contextError || error) {
     return (
       <div className="p-4 sm:p-6">
-        <div className="text-center text-red-600 dark:text-red-400 py-8">
-          Error: {contextError || error}
-        </div>
+        <div className="text-center text-destructive py-8">Error: {contextError || error}</div>
       </div>
     );
   }
@@ -79,7 +77,7 @@ export function ScaffoldDetailPage() {
     return (
       <div className="p-4 sm:p-6">
         <BackLink label="Scaffolds" onClick={() => navigate(r.scaffolds())} />
-        <div className="text-center text-gray-500 dark:text-gray-400 py-8">Scaffold not found</div>
+        <div className="text-center text-muted-foreground py-8">Scaffold not found</div>
       </div>
     );
   }
@@ -89,13 +87,13 @@ export function ScaffoldDetailPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title={label} description="" noIndex />
           <BackLink label="Scaffolds" onClick={() => navigate(r.scaffolds())} />
 
           {/* Header */}
-          <div className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
-            <span className="text-gray-500 dark:text-gray-400 [&>svg]:h-5 [&>svg]:w-5">
+          <div className="flex items-center gap-2 text-foreground">
+            <span className="text-muted-foreground [&>svg]:h-5 [&>svg]:w-5">
               {SCAFFOLD_ICONS[scaffold.type]}
             </span>
             <h1 className="text-2xl font-bold">{label}</h1>
@@ -106,11 +104,7 @@ export function ScaffoldDetailPage() {
       <div className="px-4 py-4 sm:px-6">
         {/* Details */}
         <div className="space-y-4">
-          <Card
-            variant="bordered"
-            padding="none"
-            className="divide-y divide-gray-200 dark:divide-gray-700"
-          >
+          <Card variant="bordered" padding="none" className="divide-y divide-border">
             <DetailRow label="Type" value={scaffold.type} />
             <DetailRow label="Element ID" value={String(scaffold.htmlElementId)} mono />
             {scaffold.htmlHash && <DetailRow label="HTML Hash" value={scaffold.htmlHash} mono />}
@@ -130,7 +124,7 @@ export function ScaffoldDetailPage() {
                 <TabsTrigger value="pages">
                   Pages
                   {pagePaths.length > 0 && (
-                    <span className="ml-1.5 text-xs text-gray-400 dark:text-gray-500">
+                    <span className="ml-1.5 text-xs text-muted-foreground">
                       ({pagePaths.length})
                     </span>
                   )}
@@ -138,7 +132,7 @@ export function ScaffoldDetailPage() {
                 <TabsTrigger value="interactions">
                   Interactions
                   {scaffoldInteractions.length > 0 && (
-                    <span className="ml-1.5 text-xs text-gray-400 dark:text-gray-500">
+                    <span className="ml-1.5 text-xs text-muted-foreground">
                       ({scaffoldInteractions.length})
                     </span>
                   )}
@@ -148,22 +142,15 @@ export function ScaffoldDetailPage() {
 
             {tab === 'pages' &&
               (pagePaths.length > 0 ? (
-                <Card
-                  variant="bordered"
-                  padding="none"
-                  className="divide-y divide-gray-200 dark:divide-gray-700"
-                >
+                <Card variant="bordered" padding="none" className="divide-y divide-border">
                   {pagePaths.map((path: string) => (
-                    <div
-                      key={path}
-                      className="px-4 py-2.5 text-sm font-mono text-gray-700 dark:text-gray-300"
-                    >
+                    <div key={path} className="px-4 py-2.5 text-sm font-mono text-foreground">
                       {path}
                     </div>
                   ))}
                 </Card>
               ) : (
-                <div className="text-sm text-gray-400 dark:text-gray-500 py-8 text-center">
+                <div className="text-sm text-muted-foreground py-8 text-center">
                   No pages use this scaffold.
                 </div>
               ))}
@@ -180,7 +167,7 @@ export function ScaffoldDetailPage() {
                   ))}
                 </div>
               ) : (
-                <div className="text-sm text-gray-400 dark:text-gray-500 py-8 text-center">
+                <div className="text-sm text-muted-foreground py-8 text-center">
                   No interactions use this scaffold.
                 </div>
               ))}
@@ -202,12 +189,8 @@ function DetailRow({
 }) {
   return (
     <div className="flex items-center px-4 py-3">
-      <span className="text-sm font-medium text-gray-500 dark:text-gray-400 w-32 shrink-0">
-        {label}
-      </span>
-      <span
-        className={`min-w-0 break-all text-sm text-gray-900 dark:text-gray-100 ${mono ? 'font-mono' : ''}`}
-      >
+      <span className="text-sm font-medium text-muted-foreground w-32 shrink-0">{label}</span>
+      <span className={`min-w-0 break-all text-sm text-foreground ${mono ? 'font-mono' : ''}`}>
         {value}
       </span>
     </div>

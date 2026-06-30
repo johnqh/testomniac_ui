@@ -42,21 +42,21 @@ export function RunSurfaceRunsPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title={`Run #${runId} Surface Runs`} description="" noIndex />
           <BackLink label={`Back to Run #${runId}`} onClick={() => navigate(r.run(runId))} />
-          <nav className="mb-4 flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+          <nav className="mb-4 flex items-center gap-1 text-sm text-muted-foreground">
             <button
               onClick={() => navigate(r.run(runId))}
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="hover:text-primary transition-colors"
             >
               Run #{runId}
             </button>
             <span>/</span>
-            <span className="text-gray-900 dark:text-gray-100 font-medium">Surface Runs</span>
+            <span className="text-foreground font-medium">Surface Runs</span>
           </nav>
 
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Surface Runs</h1>
+          <h1 className="text-2xl font-bold text-foreground">Surface Runs</h1>
         </div>
       }
     >
@@ -71,7 +71,7 @@ export function RunSurfaceRunsPage() {
                 topRight={<StatusBadge status={surfaceRun.status} />}
                 title={surface.title}
                 footer={
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                  <span className="text-xs text-muted-foreground">
                     {surface.testInteractions.length} elements · {formatDate(surfaceRun.startedAt)}
                   </span>
                 }

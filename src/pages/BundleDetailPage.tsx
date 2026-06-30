@@ -192,7 +192,7 @@ export function BundleDetailPage() {
   if (contextLoading || bundlesLoading) {
     return (
       <div className="p-6">
-        <div className="text-center text-gray-500 dark:text-gray-400 py-8">Loading...</div>
+        <div className="text-center text-muted-foreground py-8">Loading...</div>
       </div>
     );
   }
@@ -200,7 +200,7 @@ export function BundleDetailPage() {
   if (contextError) {
     return (
       <div className="p-6">
-        <div className="text-center text-red-600 dark:text-red-400 py-8">Error: {contextError}</div>
+        <div className="text-center text-destructive py-8">Error: {contextError}</div>
       </div>
     );
   }
@@ -208,7 +208,7 @@ export function BundleDetailPage() {
   if (!bundle) {
     return (
       <div className="p-6">
-        <div className="text-center text-gray-500 dark:text-gray-400 py-8">Bundle not found</div>
+        <div className="text-center text-muted-foreground py-8">Bundle not found</div>
       </div>
     );
   }
@@ -219,7 +219,7 @@ export function BundleDetailPage() {
         variant="link"
         size="sm"
         type="button"
-        className="text-red-600 hover:text-red-700"
+        className="text-destructive hover:text-destructive/90"
         onClick={() => handleRemove(type, id)}
       >
         Remove
@@ -235,7 +235,7 @@ export function BundleDetailPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title={bundle.title} description="" noIndex />
           <BackLink label="Bundles" onClick={() => navigate(r.bundles())} />
 
@@ -247,16 +247,16 @@ export function BundleDetailPage() {
                   type="text"
                   value={editTitle}
                   onChange={e => setEditTitle(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-lg font-bold"
+                  className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground text-lg font-bold"
                 />
                 <input
                   type="text"
                   value={editDescription}
                   onChange={e => setEditDescription(e.target.value)}
                   placeholder="Description (optional)"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
+                  className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground text-sm"
                 />
-                {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+                {error && <p className="text-sm text-destructive">{error}</p>}
                 <div className="flex gap-2">
                   <ActionButton
                     variant="primary"
@@ -275,13 +275,9 @@ export function BundleDetailPage() {
             ) : (
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {bundle.title}
-                  </h1>
+                  <h1 className="text-2xl font-bold text-foreground">{bundle.title}</h1>
                   {bundle.description && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      {bundle.description}
-                    </p>
+                    <p className="text-sm text-muted-foreground mt-1">{bundle.description}</p>
                   )}
                 </div>
                 {!isDiscovery && (
@@ -296,9 +292,7 @@ export function BundleDetailPage() {
                 )}
               </div>
             )}
-            {!editing && error && (
-              <p className="text-sm text-red-600 dark:text-red-400 mt-2">{error}</p>
-            )}
+            {!editing && error && <p className="text-sm text-destructive mt-2">{error}</p>}
           </div>
         </div>
       }
@@ -311,9 +305,7 @@ export function BundleDetailPage() {
               <TabsTrigger key={t.key} value={t.key}>
                 {t.label}
                 {t.count > 0 && (
-                  <span className="ml-1.5 text-xs text-gray-400 dark:text-gray-500">
-                    ({t.count})
-                  </span>
+                  <span className="ml-1.5 text-xs text-muted-foreground">({t.count})</span>
                 )}
               </TabsTrigger>
             ))}
@@ -390,15 +382,11 @@ export function BundleDetailPage() {
 }
 
 function LoadingState() {
-  return (
-    <div className="text-sm text-gray-400 dark:text-gray-500 py-8 text-center">Loading...</div>
-  );
+  return <div className="text-sm text-muted-foreground py-8 text-center">Loading...</div>;
 }
 
 function EmptyState({ label }: { label: string }) {
   return (
-    <div className="text-sm text-gray-400 dark:text-gray-500 py-8 text-center">
-      No {label} in this bundle
-    </div>
+    <div className="text-sm text-muted-foreground py-8 text-center">No {label} in this bundle</div>
   );
 }

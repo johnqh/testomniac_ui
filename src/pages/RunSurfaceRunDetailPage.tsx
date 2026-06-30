@@ -30,54 +30,48 @@ export function RunSurfaceRunDetailPage() {
     match?.surfaceRuns.find(surfaceRun => surfaceRun.id === Number(surfaceRunId)) ?? null;
 
   if (error) {
-    return (
-      <div className="p-4 text-center text-red-600 dark:text-red-400 sm:p-6">Error: {error}</div>
-    );
+    return <div className="p-4 text-center text-destructive sm:p-6">Error: {error}</div>;
   }
 
   if (isLoading) {
-    return (
-      <div className="p-4 text-center text-gray-500 dark:text-gray-400 sm:p-6">Loading...</div>
-    );
+    return <div className="p-4 text-center text-muted-foreground sm:p-6">Loading...</div>;
   }
 
   if (!match || !selectedRun) {
     return (
-      <div className="p-4 text-center text-gray-500 dark:text-gray-400 sm:p-6">
-        Surface run not found.
-      </div>
+      <div className="p-4 text-center text-muted-foreground sm:p-6">Surface run not found.</div>
     );
   }
 
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title={`${match.title} Run`} description="" noIndex />
           <BackLink
             label="Back to Surface Runs"
             onClick={() => navigate(r.runSurfaceRuns(runId))}
           />
-          <nav className="mb-4 flex flex-wrap items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+          <nav className="mb-4 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
             <button
               onClick={() => navigate(r.run(runId))}
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="hover:text-primary transition-colors"
             >
               Run #{runId}
             </button>
             <span>/</span>
             <button
               onClick={() => navigate(r.runSurfaceRuns(runId))}
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="hover:text-primary transition-colors"
             >
               Surface Runs
             </button>
             <span>/</span>
-            <span className="text-gray-900 dark:text-gray-100 font-medium">{match.title}</span>
+            <span className="text-foreground font-medium">{match.title}</span>
           </nav>
 
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{match.title}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{match.title}</h1>
             <StatusBadge status={selectedRun.status} />
           </div>
         </div>
@@ -85,7 +79,7 @@ export function RunSurfaceRunDetailPage() {
     >
       <div className="px-4 py-4 sm:px-6">
         <Card variant="bordered" padding="md" className="mb-6">
-          <div className="text-sm text-gray-600 dark:text-gray-300">
+          <div className="text-sm text-muted-foreground">
             Surface run #{selectedRun.id} with {match.testInteractions.length} test interactions.
           </div>
         </Card>
@@ -97,14 +91,12 @@ export function RunSurfaceRunDetailPage() {
               onClick={() =>
                 navigate(r.runSurfaceRunInteraction(runId, surfaceRunId, testInteraction.id))
               }
-              className="w-full rounded-lg border border-gray-200 bg-white p-3 text-left transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"
+              className="w-full rounded-lg border border-border bg-card p-3 text-left transition-colors hover:bg-accent"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {testInteraction.title}
-                  </div>
-                  <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <div className="text-sm font-medium text-foreground">{testInteraction.title}</div>
+                  <div className="mt-1 text-xs text-muted-foreground">
                     {testInteraction.interactionRuns.length} interaction run
                     {testInteraction.interactionRuns.length === 1 ? '' : 's'}
                   </div>

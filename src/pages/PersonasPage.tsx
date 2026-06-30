@@ -37,21 +37,19 @@ function PersonaUseCases({ personaId }: { personaId: number }) {
   const isLoading = useCasesQuery.isLoading;
 
   if (isLoading) {
-    return <div className="text-xs text-gray-400 py-2">Loading use cases...</div>;
+    return <div className="text-xs text-muted-foreground py-2">Loading use cases...</div>;
   }
 
   if (useCases.length === 0) {
-    return <div className="text-xs text-gray-400 py-2">No use cases.</div>;
+    return <div className="text-xs text-muted-foreground py-2">No use cases.</div>;
   }
 
   return (
     <div className="space-y-2">
       {useCases.map(uc => (
         <div key={uc.id} className="text-sm">
-          <span className="font-medium text-gray-800 dark:text-gray-200">{uc.title}</span>
-          {uc.description && (
-            <span className="text-gray-500 dark:text-gray-400"> — {uc.description}</span>
-          )}
+          <span className="font-medium text-foreground">{uc.title}</span>
+          {uc.description && <span className="text-muted-foreground"> — {uc.description}</span>}
         </div>
       ))}
     </div>
@@ -195,13 +193,14 @@ export function PersonasPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title="Personas" description="" noIndex />
 
           {/* Header */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Personas</h1>
+            <h1 className="text-2xl font-bold text-foreground">Personas</h1>
             <div className="flex items-center gap-2">
+              {/* distinct purple accent for the AI "Detect Personas" action; no semantic token equivalent */}
               <ActionButton
                 variant="primary"
                 className="bg-purple-600 hover:bg-purple-700"
@@ -228,8 +227,8 @@ export function PersonasPage() {
 
         {/* Detect warning dialog */}
         {showDetectWarning && (
-          <div className="mb-4 p-4 rounded-lg border border-amber-300 dark:border-amber-600 bg-amber-50 dark:bg-amber-900/20">
-            <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+          <div className="mb-4 p-4 rounded-lg border border-warning/20 bg-warning/10">
+            <p className="text-sm font-medium text-warning">
               Detecting personas will replace all {personas.length} existing persona
               {personas.length !== 1 ? 's' : ''}. This cannot be undone.
             </p>
@@ -237,7 +236,7 @@ export function PersonasPage() {
               <ActionButton
                 variant="primary"
                 size="sm"
-                className="bg-amber-600 hover:bg-amber-700"
+                className="bg-warning hover:bg-warning/90"
                 onClick={runDetect}
                 isLoading={isDetecting}
                 loadingText="Detecting..."
@@ -254,7 +253,7 @@ export function PersonasPage() {
         {/* Add / Edit form */}
         {showForm && (
           <Card variant="bordered" className="mb-6">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
+            <h3 className="text-sm font-semibold text-foreground mb-3">
               {editingPersona ? 'Edit Persona' : 'New Persona'}
             </h3>
             <div className="space-y-3">
@@ -277,9 +276,7 @@ export function PersonasPage() {
                   rows={3}
                 />
               </div>
-              {formError && (
-                <div className="text-sm text-red-600 dark:text-red-400">{formError}</div>
-              )}
+              {formError && <div className="text-sm text-destructive">{formError}</div>}
               <div className="flex items-center gap-2">
                 <ActionButton
                   variant="primary"
@@ -326,7 +323,7 @@ export function PersonasPage() {
                       <Button
                         variant="link"
                         size="sm"
-                        className="text-red-600 hover:text-red-700"
+                        className="text-destructive hover:text-destructive/90"
                         onClick={() => handleDelete(persona.id)}
                       >
                         Delete
@@ -340,7 +337,7 @@ export function PersonasPage() {
             {/* Expanded use cases for the selected persona, rendered below the grid */}
             {expandedId != null && (
               <Card variant="bordered" className="mt-4">
-                <h4 className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
+                <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
                   Use Cases — {personas.find(p => p.id === expandedId)?.title ?? ''}
                 </h4>
                 <PersonaUseCases personaId={expandedId} />

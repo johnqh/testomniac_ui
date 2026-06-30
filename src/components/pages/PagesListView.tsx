@@ -20,9 +20,7 @@ export function PagesListView({ pages, runId, screenshotsByPageId, apiUrl }: Pag
   const sorted = [...pages].sort((a, b) => a.relativePath.localeCompare(b.relativePath));
 
   if (sorted.length === 0) {
-    return (
-      <div className="py-8 text-center text-gray-500 dark:text-gray-400">No pages discovered.</div>
-    );
+    return <div className="py-8 text-center text-muted-foreground">No pages discovered.</div>;
   }
 
   return (
@@ -37,9 +35,9 @@ export function PagesListView({ pages, runId, screenshotsByPageId, apiUrl }: Pag
             role="button"
             tabIndex={0}
             onClick={() => navigate(runId ? r.runPage(runId, page.id) : r.page(page.id))}
-            className="flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white text-left transition-colors dark:border-gray-700 dark:bg-gray-800 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/40"
+            className="flex flex-col overflow-hidden rounded-lg border border-border bg-card text-left transition-colors cursor-pointer hover:bg-accent"
           >
-            <div className="aspect-[16/9] w-full shrink-0 overflow-hidden border-b border-gray-200 bg-gray-100 dark:border-gray-700 dark:bg-gray-900 flex items-center justify-center">
+            <div className="aspect-[16/9] w-full shrink-0 overflow-hidden border-b border-border bg-muted flex items-center justify-center">
               {screenshotPath && apiUrl ? (
                 <img
                   src={buildArtifactUrl(apiUrl, screenshotPath, { thumbnail: true })}
@@ -49,7 +47,7 @@ export function PagesListView({ pages, runId, screenshotsByPageId, apiUrl }: Pag
                 />
               ) : (
                 <svg
-                  className="h-8 w-8 text-gray-300 dark:text-gray-600"
+                  className="h-8 w-8 text-muted-foreground"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -61,22 +59,22 @@ export function PagesListView({ pages, runId, screenshotsByPageId, apiUrl }: Pag
               )}
             </div>
             <div className="min-w-0 flex-1 p-3">
-              <div className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+              <div className="truncate text-sm font-medium text-foreground">
                 {page.relativePath}
               </div>
               <div className="mt-1.5 flex flex-wrap items-center gap-1">
                 {page.routeKey && (
-                  <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[11px] text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                  <span className="rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground">
                     {page.routeKey}
                   </span>
                 )}
                 {page.requiresLogin && (
-                  <span className="rounded bg-yellow-100 px-1.5 py-0.5 text-[11px] text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">
+                  <span className="rounded bg-warning/10 px-1.5 py-0.5 text-[11px] text-warning">
                     Login
                   </span>
                 )}
                 {isExternal && (
-                  <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[11px] text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                  <span className="rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground">
                     external
                   </span>
                 )}

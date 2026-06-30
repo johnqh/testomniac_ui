@@ -173,7 +173,7 @@ export function SchedulesPage() {
   if (pageError) {
     return (
       <div className="p-4 sm:p-6">
-        <div className="text-center text-red-600 dark:text-red-400 py-8">Error: {pageError}</div>
+        <div className="text-center text-destructive py-8">Error: {pageError}</div>
       </div>
     );
   }
@@ -181,10 +181,10 @@ export function SchedulesPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title="Schedules" description="" noIndex />
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Schedules</h1>
+            <h1 className="text-2xl font-bold text-foreground">Schedules</h1>
             <AddButton
               label="New Schedule"
               active={showForm}
@@ -205,7 +205,7 @@ export function SchedulesPage() {
                   value={title}
                   onChange={e => setTitle(e.target.value)}
                   placeholder="Production navigation smoke"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
+                  className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground text-sm"
                 />
               </div>
               <div>
@@ -294,7 +294,7 @@ export function SchedulesPage() {
                   type="time"
                   value={timeOfDay}
                   onChange={e => setTimeOfDay(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
+                  className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground text-sm"
                 />
               </div>
 
@@ -331,16 +331,16 @@ export function SchedulesPage() {
                 type="text"
                 value={timezone}
                 onChange={e => setTimezone(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
+                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground text-sm"
               />
             </div>
 
-            <label className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+            <label className="flex items-center gap-3 text-sm text-foreground">
               <input
                 type="checkbox"
                 checked={discovery}
                 onChange={e => setDiscovery(e.target.checked)}
-                className="rounded border-gray-300 dark:border-gray-600"
+                className="rounded border-input"
               />
               Run in discovery mode
             </label>
@@ -355,7 +355,7 @@ export function SchedulesPage() {
               >
                 Create Schedule
               </ActionButton>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-xs text-muted-foreground">
                 This only creates the schedule object. Worker launch is not wired here.
               </span>
             </div>
@@ -363,9 +363,7 @@ export function SchedulesPage() {
         )}
 
         {isLoading && (
-          <div className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">
-            Loading schedules...
-          </div>
+          <div className="text-sm text-muted-foreground py-8 text-center">Loading schedules...</div>
         )}
 
         {!isLoading && schedules.length === 0 && !showForm && (
@@ -381,10 +379,10 @@ export function SchedulesPage() {
               <Card key={schedule.id} variant="bordered" padding="sm">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+                    <div className="text-sm font-semibold text-foreground truncate">
                       {schedule.title}
                     </div>
-                    <div className="mt-0.5 truncate text-xs text-gray-500 dark:text-gray-400">
+                    <div className="mt-0.5 truncate text-xs text-muted-foreground">
                       {describeScheduleTarget(schedule)} · {describeRecurrence(schedule)} ·{' '}
                       {schedule.timezone}
                     </div>

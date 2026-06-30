@@ -68,23 +68,21 @@ export function PhaseIndicator({ currentPhase }: PhaseIndicatorProps) {
         const isComplete = i < currentIndex;
         const baseClass = 'flex items-center gap-1.5';
         const iconColor = isComplete
-          ? 'text-green-500'
+          ? 'text-success'
           : isActive
-            ? 'text-blue-500 animate-pulse'
-            : 'text-gray-300 dark:text-gray-600';
+            ? 'text-info animate-pulse'
+            : 'text-muted-foreground';
         const textClass = isActive
-          ? 'text-sm font-medium text-blue-600 dark:text-blue-400'
+          ? 'text-sm font-medium text-info'
           : isComplete
-            ? 'text-sm text-green-600 dark:text-green-400'
-            : 'text-sm text-gray-400 dark:text-gray-500';
+            ? 'text-sm text-success'
+            : 'text-sm text-muted-foreground';
 
         return (
           <div key={phase.key} className={baseClass}>
             <span className={iconColor}>{PHASE_ICONS[phase.key]}</span>
             <span className={textClass}>{phase.label}</span>
-            {i < PHASES.length - 1 && (
-              <div className="w-4 h-px bg-gray-300 dark:bg-gray-600 mx-1" />
-            )}
+            {i < PHASES.length - 1 && <div className="w-4 h-px bg-border mx-1" />}
           </div>
         );
       })}

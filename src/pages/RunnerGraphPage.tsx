@@ -70,8 +70,8 @@ export function RunnerGraphPage() {
         data: { label: `${label}${stateCount > 0 ? ` (${stateCount} states)` : ''}` },
         position: { x: 0, y: 0 },
         style: {
-          background: '#fff',
-          border: '1px solid #e5e7eb',
+          background: 'hsl(var(--card))',
+          border: '1px solid hsl(var(--border))',
           borderRadius: '8px',
           padding: '8px 16px',
           fontSize: '12px',
@@ -99,7 +99,7 @@ export function RunnerGraphPage() {
     return (
       <div className="p-4 sm:p-6">
         <SEOHead title="Runner Graph" description="" noIndex />
-        <div className="text-center text-gray-500 dark:text-gray-400 py-8">Loading graph...</div>
+        <div className="text-center text-muted-foreground py-8">Loading graph...</div>
       </div>
     );
   }
@@ -108,8 +108,8 @@ export function RunnerGraphPage() {
     return (
       <div className="p-4 sm:p-6">
         <SEOHead title="Runner Graph" description="" noIndex />
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Runner Graph</h1>
-        <p className="text-gray-500 dark:text-gray-400">No pages discovered yet.</p>
+        <h1 className="text-2xl font-bold text-foreground mb-6">Runner Graph</h1>
+        <p className="text-muted-foreground">No pages discovered yet.</p>
       </div>
     );
   }
@@ -118,14 +118,14 @@ export function RunnerGraphPage() {
     <ContentLayout
       contentClassName="min-h-0"
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title="Runner Graph" description="" noIndex />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Runner Graph</h1>
+          <h1 className="text-2xl font-bold text-foreground">Runner Graph</h1>
         </div>
       }
     >
       <div className="h-full min-h-0 p-4 sm:p-6">
-        <div className="h-full min-h-[400px] w-full overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="h-full min-h-[400px] w-full overflow-hidden rounded-lg border border-border">
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -133,7 +133,7 @@ export function RunnerGraphPage() {
             onEdgesChange={onEdgesChange}
             onNodeClick={onNodeClick}
             fitView
-            className="bg-gray-50 dark:bg-gray-900"
+            className="bg-muted"
           >
             <Background />
             <Controls />

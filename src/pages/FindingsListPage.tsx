@@ -148,28 +148,28 @@ export function FindingsListPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title="Findings" description="" noIndex />
 
           {/* Header */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Findings</h1>
+              <h1 className="text-2xl font-bold text-foreground">Findings</h1>
               {runId && (
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-sm text-muted-foreground">
                   Showing findings for run #{runId}.
                 </p>
               )}
             </div>
 
             {/* Type filter toggle */}
-            <div className="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div className="flex items-center rounded-lg border border-border overflow-hidden">
               <button
                 onClick={() => setTypeFilter('all')}
                 className={`px-3 py-1.5 text-sm font-medium transition-colors ${
                   typeFilter === 'all'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-card text-foreground hover:bg-accent'
                 }`}
               >
                 All
@@ -178,8 +178,8 @@ export function FindingsListPage() {
                 onClick={() => setTypeFilter('errors')}
                 className={`px-3 py-1.5 text-sm font-medium transition-colors ${
                   typeFilter === 'errors'
-                    ? 'bg-red-600 text-white'
-                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    ? 'bg-destructive text-destructive-foreground'
+                    : 'bg-card text-foreground hover:bg-accent'
                 }`}
               >
                 Errors only
@@ -257,7 +257,7 @@ export function FindingsListPage() {
               )}
 
               {/* Result count */}
-              <span className="ml-auto text-xs text-gray-500 dark:text-gray-400">
+              <span className="ml-auto text-xs text-muted-foreground">
                 {filteredFindings.length} of {findings.length} findings
               </span>
             </div>
@@ -301,10 +301,8 @@ export function FindingsListPage() {
                           }
                         : undefined
                     }
-                    className={`px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 ${
-                      canOpen
-                        ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors'
-                        : ''
+                    className={`px-4 py-2 rounded-lg border border-border bg-card ${
+                      canOpen ? 'cursor-pointer hover:bg-accent transition-colors' : ''
                     }`}
                   >
                     <div className="flex items-start gap-3">
@@ -315,18 +313,18 @@ export function FindingsListPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
                           {tag && (
-                            <span className="inline-flex shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                            <span className="inline-flex shrink-0 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
                               {tag}
                             </span>
                           )}
-                          <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                          <span className="text-sm font-medium text-foreground truncate">
                             {title}
                           </span>
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                           {finding.description}
                         </p>
-                        <div className="mt-1.5 truncate text-xs text-gray-400 dark:text-gray-500">
+                        <div className="mt-1.5 truncate text-xs text-muted-foreground">
                           {[
                             finding.path,
                             finding.interactionRunIds?.length

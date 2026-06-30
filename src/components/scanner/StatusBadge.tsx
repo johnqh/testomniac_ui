@@ -77,7 +77,7 @@ const STATUS_ICONS: Record<string, ReactNode> = {
         fontSize="11"
         fontWeight="bold"
         fill="currentColor"
-        className="fill-yellow-100 dark:fill-red-950"
+        className="fill-destructive-foreground"
       >
         !
       </text>

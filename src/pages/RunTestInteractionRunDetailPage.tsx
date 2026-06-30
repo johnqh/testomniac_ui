@@ -66,17 +66,11 @@ export function RunTestInteractionRunDetailPage() {
 
   const pageError = structureError || error;
   if (pageError) {
-    return (
-      <div className="p-4 text-center text-red-600 dark:text-red-400 sm:p-6">
-        Error: {pageError}
-      </div>
-    );
+    return <div className="p-4 text-center text-destructive sm:p-6">Error: {pageError}</div>;
   }
 
   if (isLoading || structureLoading || !testInteractionRun) {
-    return (
-      <div className="p-4 text-center text-gray-500 dark:text-gray-400 sm:p-6">Loading...</div>
-    );
+    return <div className="p-4 text-center text-muted-foreground sm:p-6">Loading...</div>;
   }
 
   const consoleLog = formatMultilineLog(testInteractionRun.consoleLog);
@@ -85,50 +79,46 @@ export function RunTestInteractionRunDetailPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title={`Interaction Run #${elementRunId}`} description="" noIndex />
           <BackLink
             label={`Back to ${testInteraction?.title ?? `Test Interaction #${elementId}`}`}
             onClick={() => navigate(r.runSurfaceRunInteraction(runId, surfaceRunId, elementId))}
           />
-          <nav className="mb-4 flex flex-wrap items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+          <nav className="mb-4 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
             <button
               onClick={() => navigate(r.run(runId))}
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="hover:text-primary transition-colors"
             >
               Run #{runId}
             </button>
             <span>/</span>
             <button
               onClick={() => navigate(r.runSurfaceRuns(runId))}
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="hover:text-primary transition-colors"
             >
               Surface Runs
             </button>
             <span>/</span>
             <button
               onClick={() => navigate(r.runSurfaceRun(runId, surfaceRunId))}
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="hover:text-primary transition-colors"
             >
               {surface?.title ?? `Surface Run #${surfaceRunId}`}
             </button>
             <span>/</span>
             <button
               onClick={() => navigate(r.runSurfaceRunInteraction(runId, surfaceRunId, elementId))}
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="hover:text-primary transition-colors"
             >
               {testInteraction?.title ?? `Test Interaction #${elementId}`}
             </button>
             <span>/</span>
-            <span className="text-gray-900 dark:text-gray-100 font-medium">
-              Run #{elementRunId}
-            </span>
+            <span className="text-foreground font-medium">Run #{elementRunId}</span>
           </nav>
 
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              Interaction Run #{elementRunId}
-            </h1>
+            <h1 className="text-2xl font-bold text-foreground">Interaction Run #{elementRunId}</h1>
             <StatusBadge status={testInteractionRun.status} />
             {testInteraction && <StatusBadge status={testInteraction.testType} />}
           </div>
@@ -138,28 +128,26 @@ export function RunTestInteractionRunDetailPage() {
       <div className="px-4 py-4 sm:px-6">
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <Card variant="bordered" padding="md">
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {findings.length}
-            </div>
-            <div className="text-xs text-gray-500">Findings</div>
+            <div className="text-2xl font-bold text-foreground">{findings.length}</div>
+            <div className="text-xs text-muted-foreground">Findings</div>
           </Card>
           <Card variant="bordered" padding="md">
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-foreground">
               {testInteractionRun.durationMs ?? '-'}
             </div>
-            <div className="text-xs text-gray-500">Duration (ms)</div>
+            <div className="text-xs text-muted-foreground">Duration (ms)</div>
           </Card>
           <Card variant="bordered" padding="md">
-            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            <div className="text-sm font-medium text-foreground">
               {formatDate(testInteractionRun.startedAt)}
             </div>
-            <div className="text-xs text-gray-500">Started</div>
+            <div className="text-xs text-muted-foreground">Started</div>
           </Card>
           <Card variant="bordered" padding="md">
-            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            <div className="text-sm font-medium text-foreground">
               {formatDate(testInteractionRun.completedAt)}
             </div>
-            <div className="text-xs text-gray-500">Completed</div>
+            <div className="text-xs text-muted-foreground">Completed</div>
           </Card>
         </div>
 
@@ -171,10 +159,10 @@ export function RunTestInteractionRunDetailPage() {
 
         {testInteractionRun.expectedOutcome && (
           <Card variant="bordered" padding="md" className="mb-6">
-            <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+            <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               Expected Outcome
             </h2>
-            <pre className="whitespace-pre-wrap text-xs text-gray-700 dark:text-gray-300">
+            <pre className="whitespace-pre-wrap text-xs text-foreground">
               {testInteractionRun.expectedOutcome}
             </pre>
           </Card>
@@ -182,17 +170,17 @@ export function RunTestInteractionRunDetailPage() {
 
         {testInteractionRun.observedOutcome && (
           <Card variant="bordered" padding="md" className="mb-6">
-            <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+            <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               Observed Outcome
             </h2>
-            <pre className="whitespace-pre-wrap text-xs text-gray-700 dark:text-gray-300">
+            <pre className="whitespace-pre-wrap text-xs text-foreground">
               {testInteractionRun.observedOutcome}
             </pre>
           </Card>
         )}
 
         <div className="mb-8">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
             Findings
           </h2>
           {findings.length === 0 ? (
@@ -203,10 +191,8 @@ export function RunTestInteractionRunDetailPage() {
                 <Card key={finding.id} variant="bordered" padding="sm">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {finding.title}
-                      </div>
-                      <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      <div className="text-sm font-medium text-foreground">{finding.title}</div>
+                      <div className="mt-1 text-xs text-muted-foreground">
                         {finding.description}
                       </div>
                     </div>
@@ -224,20 +210,20 @@ export function RunTestInteractionRunDetailPage() {
           <div className="space-y-6">
             {consoleLog && (
               <div>
-                <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   Console Log
                 </h2>
-                <pre className="max-h-80 overflow-auto rounded-lg border border-gray-200 bg-gray-50 p-4 text-xs leading-5 text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
+                <pre className="max-h-80 overflow-auto rounded-lg border border-border bg-muted p-4 text-xs leading-5 text-foreground">
                   {consoleLog}
                 </pre>
               </div>
             )}
             {networkLog && (
               <div>
-                <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   Network Log
                 </h2>
-                <pre className="max-h-80 overflow-auto rounded-lg border border-gray-200 bg-gray-50 p-4 text-xs leading-5 text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
+                <pre className="max-h-80 overflow-auto rounded-lg border border-border bg-muted p-4 text-xs leading-5 text-foreground">
                   {networkLog}
                 </pre>
               </div>

@@ -72,8 +72,8 @@ export function TestSurfacesListPage() {
   const deviceButtonClass = (value: DeviceFilter) =>
     `px-3 py-1.5 text-sm font-medium transition-colors ${
       deviceFilter === value
-        ? 'bg-blue-600 text-white'
-        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+        ? 'bg-primary text-primary-foreground'
+        : 'bg-card text-foreground hover:bg-accent'
     }`;
 
   if (error) {
@@ -83,17 +83,17 @@ export function TestSurfacesListPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title="Test Surfaces" description="" noIndex />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Test Surfaces</h1>
+          <h1 className="text-2xl font-bold text-foreground">Test Surfaces</h1>
 
           {/* Filter controls */}
           {!isLoading && testSurfaces.length > 0 && (
             <div className="flex flex-wrap items-center gap-4 mt-4">
               {/* Device filter */}
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500 dark:text-gray-400">Device:</span>
-                <div className="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <span className="text-sm text-muted-foreground">Device:</span>
+                <div className="flex items-center rounded-lg border border-border overflow-hidden">
                   <button
                     onClick={() => setDeviceFilter('all')}
                     className={deviceButtonClass('all')}
@@ -117,7 +117,7 @@ export function TestSurfacesListPage() {
 
               {/* Priority filter */}
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500 dark:text-gray-400">Priority:</span>
+                <span className="text-sm text-muted-foreground">Priority:</span>
                 <SelectField
                   value={priorityFilter}
                   onChange={v => setPriorityFilter(v as PriorityFilter)}
@@ -134,7 +134,7 @@ export function TestSurfacesListPage() {
               {/* Type filter */}
               {typeOptions.length > 0 && (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Type:</span>
+                  <span className="text-sm text-muted-foreground">Type:</span>
                   <SelectField
                     value={typeFilter}
                     onChange={setTypeFilter}
@@ -147,7 +147,7 @@ export function TestSurfacesListPage() {
               )}
 
               {/* Result count */}
-              <span className="text-sm text-gray-400 dark:text-gray-500">
+              <span className="text-sm text-muted-foreground">
                 {filteredSurfaces.length} of {testSurfaces.length}
               </span>
             </div>

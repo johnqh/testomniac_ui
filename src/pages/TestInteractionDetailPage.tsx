@@ -21,17 +21,17 @@ function ActionRow({ action }: { action: TestActionResponse }) {
     <Card variant="bordered" padding="none" className="overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full text-left px-4 py-2 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+        className="w-full text-left px-4 py-2 flex items-center gap-3 hover:bg-accent transition-colors"
       >
-        <span className="text-xs font-mono text-gray-400 dark:text-gray-500 w-8 flex-shrink-0 text-right">
+        <span className="text-xs font-mono text-muted-foreground w-8 flex-shrink-0 text-right">
           #{action.stepOrder}
         </span>
         <StatusBadge status={action.actionType} />
-        <span className="flex-1 min-w-0 text-sm text-gray-900 dark:text-gray-100 truncate">
+        <span className="flex-1 min-w-0 text-sm text-foreground truncate">
           {action.description}
         </span>
         <svg
-          className={`w-4 h-4 flex-shrink-0 text-gray-400 transition-transform ${expanded ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 flex-shrink-0 text-muted-foreground transition-transform ${expanded ? 'rotate-180' : ''}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -41,11 +41,11 @@ function ActionRow({ action }: { action: TestActionResponse }) {
         </svg>
       </button>
       {expanded && action.playwrightCode && (
-        <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
+        <div className="px-4 py-3 border-t border-border bg-muted">
+          <div className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">
             Playwright Code
           </div>
-          <pre className="text-xs font-mono text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-words bg-white dark:bg-gray-900 rounded-md p-3 border border-gray-200 dark:border-gray-700">
+          <pre className="text-xs font-mono text-foreground whitespace-pre-wrap break-words bg-card rounded-md p-3 border border-border">
             {action.playwrightCode}
           </pre>
         </div>
@@ -66,19 +66,13 @@ function ElementLinkRow({
   return (
     <button
       onClick={onClick}
-      className="w-full text-left rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+      className="w-full text-left rounded-lg border border-border bg-card px-4 py-3 hover:bg-accent transition-colors"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
-            {relation}
-          </div>
-          <div className="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-            {element.title}
-          </div>
-          <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            Test Interaction #{element.id}
-          </div>
+          <div className="text-xs uppercase tracking-wider text-muted-foreground">{relation}</div>
+          <div className="mt-1 text-sm font-medium text-foreground truncate">{element.title}</div>
+          <div className="mt-1 text-xs text-muted-foreground">Test Interaction #{element.id}</div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <StatusBadge status={element.testType} />
@@ -153,13 +147,11 @@ export function TestInteractionDetailPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <BackLink label="Test Interactions" onClick={() => navigate(r.testInteractions())} />
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              Test Interaction #{elementId}
-            </h1>
+            <h1 className="text-2xl font-bold text-foreground">Test Interaction #{elementId}</h1>
             <AddToBundleButton itemType="interaction" itemId={Number(elementId)} />
           </div>
         </div>
@@ -168,7 +160,7 @@ export function TestInteractionDetailPage() {
       <div className="px-4 py-4 sm:px-6">
         {/* Metadata badges */}
         <div className="flex flex-wrap items-center gap-2 mb-6">
-          <span className="text-xs text-gray-500 dark:text-gray-400">ID: {elementId}</span>
+          <span className="text-xs text-muted-foreground">ID: {elementId}</span>
           {currentElement && <StatusBadge status={currentElement.testType} />}
           {currentElement && <StatusBadge status={currentElement.sizeClass} />}
           {hasHoverAction && <StatusBadge status="hover" />}
@@ -180,27 +172,27 @@ export function TestInteractionDetailPage() {
         {currentElement && (
           <div className="grid gap-4 md:grid-cols-2 mb-8">
             <Card variant="bordered" padding="md">
-              <div className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <div className="text-xs uppercase tracking-wider text-muted-foreground">
                 Starting State
               </div>
-              <div className="mt-2 text-sm text-gray-900 dark:text-gray-100">
+              <div className="mt-2 text-sm text-foreground">
                 Path: {currentElement.startingPath || 'None'}
               </div>
-              <div className="mt-1 text-sm text-gray-600 dark:text-gray-300">
+              <div className="mt-1 text-sm text-muted-foreground">
                 Page state #{currentElement.startingPageStateId ?? 'none'}
               </div>
             </Card>
 
             <Card variant="bordered" padding="md">
-              <div className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <div className="text-xs uppercase tracking-wider text-muted-foreground">
                 Interaction Shape
               </div>
-              <div className="mt-2 text-sm text-gray-900 dark:text-gray-100">
+              <div className="mt-2 text-sm text-foreground">
                 {hasHoverAction
                   ? 'This element includes a hover interaction.'
                   : 'No hover interaction is defined on this element.'}
               </div>
-              <div className="mt-1 text-sm text-gray-600 dark:text-gray-300">
+              <div className="mt-1 text-sm text-muted-foreground">
                 {actionList.length} action{actionList.length === 1 ? '' : 's'} in sequence
               </div>
             </Card>
@@ -209,7 +201,7 @@ export function TestInteractionDetailPage() {
 
         <div className="grid gap-4 lg:grid-cols-2 mb-8">
           <div>
-            <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
               Depends On
             </h2>
             {dependencyElement ? (
@@ -224,7 +216,7 @@ export function TestInteractionDetailPage() {
           </div>
 
           <div>
-            <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
               Depended On By
             </h2>
             {dependentElements.length === 0 ? (
@@ -245,7 +237,7 @@ export function TestInteractionDetailPage() {
         </div>
 
         {/* Actions list */}
-        <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
           Test Actions
         </h2>
 

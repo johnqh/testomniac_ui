@@ -389,7 +389,7 @@ export function PatternsPage() {
   if (contextLoading || isLoading) {
     return (
       <div className="p-4 sm:p-6">
-        <div className="text-center text-gray-500 dark:text-gray-400 py-8">Loading...</div>
+        <div className="text-center text-muted-foreground py-8">Loading...</div>
       </div>
     );
   }
@@ -397,9 +397,7 @@ export function PatternsPage() {
   if (contextError || error) {
     return (
       <div className="p-4 sm:p-6">
-        <div className="text-center text-red-600 dark:text-red-400 py-8">
-          Error: {contextError || error}
-        </div>
+        <div className="text-center text-destructive py-8">Error: {contextError || error}</div>
       </div>
     );
   }
@@ -407,9 +405,9 @@ export function PatternsPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title="UI Patterns" description="" noIndex />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">UI Patterns</h1>
+          <h1 className="text-2xl font-bold text-foreground">UI Patterns</h1>
 
           {uniqueTypes.length > 1 && (
             <div className="mt-4">
@@ -440,7 +438,7 @@ export function PatternsPage() {
             {filteredPatterns.map(pattern => (
               <Card key={pattern.patternType} variant="bordered" padding="md">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="text-muted-foreground">
                     {PATTERN_ICONS[pattern.patternType] ?? (
                       <svg
                         width="14"
@@ -454,11 +452,11 @@ export function PatternsPage() {
                       </svg>
                     )}
                   </span>
-                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <span className="text-sm font-medium text-foreground">
                     {PATTERN_LABELS[pattern.patternType] ?? pattern.patternType}
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span>
                     {pattern.totalCount} instance{pattern.totalCount !== 1 ? 's' : ''}
                   </span>

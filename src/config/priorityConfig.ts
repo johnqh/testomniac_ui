@@ -11,20 +11,20 @@ import { priorityLabel, priorityShortLabel } from '@sudobility/testomniac_lib';
 
 /** Badge background/text classes per priority level. */
 const PRIORITY_CLASSNAMES: Record<number, string> = {
-  0: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200',
-  1: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-200',
-  2: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200',
-  3: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200',
-  4: 'bg-gray-100 text-gray-700 dark:bg-gray-700/50 dark:text-gray-200',
+  0: 'bg-destructive/10 text-destructive',
+  1: 'bg-warning/10 text-warning',
+  2: 'bg-warning/10 text-warning',
+  3: 'bg-info/10 text-info',
+  4: 'bg-muted text-muted-foreground',
 };
 
 /** Outlined "chip" classes (with border) per priority level. */
 const PRIORITY_CHIP_CLASSNAMES: Record<number, string> = {
-  0: 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/40 dark:text-red-300 dark:border-red-800',
-  1: 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-800',
-  2: 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/40 dark:text-yellow-300 dark:border-yellow-800',
-  3: 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800',
-  4: 'bg-gray-100 text-gray-600 border-gray-200 dark:bg-gray-700/40 dark:text-gray-300 dark:border-gray-600',
+  0: 'bg-destructive/10 text-destructive border-destructive/20',
+  1: 'bg-warning/10 text-warning border-warning/20',
+  2: 'bg-warning/10 text-warning border-warning/20',
+  3: 'bg-info/10 text-info border-info/20',
+  4: 'bg-muted text-muted-foreground border-border',
 };
 
 export interface PriorityConfig {

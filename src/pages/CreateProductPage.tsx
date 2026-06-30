@@ -26,9 +26,9 @@ import { useRouteParams, useRoutes } from '../context/routing';
 import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
 
 const labelCls =
-  'block text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1';
+  'block text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1';
 const inputCls =
-  'w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-2.5 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40';
+  'w-full rounded-md border border-input bg-background px-2.5 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring';
 
 /**
  * Dashboard "Create Product" page. Mirrors the extension's scan-setup UI:
@@ -195,8 +195,8 @@ export function CreateProductPage() {
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-2xl px-5 py-6 space-y-5">
         <div>
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Create Product</h1>
-          <p className="mt-0.5 text-[13px] text-gray-500 dark:text-gray-400">
+          <h1 className="text-lg font-semibold text-foreground">Create Product</h1>
+          <p className="mt-0.5 text-[13px] text-muted-foreground">
             Enter a URL to scan. We&apos;ll set up the product and start a discovery run.
           </p>
         </div>
@@ -213,28 +213,28 @@ export function CreateProductPage() {
             className={inputCls}
           />
           {url.trim() && !isValidUrl && (
-            <p className="mt-1 text-[11px] text-amber-600 dark:text-amber-400">
-              Enter a full URL including https://
-            </p>
+            <p className="mt-1 text-[11px] text-warning">Enter a full URL including https://</p>
           )}
           {checking && (
-            <p className="mt-1 text-[11px] text-gray-400">Checking for an existing product…</p>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Checking for an existing product…
+            </p>
           )}
         </div>
 
         {/* Step 2: existing product */}
         {existing && (
-          <div className="rounded-lg border border-amber-300 dark:border-amber-700/60 bg-amber-50 dark:bg-amber-950/30 px-3 py-3">
-            <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+          <div className="rounded-lg border border-warning/20 bg-warning/10 px-3 py-3">
+            <p className="text-sm font-medium text-warning">
               This URL already belongs to “{existing.product.title}”.
             </p>
-            <p className="mt-0.5 text-[12px] text-amber-700 dark:text-amber-400">
+            <p className="mt-0.5 text-[12px] text-warning">
               A product for this URL already exists in this workspace.
             </p>
             <button
               type="button"
               onClick={openExisting}
-              className="mt-2 rounded-md bg-amber-600 px-3 py-1.5 text-[12px] font-medium text-white hover:bg-amber-700"
+              className="mt-2 rounded-md bg-warning px-3 py-1.5 text-[12px] font-medium text-warning-foreground hover:bg-warning/90"
             >
               Open existing product →
             </button>
@@ -248,7 +248,7 @@ export function CreateProductPage() {
             <div>
               <label className={labelCls}>Environment</label>
               {envContext.kind === 'local' ? (
-                <div className="rounded-md border border-emerald-200 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/30 px-3 py-2 text-[12px] text-emerald-700 dark:text-emerald-300">
+                <div className="rounded-md border border-success/20 bg-success/10 px-3 py-2 text-[12px] text-success">
                   Local environment on {envContext.hostname}
                 </div>
               ) : (
@@ -277,9 +277,9 @@ export function CreateProductPage() {
                       className={inputCls}
                     />
                   )}
-                  <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                  <p className="text-[11px] text-muted-foreground">
                     Scans for {envContext.hostname} are stored under{' '}
-                    <span className="font-medium text-gray-700 dark:text-gray-300">
+                    <span className="font-medium text-foreground">
                       {envContext.label || 'an environment label'}
                     </span>
                     .
@@ -291,13 +291,13 @@ export function CreateProductPage() {
             {/* Expertises */}
             <div>
               <label className={labelCls}>Expertises</label>
-              <div className="space-y-1.5 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2">
+              <div className="space-y-1.5 rounded-md border border-border bg-muted px-3 py-2">
                 {EXPERTISE_OPTIONS.map(opt => {
                   const checked = selectedExpertiseSlugs.includes(opt.slug);
                   return (
                     <label
                       key={opt.slug}
-                      className="flex items-center justify-between gap-2 text-[13px] text-gray-700 dark:text-gray-300"
+                      className="flex items-center justify-between gap-2 text-[13px] text-foreground"
                     >
                       <span>
                         {opt.label}
@@ -327,22 +327,22 @@ export function CreateProductPage() {
                     className={[
                       'flex-1 rounded-md border py-1.5 text-[12px] font-medium transition-colors',
                       scanMode === opt.value
-                        ? 'border-blue-600 bg-blue-600 text-white'
-                        : 'border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 hover:border-gray-400',
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-input bg-card text-muted-foreground hover:border-muted-foreground',
                     ].join(' ')}
                   >
                     {opt.label}
                   </button>
                 ))}
               </div>
-              <p className="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-[11px] text-muted-foreground">
                 {SCAN_MODE_OPTIONS.find(o => o.value === scanMode)?.description}
               </p>
             </div>
 
             {/* Continue with login + environment settings (JSON) */}
             <div>
-              <label className="flex cursor-pointer items-center gap-2 text-[13px] font-medium text-gray-700 dark:text-gray-300">
+              <label className="flex cursor-pointer items-center gap-2 text-[13px] font-medium text-foreground">
                 <input
                   type="checkbox"
                   checked={continueWithLogin}
@@ -355,7 +355,7 @@ export function CreateProductPage() {
               </label>
 
               {continueWithLogin && (
-                <div className="mt-2 space-y-2 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2">
+                <div className="mt-2 space-y-2 rounded-md border border-border bg-muted px-3 py-2">
                   <div>
                     <label className={labelCls}>Email</label>
                     <input
@@ -386,7 +386,7 @@ export function CreateProductPage() {
                       placeholder='{ "credential": { "email": "...", "password": "..." } }'
                       className={`${inputCls} font-mono text-[12px]`}
                     />
-                    <p className="mt-0.5 text-[11px] text-gray-400">
+                    <p className="mt-0.5 text-[11px] text-muted-foreground">
                       The email/password above are merged into <code>credential</code> on save.
                     </p>
                   </div>
@@ -405,7 +405,7 @@ export function CreateProductPage() {
             </div>
 
             {error && (
-              <div className="rounded-md bg-red-50 dark:bg-red-950/40 px-3 py-2 text-[12px] text-red-700 dark:text-red-300">
+              <div className="rounded-md bg-destructive/10 px-3 py-2 text-[12px] text-destructive">
                 {error}
               </div>
             )}
@@ -415,7 +415,7 @@ export function CreateProductPage() {
               type="button"
               onClick={handleStart}
               disabled={!canSubmit}
-              className="w-full rounded-md bg-green-600 px-3 py-2.5 text-sm font-semibold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-green-600/50"
+              className="w-full rounded-md bg-success px-3 py-2.5 text-sm font-semibold text-success-foreground hover:bg-success/90 disabled:cursor-not-allowed disabled:bg-success/50"
             >
               {isSubmitting ? 'Starting…' : 'Start Scanning'}
             </button>

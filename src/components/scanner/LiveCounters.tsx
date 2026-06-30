@@ -68,6 +68,8 @@ export function LiveCounters({
   testRunsCompleted,
   findingsFound,
 }: LiveCountersProps) {
+  // Decorative per-metric palette to visually distinguish the four counters
+  // (no single semantic intent — purple has no semantic equivalent).
   const counters = [
     {
       label: 'Pages',
@@ -96,7 +98,7 @@ export function LiveCounters({
       {counters.map(c => (
         <div key={c.label} className="text-center">
           <div className={`text-2xl font-bold tabular-nums ${c.color}`}>{c.value}</div>
-          <div className="flex items-center justify-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+          <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mt-0.5">
             <span className={c.color}>{COUNTER_ICONS[c.label]}</span>
             {c.label}
           </div>

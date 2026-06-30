@@ -90,16 +90,16 @@ export function TestInteractionsPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title="Test Interactions" description="" noIndex />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Test Interactions</h1>
+          <h1 className="text-2xl font-bold text-foreground">Test Interactions</h1>
 
           <div className="flex flex-wrap gap-3 mt-4">
             <SelectField value={typeFilter} onChange={onType} options={TYPE_OPTIONS} />
 
             <SelectField value={priorityFilter} onChange={onPriority} options={PRIORITY_OPTIONS} />
 
-            <div className="flex rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
+            <div className="flex rounded-lg border border-border overflow-hidden">
               {DEVICE_OPTIONS.map(option => (
                 <button
                   key={option}
@@ -107,9 +107,9 @@ export function TestInteractionsPage() {
                   onClick={() => onDevice(option)}
                   className={`px-3 py-1.5 text-sm ${
                     deviceFilter === option
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700'
-                  } ${option !== 'All' ? 'border-l border-gray-300 dark:border-gray-600' : ''}`}
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-card text-foreground hover:bg-accent'
+                  } ${option !== 'All' ? 'border-l border-border' : ''}`}
                 >
                   {option}
                 </button>
@@ -131,7 +131,7 @@ export function TestInteractionsPage() {
 
         {!isLoading && testInteractions.length > 0 && (
           <>
-            <div className="mb-3 text-xs text-gray-500 dark:text-gray-400">
+            <div className="mb-3 text-xs text-muted-foreground">
               Showing {startRow}&ndash;{endRow} of {total}
             </div>
 
@@ -147,11 +147,11 @@ export function TestInteractionsPage() {
             </CardGrid>
 
             {pageCount > 1 && (
-              <div className="mt-4 flex items-center justify-end gap-1 border-t border-gray-200 pt-3 dark:border-gray-700">
+              <div className="mt-4 flex items-center justify-end gap-1 border-t border-border pt-3">
                 <button
                   onClick={() => setPageIndex(0)}
                   disabled={pageIndex === 0}
-                  className="px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="px-2 py-1 text-xs rounded border border-border disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-colors"
                   aria-label="First page"
                 >
                   &laquo;
@@ -159,18 +159,18 @@ export function TestInteractionsPage() {
                 <button
                   onClick={() => setPageIndex(p => Math.max(0, p - 1))}
                   disabled={pageIndex === 0}
-                  className="px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="px-2 py-1 text-xs rounded border border-border disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-colors"
                   aria-label="Previous page"
                 >
                   &lsaquo;
                 </button>
-                <span className="px-2 text-xs text-gray-600 dark:text-gray-400">
+                <span className="px-2 text-xs text-muted-foreground">
                   Page {pageIndex + 1} of {pageCount}
                 </span>
                 <button
                   onClick={() => setPageIndex(p => Math.min(pageCount - 1, p + 1))}
                   disabled={pageIndex >= pageCount - 1}
-                  className="px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="px-2 py-1 text-xs rounded border border-border disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-colors"
                   aria-label="Next page"
                 >
                   &rsaquo;
@@ -178,7 +178,7 @@ export function TestInteractionsPage() {
                 <button
                   onClick={() => setPageIndex(pageCount - 1)}
                   disabled={pageIndex >= pageCount - 1}
-                  className="px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="px-2 py-1 text-xs rounded border border-border disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-colors"
                   aria-label="Last page"
                 >
                   &raquo;

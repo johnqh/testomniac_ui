@@ -122,7 +122,7 @@ export function AddScenarioForm({
           rows={4}
         />
       </div>
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      {error && <p className="text-sm text-destructive">{error}</p>}
       <div className="flex gap-2">
         <ActionButton
           variant="primary"

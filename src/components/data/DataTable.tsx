@@ -39,12 +39,9 @@ function SkeletonCards() {
   return (
     <div className="space-y-2">
       {Array.from({ length: 5 }).map((_, rowIdx) => (
-        <div
-          key={rowIdx}
-          className="rounded-lg border border-gray-200 px-4 py-3 dark:border-gray-700"
-        >
-          <div className="h-4 w-2/3 rounded bg-gray-200 animate-pulse dark:bg-gray-700" />
-          <div className="mt-2 h-3 w-1/3 rounded bg-gray-200 animate-pulse dark:bg-gray-700" />
+        <div key={rowIdx} className="rounded-lg border border-border px-4 py-3">
+          <div className="h-4 w-2/3 rounded bg-muted animate-pulse" />
+          <div className="mt-2 h-3 w-1/3 rounded bg-muted animate-pulse" />
         </div>
       ))}
     </div>
@@ -58,7 +55,7 @@ function columnLabel(header: unknown, id: string): string {
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-gray-400 dark:text-gray-500">
+    <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
       <svg
         className="mb-3 h-10 w-10"
         fill="none"
@@ -142,13 +139,13 @@ export function DataTable<T>({
       {/* Toolbar: pagination info + search */}
       {!isLoading && data.length > 0 && (
         <div className="flex items-center justify-between px-3 py-2 mb-1">
-          <span className="text-xs text-gray-500 dark:text-gray-400">
+          <span className="text-xs text-muted-foreground">
             Showing {startRow}&ndash;{endRow} of {totalRows}
           </span>
           {!manualPagination && (
             <div className="relative">
               <svg
-                className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400 dark:text-gray-500"
+                className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -165,7 +162,7 @@ export function DataTable<T>({
                 value={globalFilter}
                 onChange={e => setGlobalFilter(e.target.value)}
                 placeholder="Filter..."
-                className="h-7 w-48 rounded border border-gray-300 bg-white pl-8 pr-2 text-xs text-gray-700 placeholder-gray-400 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
+                className="h-7 w-48 rounded border border-input bg-background pl-8 pr-2 text-xs text-foreground placeholder-muted-foreground focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring"
               />
             </div>
           )}
@@ -188,12 +185,12 @@ export function DataTable<T>({
                 role={onRowClick ? 'button' : undefined}
                 tabIndex={onRowClick ? 0 : undefined}
                 onClick={onRowClick ? () => onRowClick(row.original) : undefined}
-                className={`rounded-lg border border-gray-200 bg-white px-4 py-3 transition-colors dark:border-gray-700 dark:bg-gray-800 ${
-                  onRowClick ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/40' : ''
+                className={`rounded-lg border border-border bg-card px-4 py-3 transition-colors ${
+                  onRowClick ? 'cursor-pointer hover:bg-accent' : ''
                 }`}
               >
                 {first && (
-                  <div className="font-medium text-gray-900 dark:text-gray-100">
+                  <div className="font-medium text-foreground">
                     {flexRender(first.column.columnDef.cell, first.getContext())}
                   </div>
                 )}
@@ -201,10 +198,10 @@ export function DataTable<T>({
                   <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
                     {rest.map(cell => (
                       <span key={cell.id} className="inline-flex items-center gap-1">
-                        <span className="text-gray-400 dark:text-gray-500">
+                        <span className="text-muted-foreground">
                           {columnLabel(cell.column.columnDef.header, cell.column.id)}:
                         </span>
-                        <span className="text-gray-700 dark:text-gray-300">
+                        <span className="text-foreground">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </span>
                       </span>
@@ -219,15 +216,15 @@ export function DataTable<T>({
 
       {/* Pagination */}
       {!isLoading && pageCount > 1 && (
-        <div className="flex items-center justify-between px-3 py-2.5 border-t border-gray-200 dark:border-gray-700">
-          <span className="text-xs text-gray-500 dark:text-gray-400">
+        <div className="flex items-center justify-between px-3 py-2.5 border-t border-border">
+          <span className="text-xs text-muted-foreground">
             Showing {startRow}&ndash;{endRow} of {totalRows}
           </span>
           <div className="flex items-center gap-1">
             <button
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
-              className="px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="px-2 py-1 text-xs rounded border border-border disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-colors"
               aria-label="First page"
             >
               &laquo;
@@ -235,7 +232,7 @@ export function DataTable<T>({
             <button
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="px-2 py-1 text-xs rounded border border-border disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-colors"
               aria-label="Previous page"
             >
               &lsaquo;
@@ -250,7 +247,7 @@ export function DataTable<T>({
 
               if (showEllipsis) {
                 return (
-                  <span key={i} className="px-1 text-xs text-gray-400 dark:text-gray-500">
+                  <span key={i} className="px-1 text-xs text-muted-foreground">
                     ...
                   </span>
                 );
@@ -263,8 +260,8 @@ export function DataTable<T>({
                   onClick={() => table.setPageIndex(i)}
                   className={`min-w-[28px] px-2 py-1 text-xs rounded border transition-colors ${
                     i === pageIndex
-                      ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium dark:border-blue-400 dark:bg-blue-900/30 dark:text-blue-300'
-                      : 'border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      ? 'border-primary bg-primary/10 text-primary font-medium'
+                      : 'border-border hover:bg-accent'
                   }`}
                 >
                   {i + 1}
@@ -275,7 +272,7 @@ export function DataTable<T>({
             <button
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="px-2 py-1 text-xs rounded border border-border disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-colors"
               aria-label="Next page"
             >
               &rsaquo;
@@ -283,7 +280,7 @@ export function DataTable<T>({
             <button
               onClick={() => table.setPageIndex(pageCount - 1)}
               disabled={!table.getCanNextPage()}
-              className="px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="px-2 py-1 text-xs rounded border border-border disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-colors"
               aria-label="Last page"
             >
               &raquo;

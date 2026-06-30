@@ -376,14 +376,14 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800">
+    <div className="flex flex-col h-full bg-card border-r border-border">
       {/* Workspace, Product & Environment Selectors */}
-      <div className="p-4 space-y-3 border-b border-gray-100 dark:border-gray-800">
+      <div className="p-4 space-y-3 border-b border-border">
         <div>
-          <span className="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5 px-0.5">
+          <span className="block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1.5 px-0.5">
             Workspace
           </span>
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-0.5">
+          <div className="rounded-lg border border-border bg-muted p-0.5">
             <Select value={entitySlug} onValueChange={handleWorkspaceChange}>
               <SelectTrigger className="w-full border-0 bg-transparent shadow-none text-[13px] font-medium">
                 <SelectValue placeholder={entitiesLoading ? 'Loading...' : 'Select workspace'} />
@@ -400,11 +400,11 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
         </div>
 
         <div>
-          <span className="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5 px-0.5">
+          <span className="block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1.5 px-0.5">
             Product
           </span>
           <div className="flex items-center gap-1.5">
-            <div className="min-w-0 flex-1 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-0.5">
+            <div className="min-w-0 flex-1 rounded-lg border border-border bg-muted p-0.5">
               <Select
                 value={onProductNewRoute ? 'new' : (selectedProductId ?? '')}
                 onValueChange={handleProductChange}
@@ -428,7 +428,7 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
                 onClick={() => navigate(routes.productSettings(entitySlug, selectedProductId))}
                 aria-label="Product settings"
                 title="Product settings"
-                className="flex-shrink-0 rounded-lg border border-gray-200 bg-gray-50 p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                className="flex-shrink-0 rounded-lg border border-border bg-muted p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
               >
                 <SettingsIcon />
               </button>
@@ -439,22 +439,22 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
         {/* Environment selector — only once a product is selected */}
         {selectedProductId && (
           <div>
-            <span className="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5 px-0.5">
+            <span className="block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1.5 px-0.5">
               Environment
             </span>
             {environmentsLoading ? (
-              <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-[13px] text-gray-400 dark:text-gray-500">
+              <div className="rounded-lg border border-border bg-muted px-3 py-2 text-[13px] text-muted-foreground">
                 Loading...
               </div>
             ) : environments.length === 0 ? (
               <button
                 onClick={() => navigate(routes.environmentNew(entitySlug))}
-                className="w-full text-left rounded-lg border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-[13px] font-medium text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="w-full text-left rounded-lg border border-dashed border-border bg-muted px-3 py-2 text-[13px] font-medium text-primary hover:bg-accent transition-colors"
               >
                 + Create Environment
               </button>
             ) : (
-              <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-0.5">
+              <div className="rounded-lg border border-border bg-muted p-0.5">
                 <Select value={routeEnvId ?? ''} onValueChange={handleEnvironmentChange}>
                   <SelectTrigger className="w-full border-0 bg-transparent shadow-none text-[13px] font-medium">
                     <SelectValue placeholder="Select environment" />
@@ -479,10 +479,8 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
         <nav className="flex-1 overflow-y-auto py-3 px-3">
           {MENU_SECTIONS.map((section, sectionIdx) => (
             <div key={section.title}>
-              {sectionIdx > 0 && (
-                <div className="mx-2 my-2 border-t border-gray-100 dark:border-gray-800" />
-              )}
-              <span className="block text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 px-2 pt-1.5 pb-1">
+              {sectionIdx > 0 && <div className="mx-2 my-2 border-t border-border" />}
+              <span className="block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground px-2 pt-1.5 pb-1">
                 {section.title}
               </span>
               {section.items.map(item => {
@@ -496,20 +494,20 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
                     className={[
                       'group relative flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] font-medium transition-all duration-150',
                       active
-                        ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300'
-                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-gray-200',
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-muted-foreground hover:bg-accent hover:text-foreground',
                     ].join(' ')}
                   >
                     {/* Left accent bar for active state */}
                     {active && (
-                      <span className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full bg-blue-600 dark:bg-blue-400" />
+                      <span className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full bg-primary" />
                     )}
                     <span
                       className={[
                         'flex-shrink-0 transition-colors duration-150',
                         active
-                          ? 'text-blue-600 dark:text-blue-400'
-                          : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300',
+                          ? 'text-primary'
+                          : 'text-muted-foreground group-hover:text-foreground',
                       ].join(' ')}
                     >
                       <Icon />
@@ -525,7 +523,7 @@ export function DashboardSidebar({ entitySlug }: DashboardSidebarProps) {
 
       {!(selectedProductId && selectedEnvValid) && (
         <div className="flex-1 flex items-center justify-center p-6">
-          <p className="text-[13px] text-gray-400 dark:text-gray-500 text-center leading-relaxed">
+          <p className="text-[13px] text-muted-foreground text-center leading-relaxed">
             {!selectedProductId
               ? 'Select a product to get started'
               : 'Select an environment to get started'}

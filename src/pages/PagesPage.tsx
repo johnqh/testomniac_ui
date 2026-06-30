@@ -95,7 +95,7 @@ export function PagesPage() {
   if (isLoading) {
     return (
       <div className="p-4 sm:p-6">
-        <div className="py-8 text-center text-gray-500 dark:text-gray-400">Loading...</div>
+        <div className="py-8 text-center text-muted-foreground">Loading...</div>
       </div>
     );
   }
@@ -103,7 +103,7 @@ export function PagesPage() {
   if (error) {
     return (
       <div className="p-4 sm:p-6">
-        <div className="py-8 text-center text-red-600 dark:text-red-400">Error: {error}</div>
+        <div className="py-8 text-center text-destructive">Error: {error}</div>
       </div>
     );
   }
@@ -112,19 +112,19 @@ export function PagesPage() {
     <ContentLayout
       contentClassName="min-h-0"
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title="Discovered Pages" description="" noIndex />
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-2xl font-bold text-foreground">
               {runScoped ? `Run #${runId} Pages` : 'Discovered Pages'}
             </h1>
-            <div className="flex rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="flex rounded-lg border border-border">
               <button
                 onClick={() => setView('list')}
                 className={`px-4 py-1.5 text-sm font-medium transition-colors ${
                   view === 'list'
-                    ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
-                    : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100'
+                    ? 'bg-foreground text-background'
+                    : 'text-muted-foreground hover:text-foreground'
                 } rounded-l-md`}
               >
                 List
@@ -133,8 +133,8 @@ export function PagesPage() {
                 onClick={() => setView('map')}
                 className={`px-4 py-1.5 text-sm font-medium transition-colors ${
                   view === 'map'
-                    ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
-                    : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100'
+                    ? 'bg-foreground text-background'
+                    : 'text-muted-foreground hover:text-foreground'
                 } rounded-r-md`}
               >
                 Map
@@ -146,7 +146,7 @@ export function PagesPage() {
     >
       {pages.length === 0 ? (
         <div className="px-4 py-4 sm:px-6">
-          <p className="text-gray-500 dark:text-gray-400">No pages discovered yet.</p>
+          <p className="text-muted-foreground">No pages discovered yet.</p>
         </div>
       ) : view === 'list' ? (
         <div className="px-4 py-4 sm:px-6">

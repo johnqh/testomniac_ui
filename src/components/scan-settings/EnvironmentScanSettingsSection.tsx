@@ -81,10 +81,8 @@ export function EnvironmentScanSettingsSection() {
         overrideCount={scanSettingsQuery.data?.data?.ruleOverrides?.length ?? 0}
       />
       <Card variant="bordered">
-        <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-          Effective Scan Settings
-        </h2>
-        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        <h2 className="text-sm font-semibold text-foreground">Effective Scan Settings</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
           This is the merged configuration the API will apply before request-level overrides.
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -92,16 +90,14 @@ export function EnvironmentScanSettingsSection() {
             (expertise: string) => (
               <span
                 key={expertise}
-                className="rounded bg-gray-100 px-2 py-1 text-xs capitalize text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                className="rounded bg-muted px-2 py-1 text-xs capitalize text-muted-foreground"
               >
                 {expertise}
               </span>
             )
           )}
           {(effectiveScanSettingsQuery.data?.data?.expertiseSlugs ?? []).length === 0 && (
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              No expertise settings configured.
-            </span>
+            <span className="text-xs text-muted-foreground">No expertise settings configured.</span>
           )}
         </div>
       </Card>

@@ -25,14 +25,14 @@ export function RunSummaryCard({
       variant="bordered"
       padding="md"
       onClick={onClick}
-      className="hover:border-blue-300 dark:hover:border-blue-600 cursor-pointer transition-colors"
+      className="hover:border-primary cursor-pointer transition-colors"
     >
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Run #{runId}</span>
+        <span className="text-sm font-medium text-foreground">Run #{runId}</span>
         <StatusBadge status={status} />
       </div>
-      {phase && <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Phase: {phase}</div>}
-      <div className="flex gap-4 text-xs text-gray-500 dark:text-gray-400">
+      {phase && <div className="text-xs text-muted-foreground mb-1">Phase: {phase}</div>}
+      <div className="flex gap-4 text-xs text-muted-foreground">
         {startedAt && <span>{new Date(startedAt).toLocaleDateString()}</span>}
         {pagesFound !== undefined && <span>{pagesFound} pages</span>}
         {issuesFound !== undefined && <span>{issuesFound} issues</span>}

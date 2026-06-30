@@ -35,12 +35,10 @@ function SectionLink({
   return (
     <button
       onClick={onClick}
-      className="text-left flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group"
+      className="text-left flex items-center justify-between px-3 py-2 rounded-lg hover:bg-accent transition-colors group"
     >
-      <span className="text-sm text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-        {label}
-      </span>
-      {count && <span className="text-xs text-gray-400 dark:text-gray-500 font-mono">{count}</span>}
+      <span className="text-sm text-foreground group-hover:text-primary">{label}</span>
+      {count && <span className="text-xs text-muted-foreground font-mono">{count}</span>}
     </button>
   );
 }
@@ -79,6 +77,7 @@ function EnvironmentCard({
     },
   ];
 
+  // decorative identity palette: distinguishes shared vs dedicated environment kinds (no semantic equivalent)
   const kindColor =
     environment.kind === 'shared'
       ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
@@ -88,20 +87,18 @@ function EnvironmentCard({
     <Card
       variant="bordered"
       padding="none"
-      className="overflow-hidden hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
+      className="overflow-hidden hover:border-border transition-colors"
     >
       {/* Environment header */}
-      <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700/50">
+      <div className="px-5 py-4 border-b border-border">
         <div className="flex items-center gap-2">
-          <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 truncate">
-            {environment.title}
-          </h3>
+          <h3 className="text-base font-semibold text-foreground truncate">{environment.title}</h3>
           <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${kindColor}`}>
             {environment.kind}
           </span>
         </div>
         {environment.baseUrl && (
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 truncate font-mono">
+          <p className="text-xs text-muted-foreground mt-1 truncate font-mono">
             {environment.baseUrl}
           </p>
         )}
@@ -144,18 +141,14 @@ function ProductSection({
 
   return (
     <section>
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
-        {product.title}
-      </h2>
+      <h2 className="text-lg font-semibold text-foreground mb-3">{product.title}</h2>
 
       {isLoading && (
-        <div className="text-sm text-gray-500 dark:text-gray-400 py-4">Loading environments...</div>
+        <div className="text-sm text-muted-foreground py-4">Loading environments...</div>
       )}
 
       {error && (
-        <div className="text-sm text-red-600 dark:text-red-400 py-2">
-          Failed to load environments: {error}
-        </div>
+        <div className="text-sm text-destructive py-2">Failed to load environments: {error}</div>
       )}
 
       {!isLoading && !error && environments.length === 0 && (
@@ -187,11 +180,11 @@ function StatTile({
   accent?: 'blue' | 'emerald' | 'amber' | 'gray' | 'red';
 }) {
   const accentMap: Record<string, string> = {
-    blue: 'bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400',
-    emerald: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400',
-    amber: 'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400',
-    gray: 'bg-gray-50 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
-    red: 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400',
+    blue: 'bg-info/10 text-info',
+    emerald: 'bg-success/10 text-success',
+    amber: 'bg-warning/10 text-warning',
+    gray: 'bg-muted text-muted-foreground',
+    red: 'bg-destructive/10 text-destructive',
   };
 
   return (
@@ -202,10 +195,8 @@ function StatTile({
         {icon}
       </div>
       <div className="min-w-0">
-        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">
-          {value}
-        </div>
-        <div className="text-xs text-gray-500 dark:text-gray-400 truncate">{label}</div>
+        <div className="text-2xl font-bold text-foreground tabular-nums">{value}</div>
+        <div className="text-xs text-muted-foreground truncate">{label}</div>
       </div>
     </Card>
   );
@@ -227,7 +218,7 @@ function RecentRunRow({ run, entitySlug }: { run: TestRunResponse; entitySlug: s
   return (
     <button
       onClick={() => navigate(routes.entityRun(entitySlug, run.id))}
-      className="w-full text-left flex items-center gap-4 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors group"
+      className="w-full text-left flex items-center gap-4 px-4 py-3 hover:bg-accent transition-colors group"
     >
       {/* Status badge */}
       <div className="shrink-0">
@@ -236,10 +227,10 @@ function RecentRunRow({ run, entitySlug }: { run: TestRunResponse; entitySlug: s
 
       {/* URL and meta */}
       <div className="min-w-0 flex-1">
-        <div className="text-sm text-gray-900 dark:text-gray-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 font-mono">
+        <div className="text-sm text-foreground truncate group-hover:text-primary font-mono">
           {truncatedUrl}
         </div>
-        <div className="flex items-center gap-3 mt-0.5 text-xs text-gray-400 dark:text-gray-500">
+        <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
           <span>{run.sizeClass}</span>
           {run.pagesFound != null && <span>{run.pagesFound} pages</span>}
           {run.testRunsCompleted != null && <span>{run.testRunsCompleted} tests</span>}
@@ -249,12 +240,12 @@ function RecentRunRow({ run, entitySlug }: { run: TestRunResponse; entitySlug: s
       {/* Duration */}
       <div className="shrink-0 text-right">
         {run.totalDurationMs != null && (
-          <div className="text-xs text-gray-500 dark:text-gray-400 font-mono">
+          <div className="text-xs text-muted-foreground font-mono">
             {formatDuration(run.totalDurationMs)}
           </div>
         )}
         {run.createdAt && (
-          <div className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
+          <div className="text-[11px] text-muted-foreground mt-0.5">
             {formatDateTime(run.createdAt)}
           </div>
         )}
@@ -287,15 +278,15 @@ function RecentRunsSection({
   if (isLoading) {
     return (
       <Card variant="bordered" padding="none" className="overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700/50">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Recent Runs</h2>
+        <div className="px-5 py-4 border-b border-border">
+          <h2 className="text-sm font-semibold text-foreground">Recent Runs</h2>
         </div>
         <div className="p-4 space-y-3">
           {[1, 2, 3].map(i => (
             <div key={i} className="animate-pulse flex items-center gap-4">
-              <div className="h-5 w-16 bg-gray-200 dark:bg-gray-700 rounded-full" />
-              <div className="flex-1 h-4 bg-gray-100 dark:bg-gray-700/50 rounded" />
-              <div className="h-3 w-12 bg-gray-100 dark:bg-gray-700/50 rounded" />
+              <div className="h-5 w-16 bg-muted rounded-full" />
+              <div className="flex-1 h-4 bg-muted rounded" />
+              <div className="h-3 w-12 bg-muted rounded" />
             </div>
           ))}
         </div>
@@ -307,10 +298,10 @@ function RecentRunsSection({
 
   return (
     <Card variant="bordered" padding="none" className="overflow-hidden">
-      <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700/50">
-        <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Recent Runs</h2>
+      <div className="px-5 py-4 border-b border-border">
+        <h2 className="text-sm font-semibold text-foreground">Recent Runs</h2>
       </div>
-      <div className="divide-y divide-gray-100 dark:divide-gray-700/50">
+      <div className="divide-y divide-border">
         {recentRuns.map(run => (
           <RecentRunRow key={run.id} run={run} entitySlug={entitySlug} />
         ))}
@@ -336,49 +327,47 @@ function RunStatusBreakdown({ runs }: { runs: TestRunResponse[] }) {
   if (total === 0) return null;
 
   const statusColors: Record<string, string> = {
-    completed: 'bg-green-500 dark:bg-green-400',
-    passed: 'bg-green-500 dark:bg-green-400',
-    running: 'bg-blue-500 dark:bg-blue-400',
-    pending: 'bg-yellow-500 dark:bg-yellow-400',
-    planned: 'bg-gray-400 dark:bg-gray-500',
-    failed: 'bg-red-500 dark:bg-red-400',
-    error: 'bg-red-500 dark:bg-red-400',
-    cancelled: 'bg-gray-400 dark:bg-gray-500',
-    skipped: 'bg-gray-300 dark:bg-gray-600',
+    completed: 'bg-success',
+    passed: 'bg-success',
+    running: 'bg-info',
+    pending: 'bg-warning',
+    planned: 'bg-muted',
+    failed: 'bg-destructive',
+    error: 'bg-destructive',
+    cancelled: 'bg-muted',
+    skipped: 'bg-muted',
   };
 
   const statusLabelColors: Record<string, string> = {
-    completed: 'text-green-600 dark:text-green-400',
-    passed: 'text-green-600 dark:text-green-400',
-    running: 'text-blue-600 dark:text-blue-400',
-    pending: 'text-yellow-600 dark:text-yellow-400',
-    planned: 'text-gray-500 dark:text-gray-400',
-    failed: 'text-red-600 dark:text-red-400',
-    error: 'text-red-600 dark:text-red-400',
-    cancelled: 'text-gray-500 dark:text-gray-400',
-    skipped: 'text-gray-400 dark:text-gray-500',
+    completed: 'text-success',
+    passed: 'text-success',
+    running: 'text-info',
+    pending: 'text-warning',
+    planned: 'text-muted-foreground',
+    failed: 'text-destructive',
+    error: 'text-destructive',
+    cancelled: 'text-muted-foreground',
+    skipped: 'text-muted-foreground',
   };
 
   const entries = Object.entries(breakdown).sort(([, a], [, b]) => b - a);
 
   return (
     <Card variant="bordered" padding="none" className="overflow-hidden">
-      <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700/50">
-        <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-          Run Status Overview
-        </h2>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+      <div className="px-5 py-4 border-b border-border">
+        <h2 className="text-sm font-semibold text-foreground">Run Status Overview</h2>
+        <p className="text-xs text-muted-foreground mt-0.5">
           {total} total run{total !== 1 ? 's' : ''}
         </p>
       </div>
 
       <div className="px-5 py-4">
         {/* Stacked bar */}
-        <div className="flex h-3 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-700 mb-4">
+        <div className="flex h-3 rounded-full overflow-hidden bg-muted mb-4">
           {entries.map(([status, count]) => (
             <div
               key={status}
-              className={`${statusColors[status] ?? 'bg-gray-400'} transition-all`}
+              className={`${statusColors[status] ?? 'bg-muted'} transition-all`}
               style={{ width: `${(count / total) * 100}%` }}
               title={`${status}: ${count}`}
             />
@@ -389,17 +378,13 @@ function RunStatusBreakdown({ runs }: { runs: TestRunResponse[] }) {
         <div className="flex flex-wrap gap-x-4 gap-y-1.5">
           {entries.map(([status, count]) => (
             <div key={status} className="flex items-center gap-1.5">
-              <div
-                className={`w-2.5 h-2.5 rounded-full ${statusColors[status] ?? 'bg-gray-400'}`}
-              />
+              <div className={`w-2.5 h-2.5 rounded-full ${statusColors[status] ?? 'bg-muted'}`} />
               <span
-                className={`text-xs font-medium ${statusLabelColors[status] ?? 'text-gray-500 dark:text-gray-400'}`}
+                className={`text-xs font-medium ${statusLabelColors[status] ?? 'text-muted-foreground'}`}
               >
                 {status}
               </span>
-              <span className="text-xs text-gray-400 dark:text-gray-500 tabular-nums font-mono">
-                {count}
-              </span>
+              <span className="text-xs text-muted-foreground tabular-nums font-mono">{count}</span>
             </div>
           ))}
         </div>
@@ -468,14 +453,14 @@ export function DashboardOverview() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title="Dashboard" description="" noIndex />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+          <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
         </div>
       }
     >
       <div className="max-w-5xl px-4 py-4 sm:px-6">
-        <p className="text-gray-500 dark:text-gray-400 mb-8">
+        <p className="text-muted-foreground mb-8">
           Manage your web application tests and discovery run results.
         </p>
 
@@ -566,11 +551,11 @@ export function DashboardOverview() {
         <div className="mb-8">
           <button
             onClick={() => navigate(routes.scanNew(entitySlug ?? ''))}
-            className="w-full sm:w-auto flex items-center gap-4 p-5 text-left rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 transition-all group"
+            className="w-full sm:w-auto flex items-center gap-4 p-5 text-left rounded-xl border border-border bg-primary/5 hover:bg-primary/10 transition-all group"
           >
-            <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-600 dark:bg-blue-500 flex items-center justify-center">
+            <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
               <svg
-                className="w-5 h-5 text-white"
+                className="w-5 h-5 text-primary-foreground"
                 viewBox="0 0 20 20"
                 fill="none"
                 stroke="currentColor"
@@ -582,10 +567,8 @@ export function DashboardOverview() {
               </svg>
             </div>
             <div>
-              <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                New Discovery Run
-              </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              <div className="text-sm font-semibold text-foreground">New Discovery Run</div>
+              <p className="text-xs text-muted-foreground mt-0.5">
                 Scan a URL to discover pages, generate tests, and find issues
               </p>
             </div>
@@ -613,10 +596,10 @@ export function DashboardOverview() {
           <div className="space-y-4">
             {[1, 2].map(i => (
               <div key={i} className="animate-pulse">
-                <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-48 mb-3" />
+                <div className="h-5 bg-muted rounded w-48 mb-3" />
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  <div className="h-40 bg-gray-100 dark:bg-gray-800 rounded-xl" />
-                  <div className="h-40 bg-gray-100 dark:bg-gray-800 rounded-xl" />
+                  <div className="h-40 bg-muted rounded-xl" />
+                  <div className="h-40 bg-muted rounded-xl" />
                 </div>
               </div>
             ))}
@@ -631,7 +614,7 @@ export function DashboardOverview() {
           <EmptyState
             icon={
               <svg
-                className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto"
+                className="w-12 h-12 text-muted-foreground mx-auto"
                 viewBox="0 0 48 48"
                 fill="none"
                 stroke="currentColor"

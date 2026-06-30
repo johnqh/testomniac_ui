@@ -31,9 +31,9 @@ export function TestRunsListPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title="Test Runs" description="" noIndex />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Test Runs</h1>
+          <h1 className="text-2xl font-bold text-foreground">Test Runs</h1>
         </div>
       }
     >
@@ -65,9 +65,7 @@ export function TestRunsListPage() {
                   topRight={<StatusBadge status={run.status} />}
                   title={host ?? `Run #${run.id}`}
                   subtitle={run.scanUrl ?? undefined}
-                  footer={
-                    <span className="text-xs text-gray-500 dark:text-gray-400">{metrics}</span>
-                  }
+                  footer={<span className="text-xs text-muted-foreground">{metrics}</span>}
                   onClick={() => navigate(r.run(run.id))}
                 />
               );

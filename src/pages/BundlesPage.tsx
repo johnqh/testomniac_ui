@@ -76,7 +76,7 @@ export function BundlesPage() {
   if (contextLoading || isLoading) {
     return (
       <div className="p-6">
-        <div className="text-center text-gray-500 dark:text-gray-400 py-8">Loading...</div>
+        <div className="text-center text-muted-foreground py-8">Loading...</div>
       </div>
     );
   }
@@ -84,9 +84,7 @@ export function BundlesPage() {
   if (contextError || error) {
     return (
       <div className="p-6">
-        <div className="text-center text-red-600 dark:text-red-400 py-8">
-          Error: {contextError || error}
-        </div>
+        <div className="text-center text-destructive py-8">Error: {contextError || error}</div>
       </div>
     );
   }
@@ -94,10 +92,10 @@ export function BundlesPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title="Bundles" description="" noIndex />
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Test Bundles</h1>
+            <h1 className="text-2xl font-bold text-foreground">Test Bundles</h1>
             {primaryRunner && (
               <AddButton
                 label="New Bundle"
@@ -132,7 +130,7 @@ export function BundlesPage() {
                 className="w-full"
               />
             </div>
-            {formError && <p className="text-sm text-red-600 dark:text-red-400">{formError}</p>}
+            {formError && <p className="text-sm text-destructive">{formError}</p>}
             <div className="flex gap-2">
               <ActionButton
                 type="button"

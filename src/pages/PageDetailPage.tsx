@@ -102,7 +102,7 @@ export function PageDetailPage() {
   if (isLoading || summaryLoading) {
     return (
       <div className="p-4 sm:p-6">
-        <div className="text-center text-gray-500 dark:text-gray-400 py-8">Loading...</div>
+        <div className="text-center text-muted-foreground py-8">Loading...</div>
       </div>
     );
   }
@@ -112,13 +112,13 @@ export function PageDetailPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title="Page Detail" description="" noIndex />
           <BackLink label="Pages" onClick={() => navigate(pagesBasePath)} />
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Page Detail</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <h1 className="text-2xl font-bold text-foreground">Page Detail</h1>
+              <p className="text-sm text-muted-foreground mt-1">
                 {summary?.relativePath ?? `Page #${pageId}`}
                 {runId ? ` • Run #${runId}` : ` • Page #${pageId}`}
               </p>
@@ -158,28 +158,24 @@ export function PageDetailPage() {
           <>
             <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
               <Card variant="bordered" padding="md">
-                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {summary.pageStatesCount}
-                </div>
-                <div className="text-xs text-gray-500">Page States</div>
+                <div className="text-2xl font-bold text-foreground">{summary.pageStatesCount}</div>
+                <div className="text-xs text-muted-foreground">Page States</div>
               </Card>
               <Card variant="bordered" padding="md">
-                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                <div className="text-2xl font-bold text-foreground">
                   {summary.testInteractionsCount}
                 </div>
-                <div className="text-xs text-gray-500">Test Interactions</div>
+                <div className="text-xs text-muted-foreground">Test Interactions</div>
               </Card>
               <Card variant="bordered" padding="md">
-                <div className="text-2xl font-bold text-red-600 dark:text-red-400">
-                  {summary.findings}
-                </div>
-                <div className="text-xs text-gray-500">Findings</div>
+                <div className="text-2xl font-bold text-destructive">{summary.findings}</div>
+                <div className="text-xs text-muted-foreground">Findings</div>
               </Card>
               <Card variant="bordered" padding="md">
-                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                <div className="text-2xl font-bold text-foreground">
                   {summary.testInteractionRunsCount}
                 </div>
-                <div className="text-xs text-gray-500">Case Runs</div>
+                <div className="text-xs text-muted-foreground">Case Runs</div>
               </Card>
             </div>
 
@@ -195,22 +191,18 @@ export function PageDetailPage() {
 
             {summary.recentFindings.length > 0 && (
               <div className="mb-8">
-                <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  Recent Findings
-                </h2>
+                <h2 className="mb-4 text-lg font-semibold text-foreground">Recent Findings</h2>
                 <div className="space-y-3">
                   {summary.recentFindings.slice(0, 8).map(finding => (
                     <Card key={finding.id} variant="bordered" padding="md">
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                            {finding.title}
-                          </div>
-                          <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          <div className="text-sm font-medium text-foreground">{finding.title}</div>
+                          <div className="mt-1 text-xs text-muted-foreground">
                             {finding.description}
                           </div>
                         </div>
-                        <div className="shrink-0 text-[11px] capitalize text-gray-500 dark:text-gray-400">
+                        <div className="shrink-0 text-[11px] capitalize text-muted-foreground">
                           {finding.expertise ?? finding.type}
                         </div>
                       </div>
@@ -222,36 +214,32 @@ export function PageDetailPage() {
 
             {summary.runtimeSignals.length > 0 && (
               <div className="mb-8">
-                <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  Runtime Signals
-                </h2>
+                <h2 className="mb-4 text-lg font-semibold text-foreground">Runtime Signals</h2>
                 <div className="space-y-4">
                   {summary.runtimeSignals.map(signal => (
                     <Card key={signal.testInteractionRunId} variant="bordered" padding="md">
                       <div className="mb-3 flex items-center justify-between gap-3">
                         <div>
-                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          <div className="text-sm font-medium text-foreground">
                             {signal.testInteractionTitle ??
                               `Test Interaction #${signal.testInteractionId}`}
                           </div>
-                          <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          <div className="mt-1 text-xs text-muted-foreground">
                             Case run #{signal.testInteractionRunId}
                             {signal.completedAt
                               ? ` • ${new Date(signal.completedAt).toLocaleString()}`
                               : ''}
                           </div>
                         </div>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {signal.status}
-                        </span>
+                        <span className="text-xs text-muted-foreground">{signal.status}</span>
                       </div>
                       {signal.consoleLog && (
-                        <pre className="mb-3 max-h-48 overflow-auto rounded border border-gray-200 bg-gray-50 p-3 text-xs leading-5 text-gray-700 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-300">
+                        <pre className="mb-3 max-h-48 overflow-auto rounded border border-border bg-muted p-3 text-xs leading-5 text-foreground">
                           {signal.consoleLog}
                         </pre>
                       )}
                       {signal.networkLog && (
-                        <pre className="max-h-48 overflow-auto rounded border border-gray-200 bg-gray-50 p-3 text-xs leading-5 text-gray-700 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-300">
+                        <pre className="max-h-48 overflow-auto rounded border border-border bg-muted p-3 text-xs leading-5 text-foreground">
                           {signal.networkLog}
                         </pre>
                       )}
@@ -264,7 +252,7 @@ export function PageDetailPage() {
         )}
 
         {pageStates.length === 0 ? (
-          <p className="text-gray-500 dark:text-gray-400">No page states found.</p>
+          <p className="text-muted-foreground">No page states found.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {pageStates.map(state => (
@@ -275,9 +263,9 @@ export function PageDetailPage() {
                     runId ? r.runPageState(runId, pageId, state.id) : r.pageState(pageId, state.id)
                   )
                 }
-                className="text-left rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
+                className="text-left rounded-lg border border-border overflow-hidden hover:border-primary transition-colors"
               >
-                <div className="h-40 bg-gray-100 dark:bg-gray-800 overflow-hidden">
+                <div className="h-40 bg-muted overflow-hidden">
                   {state.screenshotPath ? (
                     <img
                       src={buildArtifactUrl(baseUrl, state.screenshotPath)}
@@ -286,20 +274,18 @@ export function PageDetailPage() {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="text-xs text-gray-400">No screenshot</span>
+                      <span className="text-xs text-muted-foreground">No screenshot</span>
                     </div>
                   )}
                 </div>
                 <div className="p-3">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      State #{state.id}
-                    </span>
-                    <span className="px-1.5 py-0.5 text-xs rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                    <span className="text-sm font-medium text-foreground">State #{state.id}</span>
+                    <span className="px-1.5 py-0.5 text-xs rounded bg-muted text-muted-foreground">
                       {state.sizeClass}
                     </span>
                   </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                  <div className="text-xs text-muted-foreground">
                     {state.capturedAt
                       ? new Date(state.capturedAt).toLocaleString()
                       : 'No capture date'}
@@ -315,9 +301,7 @@ export function PageDetailPage() {
           landingElements.length > 0 ||
           onPageElements.length > 0) && (
           <div className="mt-10">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Test Interactions
-            </h2>
+            <h2 className="mb-4 text-lg font-semibold text-foreground">Test Interactions</h2>
 
             {onPageElements.length > 0 && (
               <TestInteractionGroup
@@ -367,7 +351,7 @@ function TestInteractionGroup({
 }) {
   return (
     <div className="mb-6">
-      <h3 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">{label}</h3>
+      <h3 className="mb-2 text-sm font-medium text-muted-foreground">{label}</h3>
       <div className="space-y-2">
         {elements.map(el => (
           <TestInteractionRow
@@ -414,7 +398,7 @@ function TestInteractionRow({
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setMenuOpen(prev => !prev)}
-            className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+            className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
           >
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
               <circle cx="10" cy="4" r="1.5" />
@@ -423,13 +407,13 @@ function TestInteractionRow({
             </svg>
           </button>
           {menuOpen && (
-            <div className="absolute right-0 top-full z-10 mt-1 w-32 rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-800">
+            <div className="absolute right-0 top-full z-10 mt-1 w-32 rounded-lg border border-border bg-popover py-1 shadow-lg">
               <button
                 onClick={() => {
                   setMenuOpen(false);
                   onTest();
                 }}
-                className="w-full px-3 py-1.5 text-left text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+                className="w-full px-3 py-1.5 text-left text-sm text-popover-foreground hover:bg-accent"
               >
                 Test
               </button>

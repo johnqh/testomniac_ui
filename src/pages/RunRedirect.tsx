@@ -18,8 +18,8 @@ export function RunRedirect() {
     return (
       <div className="p-6 flex items-center justify-center min-h-[200px]">
         <div className="flex items-center gap-3">
-          <div className="h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm text-gray-500 dark:text-gray-400">Loading run details...</span>
+          <div className="h-5 w-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm text-muted-foreground">Loading run details...</span>
         </div>
       </div>
     );
@@ -28,7 +28,7 @@ export function RunRedirect() {
   if (error || !run) {
     return (
       <div className="p-6">
-        <div className="text-center text-red-500 py-8">{error || 'Run not found.'}</div>
+        <div className="text-center text-destructive py-8">{error || 'Run not found.'}</div>
       </div>
     );
   }

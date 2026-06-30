@@ -27,7 +27,7 @@ export function ScaffoldsPage() {
   if (contextLoading || isLoading) {
     return (
       <div className="p-4 sm:p-6">
-        <div className="text-center text-gray-500 dark:text-gray-400 py-8">Loading...</div>
+        <div className="text-center text-muted-foreground py-8">Loading...</div>
       </div>
     );
   }
@@ -35,9 +35,7 @@ export function ScaffoldsPage() {
   if (contextError || error) {
     return (
       <div className="p-4 sm:p-6">
-        <div className="text-center text-red-600 dark:text-red-400 py-8">
-          Error: {contextError || error}
-        </div>
+        <div className="text-center text-destructive py-8">Error: {contextError || error}</div>
       </div>
     );
   }
@@ -45,15 +43,15 @@ export function ScaffoldsPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title="Scaffolds" description="" noIndex />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Scaffolds</h1>
+          <h1 className="text-2xl font-bold text-foreground">Scaffolds</h1>
         </div>
       }
     >
       <div className="px-4 py-4 sm:px-6">
         {scaffolds.length === 0 ? (
-          <p className="text-gray-500 dark:text-gray-400">No scaffolds detected.</p>
+          <p className="text-muted-foreground">No scaffolds detected.</p>
         ) : (
           <CardGrid density="dense">
             {scaffolds.map(scaffold => {

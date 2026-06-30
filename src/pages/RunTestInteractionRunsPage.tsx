@@ -42,52 +42,46 @@ export function RunTestInteractionRunsPage() {
 
   if (!surface || !testInteraction) {
     return (
-      <div className="p-4 text-center text-gray-500 dark:text-gray-400 sm:p-6">
-        Test element not found.
-      </div>
+      <div className="p-4 text-center text-muted-foreground sm:p-6">Test element not found.</div>
     );
   }
 
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title={`${testInteraction.title} Runs`} description="" noIndex />
           <BackLink
             label={`Back to ${surface.title}`}
             onClick={() => navigate(r.runSurfaceRun(runId, surfaceRunId))}
           />
-          <nav className="mb-4 flex flex-wrap items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+          <nav className="mb-4 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
             <button
               onClick={() => navigate(r.run(runId))}
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="hover:text-info transition-colors"
             >
               Run #{runId}
             </button>
             <span>/</span>
             <button
               onClick={() => navigate(r.runSurfaceRuns(runId))}
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="hover:text-info transition-colors"
             >
               Surface Runs
             </button>
             <span>/</span>
             <button
               onClick={() => navigate(r.runSurfaceRun(runId, surfaceRunId))}
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="hover:text-info transition-colors"
             >
               {surface.title}
             </button>
             <span>/</span>
-            <span className="text-gray-900 dark:text-gray-100 font-medium">
-              {testInteraction.title}
-            </span>
+            <span className="text-foreground font-medium">{testInteraction.title}</span>
           </nav>
 
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {testInteraction.title}
-            </h1>
+            <h1 className="text-2xl font-bold text-foreground">{testInteraction.title}</h1>
             <StatusBadge status={testInteraction.testType} />
           </div>
         </div>
@@ -104,7 +98,7 @@ export function RunTestInteractionRunsPage() {
                 topRight={<StatusBadge status={elementRun.status} />}
                 title={`Run #${elementRun.id}`}
                 footer={
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                  <span className="text-xs text-muted-foreground">
                     {formatDuration(elementRun.durationMs)} · {elementRun.findings.length} findings
                   </span>
                 }

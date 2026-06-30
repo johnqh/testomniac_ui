@@ -106,7 +106,7 @@ export function TestRunDetailPage() {
   if (runError || error || elementRunError) {
     return (
       <div className="p-4 sm:p-6">
-        <div className="text-center text-red-600 dark:text-red-400 py-8">
+        <div className="text-center text-destructive py-8">
           Error: {runError || error || elementRunError}
         </div>
       </div>
@@ -116,7 +116,7 @@ export function TestRunDetailPage() {
   if (isRunLoading || !run) {
     return (
       <div className="p-4 sm:p-6">
-        <div className="text-center text-gray-500 dark:text-gray-400 py-8">Loading run...</div>
+        <div className="text-center text-muted-foreground py-8">Loading run...</div>
       </div>
     );
   }
@@ -171,42 +171,40 @@ export function TestRunDetailPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <BackLink label="Back to Runs" onClick={() => navigate(r.runs())} />
 
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 mb-4">
+          <nav className="flex items-center gap-1 text-sm text-muted-foreground mb-4">
             <button
               onClick={() => navigate(r.runs())}
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="hover:text-primary transition-colors"
             >
               Runs
             </button>
             <span>/</span>
-            <span className="text-gray-900 dark:text-gray-100 font-medium">Run #{runId}</span>
+            <span className="text-foreground font-medium">Run #{runId}</span>
           </nav>
 
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            Test Run #{runId}
-          </h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Test Run #{runId}</h1>
 
           {/* Metadata */}
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge status={run.status} />
             <StatusBadge status={run.sizeClass} />
-            <span className="text-xs text-gray-500 dark:text-gray-400">ID: {runId}</span>
+            <span className="text-xs text-muted-foreground">ID: {runId}</span>
             {run.createdAt && (
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-xs text-muted-foreground">
                 Created {formatDate(run.createdAt)}
               </span>
             )}
             {run.startedAt && (
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-xs text-muted-foreground">
                 Started {formatDate(run.startedAt)}
               </span>
             )}
             {run.completedAt && (
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-xs text-muted-foreground">
                 Completed {formatDate(run.completedAt)}
               </span>
             )}
@@ -219,69 +217,61 @@ export function TestRunDetailPage() {
           <>
             <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
               <Card variant="bordered" padding="md">
-                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {summary.pagesFound ?? 0}
-                </div>
-                <div className="text-xs text-gray-500">Pages Found</div>
+                <div className="text-2xl font-bold text-foreground">{summary.pagesFound ?? 0}</div>
+                <div className="text-xs text-muted-foreground">Pages Found</div>
               </Card>
               <Card variant="bordered" padding="md">
-                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                <div className="text-2xl font-bold text-foreground">
                   {summary.pageStatesFound ?? 0}
                 </div>
-                <div className="text-xs text-gray-500">Page States</div>
+                <div className="text-xs text-muted-foreground">Page States</div>
               </Card>
               <Card variant="bordered" padding="md">
-                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                <div className="text-2xl font-bold text-foreground">
                   {summary.testRunsCompleted ?? 0}
                 </div>
-                <div className="text-xs text-gray-500">Completed Runs</div>
+                <div className="text-xs text-muted-foreground">Completed Runs</div>
               </Card>
               <Card variant="bordered" padding="md">
-                <div className="text-2xl font-bold text-red-600 dark:text-red-400">
-                  {summary.totalFindings}
-                </div>
-                <div className="text-xs text-gray-500">Findings</div>
+                <div className="text-2xl font-bold text-destructive">{summary.totalFindings}</div>
+                <div className="text-xs text-muted-foreground">Findings</div>
               </Card>
             </div>
 
             {summary.aiSummary && (
               <Card variant="bordered" padding="md" className="mb-8">
-                <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                   Summary
                 </h2>
-                <p className="text-sm leading-6 text-gray-700 dark:text-gray-300">
-                  {summary.aiSummary}
-                </p>
+                <p className="text-sm leading-6 text-foreground">{summary.aiSummary}</p>
               </Card>
             )}
 
             <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
               <button
                 onClick={() => navigate(r.runSurfaceRuns(runId))}
-                className="rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:border-blue-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-600"
+                className="rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary"
               >
-                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Surface Runs
-                </div>
-                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <div className="text-sm font-medium text-foreground">Surface Runs</div>
+                <div className="mt-1 text-xs text-muted-foreground">
                   Navigate the run hierarchy by surface run, then interaction runs and run details.
                 </div>
               </button>
               <button
                 onClick={() => navigate(r.runPages(runId))}
-                className="rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:border-blue-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-600"
+                className="rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary"
               >
-                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Pages</div>
-                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <div className="text-sm font-medium text-foreground">Pages</div>
+                <div className="mt-1 text-xs text-muted-foreground">
                   Browse discovered pages and drill into captured page states.
                 </div>
               </button>
               <button
                 onClick={() => navigate(r.runIssues(runId))}
-                className="rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:border-blue-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-600"
+                className="rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary"
               >
-                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Findings</div>
-                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <div className="text-sm font-medium text-foreground">Findings</div>
+                <div className="mt-1 text-xs text-muted-foreground">
                   Review grouped warnings and errors for this scan run.
                 </div>
               </button>
@@ -289,9 +279,7 @@ export function TestRunDetailPage() {
 
             {surfaceCoverage.length > 0 && (
               <div className="mb-8">
-                <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  Coverage Tree
-                </h2>
+                <h2 className="mb-4 text-lg font-semibold text-foreground">Coverage Tree</h2>
                 <CardGrid>
                   {surfaceCoverage.map(surface => (
                     <GridTile
@@ -299,7 +287,7 @@ export function TestRunDetailPage() {
                       topRight={<StatusBadge status={surface.status} />}
                       title={surface.title}
                       footer={
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                        <span className="text-xs text-muted-foreground">
                           {surface.interactionCount} interaction
                           {surface.interactionCount === 1 ? '' : 's'}
                         </span>
@@ -317,25 +305,21 @@ export function TestRunDetailPage() {
 
             {expertiseEntries.length > 0 && (
               <div className="mb-8">
-                <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <h2 className="mb-4 text-lg font-semibold text-foreground">
                   Findings by Expertise
                 </h2>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {expertiseEntries.map(([name, counts]) => (
                     <Card key={name} variant="bordered" padding="md">
-                      <div className="text-sm font-medium capitalize text-gray-900 dark:text-gray-100">
-                        {name}
-                      </div>
+                      <div className="text-sm font-medium capitalize text-foreground">{name}</div>
                       <div className="mt-3 flex gap-4 text-xs">
-                        <span className="text-red-600 dark:text-red-400">
+                        <span className="text-destructive">
                           {counts.errorCount} error{counts.errorCount === 1 ? '' : 's'}
                         </span>
-                        <span className="text-amber-600 dark:text-amber-400">
+                        <span className="text-warning">
                           {counts.warningCount} warning{counts.warningCount === 1 ? '' : 's'}
                         </span>
-                        <span className="text-gray-500 dark:text-gray-400">
-                          {counts.findingCount} total
-                        </span>
+                        <span className="text-muted-foreground">{counts.findingCount} total</span>
                       </div>
                     </Card>
                   ))}
@@ -344,30 +328,30 @@ export function TestRunDetailPage() {
             )}
 
             <Card variant="bordered" padding="md" className="mb-8">
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                 Effective Scan Settings
               </h2>
-              <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+              <div className="space-y-3 text-sm text-foreground">
                 <div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">Expertises</div>
+                  <div className="text-xs text-muted-foreground">Expertises</div>
                   <div className="mt-1 flex flex-wrap gap-2">
                     {effectiveExpertises.length > 0 ? (
                       effectiveExpertises.map(expertise => (
                         <span
                           key={expertise}
-                          className="rounded bg-gray-100 px-2 py-1 text-xs capitalize dark:bg-gray-800"
+                          className="rounded bg-muted px-2 py-1 text-xs capitalize"
                         >
                           {expertise}
                         </span>
                       ))
                     ) : (
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                      <span className="text-xs text-muted-foreground">
                         No expertise settings recorded.
                       </span>
                     )}
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400">
+                <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
                   <span>{effectiveRuleOverrides.length} rule override(s)</span>
                   <span>Scan mode: {run.scanMode}</span>
                   <span>{run.quickScan ? 'Quick scan enabled' : 'Full discovery flow'}</span>
@@ -378,20 +362,16 @@ export function TestRunDetailPage() {
         )}
 
         {/* Findings */}
-        <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
           Findings
         </h2>
 
         {run.testInteractionRunId !== null && isLoading && (
-          <div className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">
-            Loading findings...
-          </div>
+          <div className="text-sm text-muted-foreground py-8 text-center">Loading findings...</div>
         )}
 
         {run.testInteractionRunId === null && rootFindingsLoading && (
-          <div className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">
-            Loading findings...
-          </div>
+          <div className="text-sm text-muted-foreground py-8 text-center">Loading findings...</div>
         )}
 
         {run.testInteractionRunId !== null && !isLoading && findings.length === 0 && (
@@ -409,8 +389,8 @@ export function TestRunDetailPage() {
             !rootFindingsLoading &&
             rootFindingSummaries.length > 0)) && (
           <div className="space-y-3">
-            <div className="flex flex-wrap items-center gap-3 border-b border-gray-200 pb-3 dark:border-gray-800">
-              <div className="inline-flex overflow-hidden rounded border border-gray-300 dark:border-gray-700">
+            <div className="flex flex-wrap items-center gap-3 border-b border-border pb-3">
+              <div className="inline-flex overflow-hidden rounded border border-border">
                 {(['all', 'error', 'warning'] as const).map(type => (
                   <button
                     key={type}
@@ -418,8 +398,8 @@ export function TestRunDetailPage() {
                     onClick={() => setFindingTypeFilter(type)}
                     className={`px-3 py-1.5 text-xs font-medium capitalize ${
                       findingTypeFilter === type
-                        ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
-                        : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-card text-muted-foreground hover:bg-accent'
                     }`}
                   >
                     {type}
@@ -429,7 +409,7 @@ export function TestRunDetailPage() {
               <select
                 value={expertiseFilter}
                 onChange={event => setExpertiseFilter(event.target.value)}
-                className="h-8 rounded border border-gray-300 bg-white px-2 text-xs text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
+                className="h-8 rounded border border-input bg-card px-2 text-xs text-foreground"
                 aria-label="Filter findings by expertise"
               >
                 <option value="all">All expertises</option>
@@ -448,30 +428,26 @@ export function TestRunDetailPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-1.5">
                           {finding.expertiseId && (
-                            <span className="inline-flex shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium capitalize text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                            <span className="inline-flex shrink-0 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium capitalize text-muted-foreground">
                               {finding.expertiseId}
                             </span>
                           )}
-                          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          <span className="text-sm font-medium text-foreground">
                             {finding.label}
                           </span>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                          <span className="text-xs text-muted-foreground">
                             {finding.findingCount} occurrence{finding.findingCount === 1 ? '' : 's'}
                           </span>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                          <span className="text-xs text-muted-foreground">
                             {finding.affectedPages} page{finding.affectedPages === 1 ? '' : 's'}
                           </span>
                         </div>
-                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                          {finding.description}
-                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">{finding.description}</p>
                         {finding.remediation && (
-                          <p className="mt-2 text-xs text-gray-600 dark:text-gray-300">
-                            {finding.remediation}
-                          </p>
+                          <p className="mt-2 text-xs text-foreground">{finding.remediation}</p>
                         )}
                         {finding.samplePaths.length > 0 && (
-                          <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
+                          <p className="mt-2 text-xs text-muted-foreground">
                             {finding.samplePaths.join(' | ')}
                           </p>
                         )}
@@ -490,29 +466,27 @@ export function TestRunDetailPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5">
                             {tag && (
-                              <span className="inline-flex shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                              <span className="inline-flex shrink-0 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
                                 {tag}
                               </span>
                             )}
-                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            <span className="text-sm font-medium text-foreground">
                               {getFindingDisplayTitle(finding)}
                             </span>
                             {group.length > 1 && (
-                              <span className="text-xs text-gray-500 dark:text-gray-400">
+                              <span className="text-xs text-muted-foreground">
                                 {group.length} occurrences
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          <p className="text-xs text-muted-foreground mt-1">
                             {finding.description}
                           </p>
                           {remediation && (
-                            <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">
-                              {remediation}
-                            </p>
+                            <p className="text-xs text-foreground mt-2">{remediation}</p>
                           )}
                           {finding.createdAt && (
-                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                            <p className="text-xs text-muted-foreground mt-2">
                               {formatDate(finding.createdAt)}
                             </p>
                           )}
@@ -530,16 +504,14 @@ export function TestRunDetailPage() {
 
         {run.testInteractionRunId !== null && !isCaseRunLoading && (consoleLog || networkLog) && (
           <div className="mt-8 space-y-6">
-            <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
               Runtime Signals
             </h2>
 
             {consoleLog && (
               <div>
-                <h3 className="mb-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Console Log
-                </h3>
-                <pre className="max-h-80 overflow-auto rounded-lg border border-gray-200 bg-gray-50 p-4 text-xs leading-5 text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
+                <h3 className="mb-2 text-sm font-medium text-foreground">Console Log</h3>
+                <pre className="max-h-80 overflow-auto rounded-lg border border-border bg-muted p-4 text-xs leading-5 text-foreground">
                   {consoleLog}
                 </pre>
               </div>
@@ -547,10 +519,8 @@ export function TestRunDetailPage() {
 
             {networkLog && (
               <div>
-                <h3 className="mb-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Network Log
-                </h3>
-                <pre className="max-h-80 overflow-auto rounded-lg border border-gray-200 bg-gray-50 p-4 text-xs leading-5 text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
+                <h3 className="mb-2 text-sm font-medium text-foreground">Network Log</h3>
+                <pre className="max-h-80 overflow-auto rounded-lg border border-border bg-muted p-4 text-xs leading-5 text-foreground">
                   {networkLog}
                 </pre>
               </div>

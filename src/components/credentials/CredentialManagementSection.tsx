@@ -182,13 +182,11 @@ export function CredentialManagementSection({
   }
 
   return (
-    <section className="border-t border-gray-200 pt-6 dark:border-gray-700">
+    <section className="border-t border-border pt-6">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h2>
-          {description && (
-            <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">{description}</p>
-          )}
+          <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+          {description && <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>}
         </div>
         {!showForm && (
           <Button variant="primary" size="sm" onClick={openAddForm}>
@@ -203,7 +201,7 @@ export function CredentialManagementSection({
 
       {showForm && (
         <Card variant="bordered" className="mb-6">
-          <h3 className="mb-3 text-sm font-medium text-gray-900 dark:text-gray-100">
+          <h3 className="mb-3 text-sm font-medium text-foreground">
             {editingId ? 'Edit Credential' : 'New Credential'}
           </h3>
           <div className="space-y-3">
@@ -301,7 +299,7 @@ export function CredentialManagementSection({
             >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <span className="truncate text-sm font-medium text-foreground">
                     {credential.label}
                   </span>
                   <Badge variant="default" size="sm">
@@ -310,9 +308,7 @@ export function CredentialManagementSection({
                 </div>
                 <div className="mt-0.5 flex items-center gap-3">
                   {credential.email && (
-                    <p className="truncate text-xs text-gray-500 dark:text-gray-400">
-                      {credential.email}
-                    </p>
+                    <p className="truncate text-xs text-muted-foreground">{credential.email}</p>
                   )}
                   {credential.hasPassword && (
                     <Badge variant="success" size="sm">
@@ -320,7 +316,7 @@ export function CredentialManagementSection({
                     </Badge>
                   )}
                   {credential.loginUrl && (
-                    <span className="max-w-full truncate text-xs text-gray-400 dark:text-gray-500 sm:max-w-[200px]">
+                    <span className="max-w-full truncate text-xs text-muted-foreground sm:max-w-[200px]">
                       {credential.loginUrl}
                     </span>
                   )}

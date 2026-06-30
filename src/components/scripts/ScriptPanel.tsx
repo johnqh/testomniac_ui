@@ -46,7 +46,7 @@ export function ScriptPanel({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
           {title}
         </h2>
         <Button
@@ -61,7 +61,7 @@ export function ScriptPanel({
       </div>
 
       {isLoading && (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-6 text-center text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
+        <div className="rounded-lg border border-border bg-muted px-4 py-6 text-center text-sm text-muted-foreground">
           Generating script…
         </div>
       )}

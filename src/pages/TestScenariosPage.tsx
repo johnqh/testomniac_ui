@@ -88,11 +88,12 @@ export function TestScenariosPage() {
   return (
     <ContentLayout
       header={
-        <div className="border-b border-gray-200 bg-white px-4 pb-4 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:pt-6">
+        <div className="border-b border-border bg-card px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
           <SEOHead title="Test Scenarios" description="" noIndex />
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Test Scenarios</h1>
+            <h1 className="text-2xl font-bold text-foreground">Test Scenarios</h1>
             <div className="flex items-center gap-2">
+              {/* distinct purple accent marks the AI "Detect" action apart from the primary Add button; no semantic equivalent */}
               <ActionButton
                 variant="primary"
                 className="bg-purple-600 hover:bg-purple-700"
@@ -152,7 +153,7 @@ export function TestScenariosPage() {
                 trailing={
                   <>
                     {scenario.personaId && (
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                      <span className="text-xs text-muted-foreground">
                         {personas.find(p => p.id === scenario.personaId)?.title ??
                           `Persona #${scenario.personaId}`}
                       </span>
@@ -163,7 +164,7 @@ export function TestScenariosPage() {
                 actions={
                   <button
                     onClick={() => handleDelete(scenario.id)}
-                    className="text-xs text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                    className="text-xs text-destructive hover:text-destructive/80"
                   >
                     Delete
                   </button>

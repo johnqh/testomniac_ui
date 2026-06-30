@@ -120,7 +120,7 @@ export function EntityApiKeysPanel({ entitySlug, personalEntityId }: EntityApiKe
   return (
     <div className="max-w-2xl">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">API Keys</h2>
+        <h2 className="text-lg font-semibold text-foreground">API Keys</h2>
         {!showForm && (
           <Button variant="primary" size="sm" onClick={openForm}>
             Create Key
@@ -157,7 +157,7 @@ export function EntityApiKeysPanel({ entitySlug, personalEntityId }: EntityApiKe
 
       {showForm && (
         <Card variant="bordered" className="mb-6">
-          <h3 className="mb-3 text-sm font-medium text-gray-900 dark:text-gray-100">New API Key</h3>
+          <h3 className="mb-3 text-sm font-medium text-foreground">New API Key</h3>
           <div className="space-y-3">
             <div>
               <Label className="mb-1 block">Title *</Label>
@@ -243,19 +243,15 @@ function ApiKeyRow({
     <Card variant="bordered" padding="sm" className="flex items-center justify-between">
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
-            {apiKey.title}
-          </span>
+          <span className="truncate text-sm font-medium text-foreground">{apiKey.title}</span>
           {isPersonal && (
             <Badge variant="purple" size="sm">
               Personal
             </Badge>
           )}
         </div>
-        <p className="mt-0.5 font-mono text-xs text-gray-500 dark:text-gray-400">{maskedKey}</p>
-        {createdAt && (
-          <p className="mt-0.5 text-xs text-gray-400 dark:text-gray-500">Created {createdAt}</p>
-        )}
+        <p className="mt-0.5 font-mono text-xs text-muted-foreground">{maskedKey}</p>
+        {createdAt && <p className="mt-0.5 text-xs text-muted-foreground">Created {createdAt}</p>}
       </div>
       <div className="ml-3 shrink-0">
         <Button
