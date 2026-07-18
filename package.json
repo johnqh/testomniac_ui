@@ -1,6 +1,6 @@
 {
   "name": "@sudobility/testomniac_ui",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "description": "Shared dashboard UI components, pages, and hooks for Testomniac apps (router/i18n-agnostic)",
   "type": "module",
   "main": "dist/index.js",
@@ -27,7 +27,7 @@
   },
   "peerDependencies": {
     "@heroicons/react": ">=2.0.0",
-    "@sudobility/components": "^5.0.96",
+    "@sudobility/components": "^5.0.97",
     "@sudobility/design": "^1.1.46",
     "@sudobility/testomniac_client": "^0.0.110",
     "@sudobility/testomniac_lib": "^0.0.121",
@@ -42,7 +42,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@heroicons/react": "^2.2.0",
-    "@sudobility/components": "^5.0.96",
+    "@sudobility/components": "^5.0.97",
     "@sudobility/design": "^1.1.46",
     "@sudobility/testomniac_client": "^0.0.110",
     "@sudobility/testomniac_lib": "^0.0.121",
