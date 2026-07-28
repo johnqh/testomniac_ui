@@ -26,7 +26,7 @@ export function assignColumns(
   liveEdges: LayoutEdge[],
   originPageId: number
 ): { columns: Map<number, number>; unreachable: number[] } {
-  const known = new Set(nodes.map((node) => node.pageId));
+  const known = new Set(nodes.map(node => node.pageId));
   const outgoing = new Map<number, number[]>();
   for (const edge of liveEdges) {
     if (!known.has(edge.fromPageId) || !known.has(edge.toPageId)) continue;

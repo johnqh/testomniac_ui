@@ -17,11 +17,7 @@ describe('assignColumns', () => {
   });
 
   it('uses the shortest depth when a page is reachable two ways', () => {
-    const { columns } = assignColumns(
-      [n(1), n(2), n(3)],
-      [e(1, 2), e(2, 3), e(1, 3)],
-      1
-    );
+    const { columns } = assignColumns([n(1), n(2), n(3)], [e(1, 2), e(2, 3), e(1, 3)], 1);
     expect(columns.get(3)).toBe(1);
   });
 
