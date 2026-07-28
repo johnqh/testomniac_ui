@@ -2,6 +2,8 @@ import { useState, useMemo } from 'react';
 import {
   useEnvironmentPages,
   useEnvironmentTestInteractions,
+  useNavigationGraph,
+  useRoute,
   useRunPages,
   useRunTestInteractions,
   useRunnerPageStates,
@@ -11,6 +13,7 @@ import { SEOHead, useTestomniacApi } from '../context/config';
 import { useRouteParams } from '../context/routing';
 import { PagesListView } from '../components/pages/PagesListView';
 import { PagesMapView } from '../components/pages/PagesMapView';
+import { PagesGraphView } from '../components/pages/PagesGraphView';
 
 export function PagesPage() {
   const { entitySlug, envId, runId } = useRouteParams<{
@@ -19,7 +22,9 @@ export function PagesPage() {
     runId?: string;
   }>();
   const { networkClient, token, baseUrl } = useTestomniacApi();
-  const [view, setView] = useState<'list' | 'map'>('list');
+  const [view, setView] = useState<'list' | 'map' | 'graph'>('list');
+  const [targetPageId, setTargetPageId] = useState<number | null>(null);
+  const [showRemoved, setShowRemoved] = useState(false);
 
   const runScoped = Boolean(runId);
 
@@ -82,6 +87,23 @@ export function PagesPage() {
   );
   const pageStates = useMemo(() => pageStatesQuery.data?.data ?? [], [pageStatesQuery.data]);
 
+  // Graph mode is runner-scoped by design: edges belong to a runner, not a run.
+  const graphQuery = useNavigationGraph(networkClient, baseUrl, token ?? '', primaryRunnerId, {
+    enabled: !!primaryRunnerId && !!token && view === 'graph',
+  });
+  const routeQuery = useRoute(
+    networkClient,
+    baseUrl,
+    token ?? '',
+    primaryRunnerId,
+    targetPageId ?? 0,
+    {
+      enabled: !!primaryRunnerId && !!token && !!targetPageId && view === 'graph',
+    }
+  );
+  const graph = graphQuery.data?.data ?? null;
+  const routeHops = targetPageId ? (routeQuery.data?.data?.route ?? null) : null;
+
   const screenshotsByPageId = useMemo(() => {
     const map = new Map<number, string>();
     for (const ps of pageStates) {
@@ -135,9 +157,19 @@ export function PagesPage() {
                   view === 'map'
                     ? 'bg-foreground text-background'
                     : 'text-muted-foreground hover:text-foreground'
-                } rounded-r-md`}
+                }`}
               >
                 Map
+              </button>
+              <button
+                onClick={() => setView('graph')}
+                className={`px-4 py-1.5 text-sm font-medium transition-colors ${
+                  view === 'graph'
+                    ? 'bg-foreground text-background'
+                    : 'text-muted-foreground hover:text-foreground'
+                } rounded-r-md`}
+              >
+                Graph
               </button>
             </div>
           </div>
@@ -158,6 +190,28 @@ export function PagesPage() {
             screenshotsByPageId={screenshotsByPageId}
             apiUrl={baseUrl}
           />
+        </div>
+      ) : view === 'graph' ? (
+        <div className="h-full min-h-0 p-4 sm:p-6">
+          {graphQuery.isLoading ? (
+            <div className="py-8 text-center text-muted-foreground">Loading graph...</div>
+          ) : graphQuery.error ? (
+            <div className="py-8 text-center text-destructive">
+              Error: {graphQuery.error.message}
+            </div>
+          ) : (
+            <PagesGraphView
+              nodes={graph?.nodes ?? []}
+              edges={graph?.edges ?? []}
+              route={routeHops}
+              selectedTargetPageId={targetPageId}
+              onSelectTarget={setTargetPageId}
+              showRemoved={showRemoved}
+              onToggleRemoved={setShowRemoved}
+              originPageId={routeQuery.data?.data?.originPageId ?? null}
+              fill
+            />
+          )}
         </div>
       ) : (
         <div className="h-full min-h-0 p-4 sm:p-6">
