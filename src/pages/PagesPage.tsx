@@ -23,7 +23,7 @@ export function PagesPage() {
   }>();
   const { networkClient, token, baseUrl } = useTestomniacApi();
   const [view, setView] = useState<'list' | 'map' | 'graph'>('list');
-  const [targetPageId, setTargetPageId] = useState<number | null>(null);
+  const [targetViewId, setTargetViewId] = useState<number | null>(null);
   const [showRemoved, setShowRemoved] = useState(false);
 
   const runScoped = Boolean(runId);
@@ -87,22 +87,35 @@ export function PagesPage() {
   );
   const pageStates = useMemo(() => pageStatesQuery.data?.data ?? [], [pageStatesQuery.data]);
 
-  // Graph mode is runner-scoped by design: edges belong to a runner, not a run.
-  const graphQuery = useNavigationGraph(networkClient, baseUrl, token ?? '', primaryRunnerId, {
-    enabled: !!primaryRunnerId && !!token && view === 'graph',
+  // Graph mode is environment-scoped: base_url lives on the environment and
+  // determines which deployed site a graph describes, so staging and
+  // production never share one.
+  const graphQuery = useNavigationGraph(networkClient, baseUrl, token ?? '', Number(envId), {
+    enabled: !!envId && !!token && view === 'graph',
   });
+  const graph = graphQuery.data ?? null;
+
+  // Route targets are addressed by path: the graph is keyed on views, and
+  // several views can share a path.
+  const targetView = useMemo(
+    () => graph?.views.find(v => v.id === targetViewId) ?? null,
+    [graph, targetViewId]
+  );
   const routeQuery = useRoute(
     networkClient,
     baseUrl,
     token ?? '',
-    primaryRunnerId,
-    targetPageId ?? 0,
+    Number(envId),
     {
-      enabled: !!primaryRunnerId && !!token && !!targetPageId && view === 'graph',
+      urlPath: targetView?.urlPath ?? '',
+      signature: targetView?.signature,
+    },
+    undefined,
+    {
+      enabled: !!envId && !!token && !!targetView && view === 'graph',
     }
   );
-  const graph = graphQuery.data?.data ?? null;
-  const routeHops = targetPageId ? (routeQuery.data?.data?.route ?? null) : null;
+  const routeHops = targetView ? (routeQuery.data?.route ?? null) : null;
 
   const screenshotsByPageId = useMemo(() => {
     const map = new Map<number, string>();
@@ -201,14 +214,14 @@ export function PagesPage() {
             </div>
           ) : (
             <PagesGraphView
-              nodes={graph?.nodes ?? []}
-              edges={graph?.edges ?? []}
+              views={graph?.views ?? []}
+              transitions={graph?.transitions ?? []}
               route={routeHops}
-              selectedTargetPageId={targetPageId}
-              onSelectTarget={setTargetPageId}
+              selectedTargetViewId={targetViewId}
+              onSelectTarget={setTargetViewId}
               showRemoved={showRemoved}
               onToggleRemoved={setShowRemoved}
-              originPageId={routeQuery.data?.data?.originPageId ?? null}
+              originViewId={routeHops?.[0]?.fromViewId ?? null}
               fill
             />
           )}
