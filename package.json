@@ -23,7 +23,7 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest --passWithNoTests",
-    "verify": "bun run typecheck && bun run lint && bun run format:check"
+    "verify": "bun run typecheck && bun run lint && bun run format:check && bun run test && bun run build"
   },
   "peerDependencies": {
     "@heroicons/react": ">=2.0.0",
