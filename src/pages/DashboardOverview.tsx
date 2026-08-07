@@ -11,12 +11,12 @@ import type {
 } from '@sudobility/testomniac_types';
 import { formatDuration } from '@sudobility/testomniac_lib';
 import { Alert, Card, ContentLayout } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams, useRoutes } from '../context/routing';
-import { StatusBadge } from '../components/scanner/StatusBadge';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
-import { formatDateTime } from '../utils/formatDateTime';
-import { EmptyState } from '../components/states';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useRoutes } from '../context/routing.js';
+import { StatusBadge } from '../components/scanner/StatusBadge.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
+import { formatDateTime } from '../utils/formatDateTime.js';
+import { EmptyState } from '../components/states/index.js';
 
 // ---------------------------------------------------------------------------
 // Sub-components

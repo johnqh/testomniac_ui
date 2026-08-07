@@ -8,8 +8,8 @@ import {
 } from '@sudobility/testomniac_client';
 import type { TestRunFindingResponse } from '@sudobility/testomniac_types';
 import { getFindingDisplayTitle, getFindingExpertiseSlug } from '@sudobility/testomniac_lib';
-import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
-import { useTestomniacApi } from '../context/config';
+import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext.js';
+import { useTestomniacApi } from '../context/config.js';
 
 type MainTab = 'overview' | 'issues' | 'details';
 type DetailTab = 'navigation' | 'coverage' | 'events';

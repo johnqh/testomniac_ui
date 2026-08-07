@@ -13,13 +13,13 @@ import {
   ContentLayout,
   CardGrid,
 } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { AddButton } from '../components/ui/AddButton';
-import { BundleCell } from '../components/cells';
-import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
-import { useEnvRoutes } from '../context/routing';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
-import { EmptyState } from '../components/states';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { AddButton } from '../components/ui/AddButton.js';
+import { BundleCell } from '../components/cells/index.js';
+import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext.js';
+import { useEnvRoutes } from '../context/routing.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
+import { EmptyState } from '../components/states/index.js';
 
 export function BundlesPage() {
   const { navigate } = useLocalizedNavigate();

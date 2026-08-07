@@ -1,12 +1,12 @@
 import type { TestRunResponse } from '@sudobility/testomniac_types';
 import { formatDuration, formatDate } from '@sudobility/testomniac_lib';
 import { ContentLayout, CardGrid, GridTile } from '@sudobility/components';
-import { SEOHead } from '../context/config';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
-import { useEnvRoutes } from '../context/routing';
-import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
-import { StatusBadge } from '../components/scanner/StatusBadge';
-import { ErrorState, LoadingState, EmptyState } from '../components/states';
+import { SEOHead } from '../context/config.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
+import { useEnvRoutes } from '../context/routing.js';
+import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext.js';
+import { StatusBadge } from '../components/scanner/StatusBadge.js';
+import { ErrorState, LoadingState, EmptyState } from '../components/states/index.js';
 
 /** Best-effort host extraction for a run's scan URL (falls back to null). */
 function runHost(scanUrl: string | null): string | null {

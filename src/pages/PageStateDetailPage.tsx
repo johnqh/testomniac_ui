@@ -6,10 +6,10 @@ import {
   buildArtifactUrl,
 } from '@sudobility/testomniac_client';
 import { Tabs, TabsList, TabsTrigger, Card, ContentLayout } from '@sudobility/components';
-import { useTestomniacApi } from '../context/config';
-import { useRouteParams, useEnvRoutes } from '../context/routing';
-import BackLink from '../components/navigation/BackLink';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
+import { useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useEnvRoutes } from '../context/routing.js';
+import BackLink from '../components/navigation/BackLink.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
 
 type Tab = 'body' | 'content' | 'scaffolds';
 

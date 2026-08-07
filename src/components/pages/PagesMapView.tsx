@@ -20,8 +20,8 @@ import {
 import '@xyflow/react/dist/style.css';
 import { normalizePath, patternizePath } from '@sudobility/testomniac_lib';
 import { buildArtifactUrl } from '@sudobility/testomniac_client';
-import { useLocalizedNavigate } from '../../hooks/useLocalizedNavigate';
-import { useEnvRoutes } from '../../context/routing';
+import { useLocalizedNavigate } from '../../hooks/useLocalizedNavigate.js';
+import { useEnvRoutes } from '../../context/routing.js';
 
 // --- Constants ---
 

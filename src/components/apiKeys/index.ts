@@ -1,1 +1,1 @@
-export { EntityApiKeysPanel } from './EntityApiKeysPanel';
+export { EntityApiKeysPanel } from './EntityApiKeysPanel.js';

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useTestomniacRouting } from '../context/routing';
+import { useTestomniacRouting } from '../context/routing.js';
 
 const noop = () => {};
 

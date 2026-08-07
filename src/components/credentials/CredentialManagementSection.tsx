@@ -21,9 +21,9 @@ import type {
   EntityCredentialResponse,
   UpdateEntityCredentialRequest,
 } from '@sudobility/testomniac_types';
-import { useTestomniacApi } from '../../context/config';
-import { SelectField } from '../forms/SelectField';
-import { EmptyState } from '../states';
+import { useTestomniacApi } from '../../context/config.js';
+import { SelectField } from '../forms/SelectField.js';
+import { EmptyState } from '../states/index.js';
 
 const AUTH_PROVIDERS = [
   'email_password',

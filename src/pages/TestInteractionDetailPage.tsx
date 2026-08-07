@@ -4,15 +4,15 @@ import {
   useTestInteractionActions,
 } from '@sudobility/testomniac_client';
 import type { TestActionResponse, TestInteractionResponse } from '@sudobility/testomniac_types';
-import { useTestomniacApi } from '../context/config';
-import { useRouteParams, useEnvRoutes } from '../context/routing';
-import BackLink from '../components/navigation/BackLink';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
+import { useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useEnvRoutes } from '../context/routing.js';
+import BackLink from '../components/navigation/BackLink.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
 import { Card, ContentLayout } from '@sudobility/components';
-import { StatusBadge } from '../components/scanner/StatusBadge';
-import { AddToBundleButton } from '../components/bundles/AddToBundleButton';
-import { ScriptPanel } from '../components/scripts/ScriptPanel';
-import { ErrorState, LoadingState, EmptyState } from '../components/states';
+import { StatusBadge } from '../components/scanner/StatusBadge.js';
+import { AddToBundleButton } from '../components/bundles/AddToBundleButton.js';
+import { ScriptPanel } from '../components/scripts/ScriptPanel.js';
+import { ErrorState, LoadingState, EmptyState } from '../components/states/index.js';
 
 function ActionRow({ action }: { action: TestActionResponse }) {
   const [expanded, setExpanded] = useState(false);

@@ -21,9 +21,9 @@ import {
   SelectItem,
   SelectValue,
 } from '@sudobility/components';
-import { useTestomniacApi } from '../context/config';
-import { useRouteParams, useRoutes } from '../context/routing';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
+import { useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useRoutes } from '../context/routing.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
 
 const labelCls =
   'block text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1';

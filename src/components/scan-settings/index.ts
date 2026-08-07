@@ -1,3 +1,3 @@
-export { ScanSettingsPanel } from './ScanSettingsPanel';
-export { ProductScanDefaultsSection } from './ProductScanDefaultsSection';
-export { EnvironmentScanSettingsSection } from './EnvironmentScanSettingsSection';
+export { ScanSettingsPanel } from './ScanSettingsPanel.js';
+export { ProductScanDefaultsSection } from './ProductScanDefaultsSection.js';
+export { EnvironmentScanSettingsSection } from './EnvironmentScanSettingsSection.js';

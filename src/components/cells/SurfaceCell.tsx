@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import type { TestSurfaceResponse } from '@sudobility/testomniac_types';
 import { Badge, GridTile } from '@sudobility/components';
-import { StatusBadge } from '../scanner/StatusBadge';
-import { ListCell } from './ListCell';
+import { StatusBadge } from '../scanner/StatusBadge.js';
+import { ListCell } from './ListCell.js';
 
 function FolderIcon() {
   return (

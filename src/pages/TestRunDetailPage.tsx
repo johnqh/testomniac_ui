@@ -20,13 +20,13 @@ import {
   getFindingRemediation,
   groupFindingsByRule,
 } from '@sudobility/testomniac_lib';
-import { useTestomniacApi } from '../context/config';
-import { useRouteParams, useEnvRoutes } from '../context/routing';
-import BackLink from '../components/navigation/BackLink';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
+import { useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useEnvRoutes } from '../context/routing.js';
+import BackLink from '../components/navigation/BackLink.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
 import { Badge, Card, ContentLayout, CardGrid, GridTile } from '@sudobility/components';
-import { StatusBadge } from '../components/scanner/StatusBadge';
-import { EmptyState } from '../components/states';
+import { StatusBadge } from '../components/scanner/StatusBadge.js';
+import { EmptyState } from '../components/states/index.js';
 
 function FindingTypeBadge({ type }: { type: string }) {
   const variant = type === 'error' ? 'danger' : type === 'warning' ? 'warning' : 'info';

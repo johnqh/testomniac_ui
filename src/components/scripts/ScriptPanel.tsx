@@ -1,6 +1,6 @@
 import { CodeBlock, Alert, Button } from '@sudobility/components';
 import { useObjectScript, type ScriptKind } from '@sudobility/testomniac_client';
-import { useTestomniacApi } from '../../context/config';
+import { useTestomniacApi } from '../../context/config.js';
 
 interface ScriptPanelProps {
   kind: ScriptKind;

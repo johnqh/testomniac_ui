@@ -1,4 +1,4 @@
-import { useRouteParams, useRoutes } from '../context/routing';
+import { useRouteParams, useRoutes } from '../context/routing.js';
 
 /**
  * Returns the environment-scoped dashboard base path for the current route,

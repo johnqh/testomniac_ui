@@ -12,7 +12,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import type { GraphTransition, GraphView } from '@sudobility/testomniac_client';
-import { assignColumns, MAX_GRAPH_NODES, UNREACHABLE_COLUMN } from './graphLayout';
+import { assignColumns, MAX_GRAPH_NODES, UNREACHABLE_COLUMN } from './graphLayout.js';
 
 const COLUMN_WIDTH = 260;
 const ROW_HEIGHT = 90;

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { PersonaResponse } from '@sudobility/testomniac_types';
 import { GridTile } from '@sudobility/components';
-import { ListCell } from './ListCell';
+import { ListCell } from './ListCell.js';
 
 export interface PersonaCellProps {
   persona: PersonaResponse;

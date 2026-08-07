@@ -1,6 +1,6 @@
 import { useDashboardEnvironmentContextData } from '@sudobility/testomniac_client';
-import { useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
+import { useTestomniacApi } from '../context/config.js';
+import { useRouteParams } from '../context/routing.js';
 
 export function useDashboardEnvironmentContext() {
   const { entitySlug, envId } = useRouteParams<{ entitySlug: string; envId: string }>();

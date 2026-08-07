@@ -1,7 +1,7 @@
-export { ScanForm } from './ScanForm';
-export { ScanProgressPanel } from './ScanProgressPanel';
-export { PhaseIndicator } from './PhaseIndicator';
-export { LiveCounters } from './LiveCounters';
-export { EventLog } from './EventLog';
-export { StatusBadge } from './StatusBadge';
-export { RunSummaryCard } from './RunSummaryCard';
+export { ScanForm } from './ScanForm.js';
+export { ScanProgressPanel } from './ScanProgressPanel.js';
+export { PhaseIndicator } from './PhaseIndicator.js';
+export { LiveCounters } from './LiveCounters.js';
+export { EventLog } from './EventLog.js';
+export { StatusBadge } from './StatusBadge.js';
+export { RunSummaryCard } from './RunSummaryCard.js';

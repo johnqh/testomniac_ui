@@ -5,9 +5,9 @@ import {
   useEnvironmentScanSettings,
   useUpdateEnvironmentScanSettings,
 } from '@sudobility/testomniac_client';
-import { useTestomniacApi } from '../../context/config';
-import { useDashboardEnvironmentContext } from '../../hooks/useDashboardEnvironmentContext';
-import { ScanSettingsPanel } from './ScanSettingsPanel';
+import { useTestomniacApi } from '../../context/config.js';
+import { useDashboardEnvironmentContext } from '../../hooks/useDashboardEnvironmentContext.js';
+import { ScanSettingsPanel } from './ScanSettingsPanel.js';
 
 /**
  * Per-environment scan overrides plus the merged "effective" settings the API

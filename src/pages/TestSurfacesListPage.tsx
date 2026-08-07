@@ -3,12 +3,12 @@ import { useEnvironmentTestSurfaces } from '@sudobility/testomniac_client';
 import { getSurfacePriorityBand } from '@sudobility/testomniac_lib';
 import type { TestSurfaceResponse } from '@sudobility/testomniac_types';
 import { ContentLayout, CardGrid } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams, useEnvRoutes } from '../context/routing';
-import { SurfaceCell } from '../components/cells';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
-import { SelectField } from '../components/forms/SelectField';
-import { ErrorState, LoadingState, EmptyState } from '../components/states';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useEnvRoutes } from '../context/routing.js';
+import { SurfaceCell } from '../components/cells/index.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
+import { SelectField } from '../components/forms/SelectField.js';
+import { ErrorState, LoadingState, EmptyState } from '../components/states/index.js';
 
 type DeviceFilter = 'all' | 'desktop' | 'mobile';
 type PriorityFilter = 'all' | 'critical' | 'high' | 'medium' | 'low';

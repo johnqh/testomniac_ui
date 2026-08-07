@@ -1,5 +1,5 @@
 import { Card } from '@sudobility/components';
-import { StatusBadge } from './StatusBadge';
+import { StatusBadge } from './StatusBadge.js';
 
 interface RunSummaryCardProps {
   runId: number;

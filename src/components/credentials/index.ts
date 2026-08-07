@@ -1,1 +1,1 @@
-export { CredentialManagementSection } from './CredentialManagementSection';
+export { CredentialManagementSection } from './CredentialManagementSection.js';

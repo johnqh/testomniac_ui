@@ -1,8 +1,8 @@
 import { ContentLayout } from '@sudobility/components';
-import { SEOHead } from '../context/config';
-import { useRouteParams } from '../context/routing';
-import { CredentialManagementSection } from '../components/credentials';
-import { EnvironmentScanSettingsSection } from '../components/scan-settings';
+import { SEOHead } from '../context/config.js';
+import { useRouteParams } from '../context/routing.js';
+import { CredentialManagementSection } from '../components/credentials/index.js';
+import { EnvironmentScanSettingsSection } from '../components/scan-settings/index.js';
 
 export function RunnerSettingsPage() {
   const { entitySlug, envId } = useRouteParams<{

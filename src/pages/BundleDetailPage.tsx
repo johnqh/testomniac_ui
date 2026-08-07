@@ -17,12 +17,12 @@ import {
   ContentLayout,
   CardGrid,
 } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams, useEnvRoutes } from '../context/routing';
-import { SurfaceCell, InteractionCell, ScenarioCell } from '../components/cells';
-import BackLink from '../components/navigation/BackLink';
-import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useEnvRoutes } from '../context/routing.js';
+import { SurfaceCell, InteractionCell, ScenarioCell } from '../components/cells/index.js';
+import BackLink from '../components/navigation/BackLink.js';
+import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
 
 type ContentTab = 'surfaces' | 'interactions' | 'scenarios';
 

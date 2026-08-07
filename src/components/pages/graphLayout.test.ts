@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { assignColumns, UNREACHABLE_COLUMN } from './graphLayout';
+import { assignColumns, UNREACHABLE_COLUMN } from './graphLayout.js';
 
 const n = (id: number) => ({ id });
 const e = (fromViewId: number, toViewId: number | null) => ({

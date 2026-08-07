@@ -13,15 +13,15 @@ import type {
   TestInteractionResponse,
 } from '@sudobility/testomniac_types';
 import type { NetworkClient } from '@sudobility/types';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams, useEnvRoutes } from '../context/routing';
-import { InteractionCell, ListCell } from '../components/cells';
-import { ScriptPanel } from '../components/scripts/ScriptPanel';
-import BackLink from '../components/navigation/BackLink';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
-import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
-import { AddToBundleButton } from '../components/bundles/AddToBundleButton';
-import { EmptyState } from '../components/states';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useEnvRoutes } from '../context/routing.js';
+import { InteractionCell, ListCell } from '../components/cells/index.js';
+import { ScriptPanel } from '../components/scripts/ScriptPanel.js';
+import BackLink from '../components/navigation/BackLink.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
+import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext.js';
+import { AddToBundleButton } from '../components/bundles/AddToBundleButton.js';
+import { EmptyState } from '../components/states/index.js';
 
 function SequenceCard({
   sequence,

@@ -1,10 +1,10 @@
 import { useRunScaffolds } from '@sudobility/testomniac_client';
 import { ContentLayout, CardGrid } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams, useEnvRoutes } from '../context/routing';
-import { ScaffoldCell } from '../components/cells';
-import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useEnvRoutes } from '../context/routing.js';
+import { ScaffoldCell } from '../components/cells/index.js';
+import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
 
 export function ScaffoldsPage() {
   const { envId } = useRouteParams<{ envId: string }>();

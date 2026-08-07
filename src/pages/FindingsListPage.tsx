@@ -8,14 +8,14 @@ import {
   formatDate,
 } from '@sudobility/testomniac_lib';
 import { Badge, Button, ContentLayout } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams, useEnvRoutes } from '../context/routing';
-import { getPriorityConfig } from '../config/priorityConfig';
-import { SelectField } from '../components/forms/SelectField';
-import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
-import { ScriptPanel } from '../components/scripts/ScriptPanel';
-import { ErrorState, LoadingState, EmptyState } from '../components/states';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useEnvRoutes } from '../context/routing.js';
+import { getPriorityConfig } from '../config/priorityConfig.js';
+import { SelectField } from '../components/forms/SelectField.js';
+import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
+import { ScriptPanel } from '../components/scripts/ScriptPanel.js';
+import { ErrorState, LoadingState, EmptyState } from '../components/states/index.js';
 
 /* ---------- Sub-components ---------- */
 

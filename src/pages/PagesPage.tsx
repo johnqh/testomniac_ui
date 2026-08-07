@@ -9,11 +9,11 @@ import {
   useRunnerPageStates,
 } from '@sudobility/testomniac_client';
 import { ContentLayout } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
-import { PagesListView } from '../components/pages/PagesListView';
-import { PagesMapView } from '../components/pages/PagesMapView';
-import { PagesGraphView } from '../components/pages/PagesGraphView';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams } from '../context/routing.js';
+import { PagesListView } from '../components/pages/PagesListView.js';
+import { PagesMapView } from '../components/pages/PagesMapView.js';
+import { PagesGraphView } from '../components/pages/PagesGraphView.js';
 
 export function PagesPage() {
   const { entitySlug, envId, runId } = useRouteParams<{

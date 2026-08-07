@@ -7,15 +7,15 @@ import {
 } from '@sudobility/testomniac_client';
 import type { TestScenarioResponse } from '@sudobility/testomniac_types';
 import { Alert, ActionButton, ContentLayout, CardGrid } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { AddButton } from '../components/ui/AddButton';
-import { useRouteParams, useEnvRoutes } from '../context/routing';
-import { ScenarioCell } from '../components/cells';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
-import { StatusBadge } from '../components/scanner/StatusBadge';
-import { AddScenarioForm } from '../components/scenarios/AddScenarioForm';
-import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
-import { ErrorState, LoadingState, EmptyState } from '../components/states';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { AddButton } from '../components/ui/AddButton.js';
+import { useRouteParams, useEnvRoutes } from '../context/routing.js';
+import { ScenarioCell } from '../components/cells/index.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
+import { StatusBadge } from '../components/scanner/StatusBadge.js';
+import { AddScenarioForm } from '../components/scenarios/AddScenarioForm.js';
+import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext.js';
+import { ErrorState, LoadingState, EmptyState } from '../components/states/index.js';
 
 export function TestScenariosPage() {
   const { envId } = useRouteParams<{ envId: string }>();

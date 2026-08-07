@@ -15,7 +15,7 @@ import {
   Input,
   TextArea,
 } from '@sudobility/components';
-import { useTestomniacApi } from '../../context/config';
+import { useTestomniacApi } from '../../context/config.js';
 
 interface AddScenarioFormProps {
   networkClient: NetworkClient;

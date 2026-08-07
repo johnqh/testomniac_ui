@@ -6,12 +6,12 @@ import {
 } from '@sudobility/testomniac_client';
 import { formatDate, formatMultilineLog } from '@sudobility/testomniac_lib';
 import { Alert, Card, ContentLayout } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams, useEnvRoutes } from '../context/routing';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
-import { StatusBadge } from '../components/scanner/StatusBadge';
-import BackLink from '../components/navigation/BackLink';
-import { EmptyState } from '../components/states';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useEnvRoutes } from '../context/routing.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
+import { StatusBadge } from '../components/scanner/StatusBadge.js';
+import BackLink from '../components/navigation/BackLink.js';
+import { EmptyState } from '../components/states/index.js';
 
 export function RunTestInteractionRunDetailPage() {
   const { runId, surfaceRunId, elementId, elementRunId } = useRouteParams<{

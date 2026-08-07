@@ -1,11 +1,11 @@
 import { type ReactNode, useMemo, useState } from 'react';
 import { useRunPatterns } from '@sudobility/testomniac_client';
 import { Card, ContentLayout } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
-import { SelectField } from '../components/forms/SelectField';
-import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
-import { EmptyState } from '../components/states';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams } from '../context/routing.js';
+import { SelectField } from '../components/forms/SelectField.js';
+import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext.js';
+import { EmptyState } from '../components/states/index.js';
 
 const PATTERN_LABELS: Record<string, string> = {
   card: 'Card',

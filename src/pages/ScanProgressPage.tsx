@@ -2,10 +2,10 @@ import { useEffect, useRef } from 'react';
 import { useScanProgressStore } from '@sudobility/testomniac_lib';
 import { useRunProgressStream } from '@sudobility/testomniac_client';
 import { Button, ContentLayout } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams, useRoutes } from '../context/routing';
-import { ScanProgressPanel } from '../components/scanner/ScanProgressPanel';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useRoutes } from '../context/routing.js';
+import { ScanProgressPanel } from '../components/scanner/ScanProgressPanel.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
 
 export function ScanProgressPage() {
   const { entitySlug, runId } = useRouteParams<{ entitySlug: string; runId: string }>();

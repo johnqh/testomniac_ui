@@ -19,7 +19,7 @@ import {
   useDeleteEntityApiKey,
   useEntityApiKeys,
 } from '@sudobility/testomniac_client';
-import { useTestomniacApi } from '../../context/config';
+import { useTestomniacApi } from '../../context/config.js';
 
 interface EntityApiKeysPanelProps {
   entitySlug: string;

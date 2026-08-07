@@ -19,12 +19,12 @@ import {
   usePersonaUseCases,
 } from '@sudobility/testomniac_client';
 import type { PersonaResponse } from '@sudobility/testomniac_types';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
-import { AddButton } from '../components/ui/AddButton';
-import { PersonaCell } from '../components/cells';
-import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
-import { ErrorState, LoadingState, EmptyState } from '../components/states';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams } from '../context/routing.js';
+import { AddButton } from '../components/ui/AddButton.js';
+import { PersonaCell } from '../components/cells/index.js';
+import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext.js';
+import { ErrorState, LoadingState, EmptyState } from '../components/states/index.js';
 
 // ---------------------------------------------------------------------------
 // Sub-component: Use Cases (expandable per persona)

@@ -1,13 +1,13 @@
 import { useTestSurfaceTestInteractions } from '@sudobility/testomniac_client';
 import type { TestInteractionResponse } from '@sudobility/testomniac_types';
 import { ContentLayout, CardGrid } from '@sudobility/components';
-import { useTestomniacApi } from '../context/config';
-import { useRouteParams, useEnvRoutes } from '../context/routing';
-import BackLink from '../components/navigation/BackLink';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
-import { InteractionCell } from '../components/cells';
-import { AddToBundleButton } from '../components/bundles/AddToBundleButton';
-import { ErrorState, LoadingState, EmptyState } from '../components/states';
+import { useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useEnvRoutes } from '../context/routing.js';
+import BackLink from '../components/navigation/BackLink.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
+import { InteractionCell } from '../components/cells/index.js';
+import { AddToBundleButton } from '../components/bundles/AddToBundleButton.js';
+import { ErrorState, LoadingState, EmptyState } from '../components/states/index.js';
 
 export function TestSurfaceDetailPage() {
   const { surfaceId } = useRouteParams<{

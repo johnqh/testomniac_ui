@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { Button } from '@sudobility/components';
 import { useAddToBundle, useRunnerTestSurfaceBundles } from '@sudobility/testomniac_client';
-import { useTestomniacApi } from '../../context/config';
-import { useDashboardEnvironmentContext } from '../../hooks/useDashboardEnvironmentContext';
+import { useTestomniacApi } from '../../context/config.js';
+import { useDashboardEnvironmentContext } from '../../hooks/useDashboardEnvironmentContext.js';
 
 type ItemType = 'surface' | 'interaction' | 'scenario';
 

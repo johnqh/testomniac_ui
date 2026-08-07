@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { TestSurfaceBundleResponse } from '@sudobility/testomniac_types';
 import { Badge, GridTile } from '@sudobility/components';
-import { ListCell, ChevronRight } from './ListCell';
+import { ListCell, ChevronRight } from './ListCell.js';
 
 export interface BundleCellProps {
   bundle: TestSurfaceBundleResponse;

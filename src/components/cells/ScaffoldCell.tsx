@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import type { ScaffoldResponse } from '@sudobility/testomniac_types';
 import { GridTile } from '@sudobility/components';
-import { ListCell, ChevronRight } from './ListCell';
-import { SCAFFOLD_ICONS, SCAFFOLD_LABELS } from './scaffoldMeta';
+import { ListCell, ChevronRight } from './ListCell.js';
+import { SCAFFOLD_ICONS, SCAFFOLD_LABELS } from './scaffoldMeta.js';
 
 export interface ScaffoldCellProps {
   scaffold: ScaffoldResponse;

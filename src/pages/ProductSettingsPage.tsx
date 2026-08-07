@@ -1,7 +1,7 @@
 import { ContentLayout } from '@sudobility/components';
-import { SEOHead } from '../context/config';
-import { useRouteParams } from '../context/routing';
-import { ProductScanDefaultsSection } from '../components/scan-settings';
+import { SEOHead } from '../context/config.js';
+import { useRouteParams } from '../context/routing.js';
+import { ProductScanDefaultsSection } from '../components/scan-settings/index.js';
 
 /**
  * Product-level settings (`/dashboard/:entitySlug/products/:productId/settings`).

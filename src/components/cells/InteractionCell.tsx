@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import type { TestInteractionResponse } from '@sudobility/testomniac_types';
 import { GridTile } from '@sudobility/components';
-import { StatusBadge } from '../scanner/StatusBadge';
-import { ListCell } from './ListCell';
+import { StatusBadge } from '../scanner/StatusBadge.js';
+import { ListCell } from './ListCell.js';
 
 export interface InteractionCellProps {
   interaction: TestInteractionResponse;

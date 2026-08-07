@@ -1,7 +1,7 @@
 import { Alert } from '@sudobility/components';
 import type { TestRunStreamEvent } from '@sudobility/testomniac_types';
-import { LiveCounters } from './LiveCounters';
-import { EventLog } from './EventLog';
+import { LiveCounters } from './LiveCounters.js';
+import { EventLog } from './EventLog.js';
 
 interface ScanProgressPanelProps {
   pagesFound: number;

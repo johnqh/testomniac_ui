@@ -14,13 +14,13 @@ import {
   describeRecurrence,
 } from '@sudobility/testomniac_lib';
 import { ActionButton, Card, Label, ContentLayout } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams } from '../context/routing';
-import { AddButton } from '../components/ui/AddButton';
-import { SelectField } from '../components/forms/SelectField';
-import { StatusBadge } from '../components/scanner/StatusBadge';
-import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
-import { EmptyState } from '../components/states';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams } from '../context/routing.js';
+import { AddButton } from '../components/ui/AddButton.js';
+import { SelectField } from '../components/forms/SelectField.js';
+import { StatusBadge } from '../components/scanner/StatusBadge.js';
+import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext.js';
+import { EmptyState } from '../components/states/index.js';
 
 type TargetKind = 'bundle' | 'surface' | 'element';
 

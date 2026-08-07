@@ -1,2 +1,2 @@
-export { DataTable } from './DataTable';
-export { JsonViewer } from './JsonViewer';
+export { DataTable } from './DataTable.js';
+export { JsonViewer } from './JsonViewer.js';

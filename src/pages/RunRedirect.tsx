@@ -1,6 +1,6 @@
 import { useRun } from '@sudobility/testomniac_client';
-import { useTestomniacApi } from '../context/config';
-import { useRouteParams, useRoutes, Redirect } from '../context/routing';
+import { useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useRoutes, Redirect } from '../context/routing.js';
 
 export function RunRedirect() {
   const { runId, entitySlug } = useRouteParams<{ runId: string; entitySlug: string }>();

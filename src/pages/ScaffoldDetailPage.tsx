@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useRunScaffolds, useEnvironmentTestInteractions } from '@sudobility/testomniac_client';
 import { Card, Tabs, TabsList, TabsTrigger, ContentLayout } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams, useEnvRoutes } from '../context/routing';
-import { InteractionCell, SCAFFOLD_ICONS, SCAFFOLD_LABELS } from '../components/cells';
-import BackLink from '../components/navigation/BackLink';
-import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useEnvRoutes } from '../context/routing.js';
+import { InteractionCell, SCAFFOLD_ICONS, SCAFFOLD_LABELS } from '../components/cells/index.js';
+import BackLink from '../components/navigation/BackLink.js';
+import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
 
 export function ScaffoldDetailPage() {
   const { envId, scaffoldId } = useRouteParams<{

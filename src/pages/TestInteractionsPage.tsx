@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { useEnvironmentTestInteractionsPage } from '@sudobility/testomniac_client';
 import type { TestInteractionResponse } from '@sudobility/testomniac_types';
 import { ContentLayout, CardGrid } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams, useEnvRoutes } from '../context/routing';
-import { SelectField } from '../components/forms/SelectField';
-import { InteractionCell } from '../components/cells';
-import { ErrorState, LoadingState, EmptyState } from '../components/states';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useEnvRoutes } from '../context/routing.js';
+import { SelectField } from '../components/forms/SelectField.js';
+import { InteractionCell } from '../components/cells/index.js';
+import { ErrorState, LoadingState, EmptyState } from '../components/states/index.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
 
 const PAGE_SIZE = 50;
 

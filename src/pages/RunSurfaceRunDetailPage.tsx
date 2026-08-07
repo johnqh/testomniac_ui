@@ -1,10 +1,10 @@
 import { useRunStructure } from '@sudobility/testomniac_client';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams, useEnvRoutes } from '../context/routing';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
-import { StatusBadge } from '../components/scanner/StatusBadge';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useEnvRoutes } from '../context/routing.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
+import { StatusBadge } from '../components/scanner/StatusBadge.js';
 import { Card, ContentLayout } from '@sudobility/components';
-import BackLink from '../components/navigation/BackLink';
+import BackLink from '../components/navigation/BackLink.js';
 
 export function RunSurfaceRunDetailPage() {
   const { runId, surfaceRunId } = useRouteParams<{

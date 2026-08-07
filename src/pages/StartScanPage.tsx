@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useEntityCredentials, useSubmitScan } from '@sudobility/testomniac_client';
 import { Label, ContentLayout } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams, useRoutes } from '../context/routing';
-import { SelectField } from '../components/forms/SelectField';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
-import { ScanForm } from '../components/scanner/ScanForm';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useRoutes } from '../context/routing.js';
+import { SelectField } from '../components/forms/SelectField.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
+import { ScanForm } from '../components/scanner/ScanForm.js';
 
 const AUTH_PROVIDER_LABELS: Record<string, string> = {
   email_password: 'Email / Password',

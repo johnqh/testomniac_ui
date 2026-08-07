@@ -1,8 +1,8 @@
 import type { PageResponse } from '@sudobility/testomniac_types';
 import { buildArtifactUrl } from '@sudobility/testomniac_client';
 import { CardGrid } from '@sudobility/components';
-import { useLocalizedNavigate } from '../../hooks/useLocalizedNavigate';
-import { useEnvRoutes } from '../../context/routing';
+import { useLocalizedNavigate } from '../../hooks/useLocalizedNavigate.js';
+import { useEnvRoutes } from '../../context/routing.js';
 
 interface PagesListViewProps {
   pages: PageResponse[];

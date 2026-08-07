@@ -13,14 +13,14 @@ import {
   useProductEnvironments,
 } from '@sudobility/testomniac_client';
 import { useCreateProductDraftStore, useProductSelectionStore } from '@sudobility/testomniac_lib';
-import { useLocalizedNavigate } from '../../hooks/useLocalizedNavigate';
-import { useTestomniacApi } from '../../context/config';
+import { useLocalizedNavigate } from '../../hooks/useLocalizedNavigate.js';
+import { useTestomniacApi } from '../../context/config.js';
 import {
   useRouteParams,
   useTestomniacRouting,
   useRoutes,
   type TestomniacRoutes,
-} from '../../context/routing';
+} from '../../context/routing.js';
 
 interface DashboardSidebarProps {
   entitySlug: string;

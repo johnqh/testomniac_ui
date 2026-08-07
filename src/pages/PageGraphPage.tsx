@@ -13,10 +13,10 @@ import '@xyflow/react/dist/style.css';
 import { usePageStates, buildArtifactUrl } from '@sudobility/testomniac_client';
 import { layoutDagreGraph } from '@sudobility/testomniac_lib';
 import { ContentLayout } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams, useEnvRoutes } from '../context/routing';
-import BackLink from '../components/navigation/BackLink';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useEnvRoutes } from '../context/routing.js';
+import BackLink from '../components/navigation/BackLink.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
 
 const NODE_WIDTH = 200;
 const NODE_HEIGHT = 160;

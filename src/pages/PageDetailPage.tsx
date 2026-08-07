@@ -13,14 +13,14 @@ import {
 import type { TestInteractionResponse } from '@sudobility/testomniac_types';
 import { usePageInteractionGroups } from '@sudobility/testomniac_lib';
 import { Button, Card, ContentLayout } from '@sudobility/components';
-import { SEOHead, useTestomniacApi } from '../context/config';
-import { useRouteParams, useEnvRoutes } from '../context/routing';
-import { AddButton } from '../components/ui/AddButton';
-import { InteractionCell } from '../components/cells';
-import BackLink from '../components/navigation/BackLink';
-import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate';
-import { AddScenarioForm } from '../components/scenarios/AddScenarioForm';
-import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext';
+import { SEOHead, useTestomniacApi } from '../context/config.js';
+import { useRouteParams, useEnvRoutes } from '../context/routing.js';
+import { AddButton } from '../components/ui/AddButton.js';
+import { InteractionCell } from '../components/cells/index.js';
+import BackLink from '../components/navigation/BackLink.js';
+import { useLocalizedNavigate } from '../hooks/useLocalizedNavigate.js';
+import { AddScenarioForm } from '../components/scenarios/AddScenarioForm.js';
+import { useDashboardEnvironmentContext } from '../hooks/useDashboardEnvironmentContext.js';
 
 export function PageDetailPage() {
   const { pageId, envId, runId } = useRouteParams<{

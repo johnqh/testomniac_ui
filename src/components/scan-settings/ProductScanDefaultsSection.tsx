@@ -4,8 +4,8 @@ import {
   useProductScanSettings,
   useUpdateProductScanSettings,
 } from '@sudobility/testomniac_client';
-import { useTestomniacApi } from '../../context/config';
-import { ScanSettingsPanel } from './ScanSettingsPanel';
+import { useTestomniacApi } from '../../context/config.js';
+import { ScanSettingsPanel } from './ScanSettingsPanel.js';
 
 /**
  * Product-wide scan defaults. These apply to every environment unless an
