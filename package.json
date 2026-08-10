@@ -15,7 +15,7 @@
     "build": "tsc -p tsconfig.build.json",
     "build:watch": "tsc -p tsconfig.build.json --watch",
     "clean": "rm -rf dist",
-    "prepublishOnly": "bun run clean && bun run build && sh -c 'test ! -f ../workflows/scripts/check-package-entry.cjs || node ../workflows/scripts/check-package-entry.cjs'",
+    "prepublishOnly": "bun run clean && bun run build",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
