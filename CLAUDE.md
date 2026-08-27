@@ -1,5 +1,10 @@
 # Testomniac UI
 
+> **Git policy — never auto-commit or auto-push.** Leave your work in the working tree.
+> Run `git commit`, `git push`, `gh pr create`, or `scripts/push_all.sh` **only when the user
+> explicitly asks in that turn**. Approval for an earlier change does not carry forward, and
+> finishing a task is not permission to commit it.
+
 Shared dashboard UI library for Testomniac apps.
 
 **Package**: `@sudobility/testomniac_ui` (restricted, BUSL-1.1)
@@ -69,3 +74,7 @@ bun run test       # vitest
 - **testomniac_client** — API client + query hooks
 - **testomniac_lib** — business logic (managers, analysis, formatting, priority, graph layout)
 - **testomniac_types** — shared types
+
+## Git Workflow
+
+- Do not use feature branches for code changes. Always stay on the current branch.
